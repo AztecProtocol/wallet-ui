@@ -35,8 +35,8 @@ provider "aws" {
 }
 
 # AWS S3 bucket for static hosting.
-resource "aws_s3_bucket" "wallet-ui" {
-  bucket = "${var.DEPLOY_TAG}-aztec-wallet.aztec.network"
+resource "aws_s3_bucket" "wallet" {
+  bucket = "${var.DEPLOY_TAG}-wallet.aztec.network"
   acl    = "public-read"
 
   cors_rule {
@@ -58,7 +58,7 @@ resource "aws_s3_bucket" "wallet-ui" {
         "AWS": "*"
       },
       "Action": "s3:GetObject",
-      "Resource": "arn:aws:s3:::${var.DEPLOY_TAG}-aztec-wallet.aztec.network/*"
+      "Resource": "arn:aws:s3:::${var.DEPLOY_TAG}-wallet.aztec.network/*"
     }
   ]
 }
@@ -71,9 +71,9 @@ EOF
 }
 
 # AWS Cloudfront for caching.
-resource "aws_cloudfront_distribution" "wallet-ui_distribution" {
+resource "aws_cloudfront_distribution" "wallet_distribution" {
   origin {
-    domain_name = aws_s3_bucket.wallet-ui.website_endpoint
+    domain_name = aws_s3_bucket.wallet.website_endpoint
     origin_id   = "website"
     custom_origin_config {
       http_port              = "80"
@@ -87,7 +87,7 @@ resource "aws_cloudfront_distribution" "wallet-ui_distribution" {
   is_ipv6_enabled = true
   comment         = "Managed by Terraform"
 
-  aliases = ["${var.DEPLOY_TAG}-aztec-wallet.aztec.network"]
+  aliases = ["${var.DEPLOY_TAG}-wallet.aztec.network"]
 
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
@@ -124,11 +124,11 @@ resource "aws_cloudfront_distribution" "wallet-ui_distribution" {
 
 resource "aws_route53_record" "a_record" {
   zone_id = data.terraform_remote_state.aztec2_iac.outputs.aws_route53_zone_id
-  name    = "${var.DEPLOY_TAG}-aztec-wallet"
+  name    = "${var.DEPLOY_TAG}-wallet"
   type    = "A"
   alias {
-    name                   = aws_cloudfront_distribution.wallet-ui_distribution.domain_name
-    zone_id                = aws_cloudfront_distribution.wallet-ui_distribution.hosted_zone_id
+    name                   = aws_cloudfront_distribution.wallet_distribution.domain_name
+    zone_id                = aws_cloudfront_distribution.wallet_distribution.hosted_zone_id
     evaluate_target_health = true
   }
 }
