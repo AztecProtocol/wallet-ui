@@ -27,10 +27,8 @@ export async function handleHandoverMessage(
     await signClient.core.crypto.generateSharedKey(session.self.publicKey, session.peer.publicKey);
     await signClient.session.set(session.topic, session);
     await signClient.core.relayer.subscribe(session.topic);
-    console.log('GET');
     return { session, keyStore };
   }
-  console.log('GET');
   return { keyStore };
 }
 
