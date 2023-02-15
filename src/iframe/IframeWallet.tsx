@@ -1,23 +1,20 @@
-import { useState, useEffect } from "react";
-import { AppProps } from "../components/appProps.js";
+import { useState, useEffect, useContext } from 'react';
+import { AppProps } from '../components/appProps.js';
 import {
   AztecKeyStore,
   ServerRollupProvider,
   WalletConnectAztecWalletProviderServer,
-} from "@aztec/sdk";
-import { SignClient } from "@walletconnect/sign-client/dist/types/client.js";
-import { createSignClient } from "../walletConnect/createSignClient.js";
-import { SessionTypes } from "@walletconnect/types";
-import {
-  IFRAME_HANDOVER_TYPE,
-  getTopic,
-  handleHandoverMessage,
-  openPopup,
-} from "./handleHandover.js";
+  BarretenbergWasm,
+} from '@aztec/sdk';
+import { SignClient } from '@walletconnect/sign-client/dist/types/client.js';
+import { createSignClient } from '../walletConnect/createSignClient.js';
+import { SessionTypes } from '@walletconnect/types';
+import { IFRAME_HANDOVER_TYPE, getTopic, handleHandoverMessage, openPopup } from './handleHandover.js';
+import { BBWasmContext } from '../utils/wasmContext.js';
 
 export default function IframeWallet(props: AppProps) {
   const [aztecAWPServer] = useState<WalletConnectAztecWalletProviderServer>(
-    new WalletConnectAztecWalletProviderServer()
+    new WalletConnectAztecWalletProviderServer(),
   );
   const [initialized, setInitialized] = useState<boolean>(false);
   const [initializing, setInitializing] = useState<boolean>(false);
@@ -26,14 +23,14 @@ export default function IframeWallet(props: AppProps) {
   const [session, setSession] = useState<SessionTypes.Struct | null>(null);
   const [keyStore, setKeyStore] = useState<AztecKeyStore | null>(null);
 
+  const wasm = useContext<BarretenbergWasm>(BBWasmContext);
+
   useEffect(() => {
     async function init() {
       const client = await createSignClient(true);
       setClient(client);
       aztecAWPServer.setClient(client);
-      const cachedSession = client.session
-        .getAll()
-        .find(({ topic }) => topic === getTopic());
+      const cachedSession = client.session.getAll().find(({ topic }) => topic === getTopic());
       if (cachedSession) {
         setSession(cachedSession);
       }
@@ -47,21 +44,15 @@ export default function IframeWallet(props: AppProps) {
         if (event.origin === window.location.origin) {
           switch (event.data.type) {
             case IFRAME_HANDOVER_TYPE:
-              await handleHandoverMessage(
-                event.data.payload,
-                setKeyStore,
-                setSession,
-                client,
-                props.wasm
-              );
+              await handleHandoverMessage(event.data.payload, setKeyStore, setSession, client, wasm);
               break;
             default:
-              console.log("Unknown message", event.data);
+              console.log('Unknown message', event.data);
           }
         }
       };
-      window.addEventListener("message", handler);
-      return () => window.removeEventListener("message", handler);
+      window.addEventListener('message', handler);
+      return () => window.removeEventListener('message', handler);
     }
     return () => {};
   }, [client]);
@@ -70,7 +61,7 @@ export default function IframeWallet(props: AppProps) {
     if (!initialized) {
       // Sending the open iframe soon after IFRAME_READY makes it not to be listened :/
       setTimeout(() => {
-        console.log("requesting open");
+        console.log('requesting open');
         aztecAWPServer.openIframe().catch(console.error);
       }, 500);
     } else {
@@ -84,10 +75,8 @@ export default function IframeWallet(props: AppProps) {
       aztecAWPServer
         .initWalletProvider(
           keyStore,
-          new ServerRollupProvider(
-            new URL(process.env.ROLLUP_HOST || "http://localhost:8081")
-          ),
-          props.wasm
+          new ServerRollupProvider(new URL(process.env.ROLLUP_HOST || 'http://localhost:8081')),
+          wasm,
         )
         .catch(console.error);
     }
@@ -105,14 +94,14 @@ export default function IframeWallet(props: AppProps) {
             onClick={() =>
               openPopup(
                 () => setInitializing(true),
-                () => setInitializing(false)
+                () => setInitializing(false),
               )
             }
           >
             Connect
           </button>
         ) : (
-          "Connecting..."
+          'Connecting...'
         )}
       </div>
     );

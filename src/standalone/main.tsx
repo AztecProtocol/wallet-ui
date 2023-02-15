@@ -1,21 +1,54 @@
-import { BarretenbergWasm } from "@aztec/sdk";
-import { useEffect, useState } from "react";
-import render from "../components/render";
-import getChainId from "../utils/getChainId";
-import getWasm from "../utils/getWasm";
-import StandaloneWallet from "./StandaloneWallet";
+import '@rainbow-me/rainbowkit/styles.css';
+import { WagmiConfig } from 'wagmi';
+import { lightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+
+import render from '../components/render';
+import getChainId from '../utils/getChainId';
+import { BBWasmContext, BBWasmProvider, WithBBWasm } from '../utils/wasmContext';
+import StandaloneWallet from './StandaloneWallet';
+import { getWagmiRainbowConfig, WagmiRainbowConfig } from '../utils/config';
+import { useContext, useEffect, useState } from 'react';
 
 function StandaloneApp() {
-  const [wasm, setWasm] = useState<BarretenbergWasm>();
+  const chainId = getChainId();
+  const [wagmiConfig, setWagmiConfig] = useState<WagmiRainbowConfig | undefined>(undefined);
+
+  async function init() {
+    setWagmiConfig(getWagmiRainbowConfig(chainId));
+  }
 
   useEffect(() => {
-    getWasm().then(setWasm).catch(console.error);
+    (async () => {
+      await init();
+    })();
   }, []);
-  return !wasm ? (
-    <div>"Loading..."</div>
-  ) : (
-    <StandaloneWallet chainId={getChainId()} wasm={wasm} />
+
+  const wasm = useContext(BBWasmContext);
+
+  if (!wasm || !wagmiConfig) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <WagmiConfig client={wagmiConfig.wagmiClient}>
+      <RainbowKitProvider
+        chains={wagmiConfig.chains}
+        theme={lightTheme({
+          accentColor: 'white',
+          accentColorForeground: 'black',
+          borderRadius: 'medium',
+          fontStack: 'system',
+          overlayBlur: 'none',
+        })}
+      >
+        <StandaloneWallet chainId={chainId} />
+      </RainbowKitProvider>
+    </WagmiConfig>
   );
 }
 
-render(<StandaloneApp />);
+render(
+  <BBWasmProvider>
+    <StandaloneApp />
+  </BBWasmProvider>,
+);

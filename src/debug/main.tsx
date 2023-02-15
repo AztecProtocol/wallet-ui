@@ -6,41 +6,34 @@ import {
   decryptPrivateKeys,
   WalletProvider,
   AztecBuffer,
-} from "@aztec/sdk";
-import { useEffect, useState } from "react";
-import ConnectAccount from "../components/ConnectAccount";
-import render from "../components/render";
-import getWasm from "../utils/getWasm";
-import { createFundedWalletProvider } from "./createFundedWalletProvider";
+} from '@aztec/sdk';
+import { useEffect, useState } from 'react';
+import ConnectAccount from '../components/ConnectAccount';
+import render from '../components/render';
+import getWasm from '../utils/getWasm';
+import { createFundedWalletProvider } from './createFundedWalletProvider';
 
 async function generateEncryptedKeystoreFieldInput(
   provider: EthereumProvider,
   address: EthAddress,
-  userPassword: string
+  userPassword: string,
 ): Promise<string> {
   const keyStore = await AztecKeyStore.create(await getWasm());
 
-  const encryptedKeystore = await keyStore.export(
-    userPassword,
-    provider,
-    address
-  );
-  return encryptedKeystore.toString("hex");
+  const encryptedKeystore = await keyStore.export(userPassword, provider, address);
+  return encryptedKeystore.toString('hex');
 }
 
 async function decryptEncryptedKeystoreFieldInput(
   userPassword: string,
-  encryptedKeystore: string
+  encryptedKeystore: string,
 ): Promise<PrivateKeys> {
-  return await decryptPrivateKeys(
-    AztecBuffer.from(encryptedKeystore, "hex"),
-    userPassword
-  );
+  return await decryptPrivateKeys(AztecBuffer.from(encryptedKeystore, 'hex'), userPassword);
 }
 
-const USER_PASSWORD_KEY = "user-keys";
-const ENCRYPTED_KEYS_KEY = "encrypted-keys";
-const ORIGIN = "*"; // TODO add origin environment flags
+const USER_PASSWORD_KEY = 'user-keys';
+const ENCRYPTED_KEYS_KEY = 'encrypted-keys';
+const ORIGIN = '*'; // TODO add origin environment flags
 
 function DebugApp() {
   const [ethereumProvider, setEthereumProvider] = useState<WalletProvider>();
@@ -58,7 +51,7 @@ function DebugApp() {
         const encryptedKeystore = await generateEncryptedKeystoreFieldInput(
           ethereumProvider,
           ethereumProvider.getAccount(0),
-          userPassword
+          userPassword,
         );
         window.localStorage.setItem(ENCRYPTED_KEYS_KEY, encryptedKeystore);
         return encryptedKeystore;
@@ -66,16 +59,13 @@ function DebugApp() {
       initialEncryptedKeystore={window.localStorage.getItem(ENCRYPTED_KEYS_KEY)}
       initialUserPassword={window.localStorage.getItem(USER_PASSWORD_KEY)}
       connect={async (userPassword: string, encryptedKeystore: string) => {
-        const keys = await decryptEncryptedKeystoreFieldInput(
-          userPassword,
-          encryptedKeystore
-        );
+        const keys = await decryptEncryptedKeystoreFieldInput(userPassword, encryptedKeystore);
         window.opener.postMessage(
           {
-            fn: "resolvePrivateKeys",
+            fn: 'resolvePrivateKeys',
             args: [keys.accountKey, keys.spendingKey],
           },
-          ORIGIN
+          ORIGIN,
         );
       }}
     />

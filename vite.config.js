@@ -33,6 +33,17 @@ export default defineConfig({
         },
       ],
     }),
+    {
+      name: 'configure-server',
+      configureServer(server) {
+        server.middlewares.use((req, _, next) => {
+          if (req.url === '/wc') {
+            req.url = '/wc.html';
+          }
+          next();
+        });
+      },
+    },
   ],
   resolve: {
     alias: {},
@@ -49,7 +60,7 @@ export default defineConfig({
         'debug-index': path.resolve(__dirname, 'debug.html'),
         'iframe-index': path.resolve(__dirname, 'iframe.html'),
         'popup-index': path.resolve(__dirname, 'popup.html'),
-        'wc-index': path.resolve(__dirname, 'wc.html'),
+        wc: path.resolve(__dirname, 'wc.html'),
       },
     },
   },

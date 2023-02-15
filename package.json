@@ -45,14 +45,13 @@
     "@walletconnect/core": "2.2.1",
     "@walletconnect/sign-client": "2.2.1",
     "@walletconnect/types": "2.2.1",
-    "@web3-react/core": "^6.1.9",
-    "@web3-react/injected-connector": "^6.0.7",
-    "@web3-react/metamask": "^8.0.0-beta.0",
-    "@web3-react/walletconnect-connector": "^6.2.13",
+    "ethers": "^5.7.2",
+    "jspdf": "^2.5.1",
     "react-is": "^18.2.0",
     "react-router-dom": "^6.8.0",
     "safe-json-utils": "^1.1.1",
-    "serve": "^14.0.1"
+    "serve": "^14.0.1",
+    "wagmi": "^0.11.5"
   },
   "devDependencies": {
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
