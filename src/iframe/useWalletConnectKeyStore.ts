@@ -55,44 +55,5 @@ export default function useWalletConnectKeyStore(
     return () => {};
   }, [client]);
 
-  // useEffect(() => {
-  //   console.log('CLIENT');
-  //   if (client && !keyStore) {
-  //     const { handoverPromise, removeListener } = addHandoverMessageListener(client);
-  //     handoverPromise.then(({ keyStore, session }) => {
-  //       console.log('kestore');
-
-  //       setKeyStore(
-  //         new WalletConnectKeyStore(
-  //           keyStore,
-  //           session || cachedSession,
-  //           showApproveProofsRequest,
-  //           showApproveProofInputsRequest,
-  //         ),
-  //       );
-  //     });
-  //     // return removeListener;
-  //   }
-  //   return () => {};
-  // }, [client, keyStore]);
   return { client, keyStore, session };
 }
-
-// function addHandoverMessageListener(client: SignClient) {
-//   // TODO when to reject?
-//   let handoverPromiseResolve: (result: HandoverResult) => void;
-//   const handoverPromise = new Promise<HandoverResult>(resolve => (handoverPromiseResolve = resolve));
-//   const handler = async (event: MessageEvent<any>) => {
-//     if (event.origin === window.location.origin) {
-//       switch (event.data.type) {
-//         case IFRAME_HANDOVER_TYPE:
-//           handoverPromiseResolve(await handleHandoverMessage(event.data.payload, client));
-//           break;
-//         default:
-//           console.log('Unknown message', event.data);
-//       }
-//     }
-//   };
-//   window.addEventListener('message', handler);
-//   return { handoverPromise, removeListener: () => window.removeEventListener('message', handler) };
-// }
