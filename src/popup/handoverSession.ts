@@ -1,11 +1,11 @@
-import { AztecKeyStore } from "@aztec/sdk";
-import { IFRAME_HANDOVER_TYPE } from "../iframe/handleHandover.js";
-import { getSession, keyStoreToString } from "../utils/sessionUtils.js";
+import { AztecKeyStore } from '@aztec/sdk';
+import { IFRAME_HANDOVER_TYPE } from '../iframe/handleHandover.js';
+import { getSession, keyStoreToString } from '../utils/sessionUtils.js';
 
 function handoverSession(topic: string) {
   const sessionData = getSession(topic);
   if (!sessionData) {
-    console.warn("No sessions found for", topic);
+    console.warn('No sessions found for', topic);
     return;
   }
 
@@ -13,17 +13,16 @@ function handoverSession(topic: string) {
 }
 
 export async function sendHandoverMessage(keyStore: AztecKeyStore) {
+  console.log("OPEN'ER");
   window.opener.postMessage(
     {
       type: IFRAME_HANDOVER_TYPE,
       payload: {
         keyStore: await keyStoreToString(keyStore),
-        sessionData: window.handoverSession
-          ? handoverSession(window.handoverSession)
-          : undefined,
+        sessionData: window.handoverSession ? handoverSession(window.handoverSession) : undefined,
       },
     },
-    window.location.origin
+    window.location.origin,
   );
   window.close();
 }

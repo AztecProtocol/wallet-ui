@@ -47,6 +47,7 @@ export default function IframeWallet(props: AppProps) {
     if (client) {
       const { handoverPromise, removeListener } = addHandoverMessageListener(client);
       handoverPromise.then(({ keyStore, session }) => {
+        console.log('GET', keyStore);
         setKeyStore(keyStore);
         setSession(session);
       });
@@ -120,6 +121,7 @@ export default function IframeWallet(props: AppProps) {
 }
 
 function addHandoverMessageListener(client: SignClient) {
+  console.log('ADD');
   // TODO when to reject?
   let handoverPromiseResolve: (result: HandoverResult) => void;
   const handoverPromise = new Promise<HandoverResult>(resolve => (handoverPromiseResolve = resolve));
@@ -127,6 +129,7 @@ function addHandoverMessageListener(client: SignClient) {
     if (event.origin === window.location.origin) {
       switch (event.data.type) {
         case IFRAME_HANDOVER_TYPE:
+          console.log('GET', IFRAME_HANDOVER_TYPE);
           handoverPromiseResolve(await handleHandoverMessage(event.data.payload, client));
           break;
         default:
