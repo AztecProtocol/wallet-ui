@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { AppProps } from "../components/appProps.js";
 import { OpenKeystore } from "../components/openKeystore.js";
 import { sendHandoverMessage } from "./handoverSession.js";
-import { AztecBuffer, AztecKeyStore } from "@aztec/sdk";
 import {
   getCachedEncryptedKeystore,
   getCachedPassword,
 } from "../utils/sessionUtils.js";
+import { AztecKeyStore, AztecBuffer } from "@aztec/sdk";
 
 export default function PopupWallet(props: AppProps) {
   const [keyStore, setKeyStore] = useState<AztecKeyStore | null>(null);
@@ -21,7 +21,7 @@ export default function PopupWallet(props: AppProps) {
         props.wasm,
         []
       )
-        .then((keyStore) => {
+        .then((keyStore: AztecKeyStore) => {
           setKeyStore(keyStore);
         })
         .catch(console.warn);

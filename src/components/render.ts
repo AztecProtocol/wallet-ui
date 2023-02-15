@@ -1,4 +1,4 @@
-import { enableLogs, isLogEnabled } from "@aztec/sdk";
+import { isLogEnabled, enableLogs } from "@aztec/sdk";
 import { ReactElement } from "react";
 import * as ReactDOM from "react-dom/client";
 
@@ -11,7 +11,7 @@ declare global {
   }
 }
 
-export function render(element: ReactElement) {
+export default function render(element: ReactElement) {
   if (!isLogEnabled("bb:") && process.env.NODE_ENV !== "production") {
     enableLogs("bb:*");
     location.reload();

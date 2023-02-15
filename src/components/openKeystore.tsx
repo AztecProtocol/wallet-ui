@@ -1,4 +1,4 @@
-import { AztecBuffer, AztecKeyStore, BarretenbergWasm } from "@aztec/sdk";
+import { AztecKeyStore, BarretenbergWasm } from "@aztec/sdk";
 import { useState } from "react";
 import {
   getCachedEncryptedKeystore,

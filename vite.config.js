@@ -40,9 +40,11 @@ export default defineConfig({
     // sourcemap: true,
     rollupOptions: {
       input: {
+        debug: path.resolve(__dirname, "src/debug/main.tsx"),
         iframe: path.resolve(__dirname, "src/iframe/main.tsx"),
         popup: path.resolve(__dirname, "src/popup/main.tsx"),
         standalone: path.resolve(__dirname, "src/standalone/main.tsx"),
+        "debug-index": path.resolve(__dirname, "debug-index.html"),
         "iframe-index": path.resolve(__dirname, "iframe-index.html"),
         "popup-index": path.resolve(__dirname, "popup-index.html"),
         "standalone-index": path.resolve(__dirname, "standalone-index.html"),

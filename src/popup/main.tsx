@@ -1,6 +1,6 @@
 import { BarretenbergWasm } from "@aztec/sdk";
 import { useEffect, useState } from "react";
-import { render } from "../components/render";
+import render from "../components/render";
 import getChainId from "../utils/getChainId";
 import getWasm from "../utils/getWasm";
 import PopupWallet from "./PopupWallet";
