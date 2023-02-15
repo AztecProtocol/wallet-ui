@@ -37,7 +37,7 @@ export async function handleHandoverMessage(
 
 export function openPopup(onOpen: () => void, onClose: () => void) {
   const walletWindow = window.open(
-    window.location.origin + window.location.pathname,
+    window.location.origin + "/popup.html",
     "_blank",
     "popup=true"
   );

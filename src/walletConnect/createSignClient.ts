@@ -22,7 +22,7 @@ export function createSignClient(isIframe: boolean) {
   const metadata = {
     name: 'Wallet name',
     description: 'A short description for your wallet',
-    url: window.location.origin + window.location.pathname,
+    url: window.location.origin,
     icons: ['https://walletconnect.com/walletconnect-logo.png'],
     iframable: true,
   };
