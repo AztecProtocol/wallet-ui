@@ -19,7 +19,7 @@ export default defineConfig({
     EnvironmentPlugin({
       VITE_CHAINID: 1337,
       NODE_ENV: 'development',
-      WALLETCONNECT_PROJECT_ID: '3c8bb328309b91d45b5cc8b2dc392065',
+      WALLETCONNECT_PROJECT_ID: '',
     }),
     viteStaticCopy({
       targets: [
