@@ -13,7 +13,6 @@ function handoverSession(topic: string) {
 }
 
 export async function sendHandoverMessage(keyStore: AztecKeyStore) {
-  console.log("OPEN'ER");
   window.opener.postMessage(
     {
       type: IFRAME_HANDOVER_TYPE,

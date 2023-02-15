@@ -1,81 +1,47 @@
 import { useState, useEffect, useContext } from 'react';
 import { AppProps } from '../components/appProps.js';
-import {
-  AztecKeyStore,
-  ServerRollupProvider,
-  BarretenbergWasm,
-  WalletConnectAztecWalletProviderServer,
-} from '@aztec/sdk';
-import { SignClient } from '@walletconnect/sign-client/dist/types/client.js';
-import { createSignClient } from '../walletConnect/createSignClient.js';
-import { SessionTypes } from '@walletconnect/types';
-import { IFRAME_HANDOVER_TYPE, getTopic, handleHandoverMessage, openPopup, HandoverResult } from './handleHandover.js';
+import { BarretenbergWasm, ServerRollupProvider, WalletConnectAztecWalletProviderServer } from '@aztec/sdk';
+import { openPopup } from './handleHandover.js';
+import useWalletConnectKeyStore from './useWalletConnectKeyStore.js';
 import { BBWasmContext } from '../utils/wasmContext.js';
-
-export type IframeWalletMode = 'closed' | 'connect' | 'approve-proofs' | 'approve-proof-inputs';
 
 export default function IframeWallet(props: AppProps) {
   const [aztecAWPServer] = useState<WalletConnectAztecWalletProviderServer>(
     new WalletConnectAztecWalletProviderServer(),
   );
   const [initialized, setInitialized] = useState<boolean>(false);
-
-  const [walletMode, setWalletMode] = useState<IframeWalletMode>('closed');
-  const [client, setClient] = useState<SignClient>();
-  const [session, setSession] = useState<SessionTypes.Struct>();
-  const [keyStore, setKeyStore] = useState<AztecKeyStore>();
-
+  const [initializing, setInitializing] = useState<boolean>(false);
   const wasm = useContext<BarretenbergWasm>(BBWasmContext);
 
-  const showApproveProofsRequest = () => {};
-  const showApproveProofInputsRequest = () => {};
+  const showApproveProofsRequest = async (): Promise<{ approved: boolean; error: string }> => {
+    console.log('showApproveProofsRequest TODO');
+    return Promise.resolve({ approved: true, error: '' });
+  };
+  const showApproveProofInputsRequest = async (): Promise<{ approved: boolean; error: string }> => {
+    console.log('showApproveProofInputsRequest TODO');
+    return Promise.resolve({ approved: true, error: '' });
+  };
+  const { client, keyStore, session } = useWalletConnectKeyStore(
+    aztecAWPServer,
+    showApproveProofsRequest,
+    showApproveProofInputsRequest,
+  );
 
   useEffect(() => {
-    async function init() {
-      const client = await createSignClient(true);
-      setClient(client);
-      aztecAWPServer.setClient(client);
-      const cachedSession = client.session.getAll().find(({ topic }) => topic === getTopic());
-      if (cachedSession) {
-        setSession(cachedSession);
-      }
-    }
-    init().catch(console.error);
-  }, []);
-
-  useEffect(() => {
-    if (client) {
-      const { handoverPromise, removeListener } = addHandoverMessageListener(client);
-      handoverPromise.then(({ keyStore, session }) => {
-        console.log('GET', keyStore);
-        setKeyStore(keyStore);
-        setSession(session);
-      });
-      return removeListener;
-    }
-    return () => {};
-  }, [client]);
-
-  useEffect(() => {
-    if (walletMode === 'connect') {
+    if (!initialized) {
       // Sending the open iframe soon after IFRAME_READY makes it not to be listened :/
       setTimeout(() => {
         console.log('requesting open');
         aztecAWPServer.openIframe().catch(console.error);
       }, 500);
-    } else if (walletMode === 'approve-proofs') {
-      aztecAWPServer.openIframe().catch(console.error);
-    } else if (walletMode === 'approve-proof-inputs') {
-      aztecAWPServer.openIframe().catch(console.error);
-    } else if (walletMode === 'closed') {
+    } else {
       aztecAWPServer.closeIframe().catch(console.error);
     }
-  }, [walletMode]);
+  }, [initialized]);
 
   useEffect(() => {
-    if (client && session && keyStore) {
+    if (keyStore && client && session) {
       setInitialized(true);
-      setWalletMode('connect');
       aztecAWPServer
         .initWalletProvider(
           keyStore,
@@ -84,7 +50,7 @@ export default function IframeWallet(props: AppProps) {
         )
         .catch(console.error);
     }
-  }, [client, keyStore, session]);
+  }, [keyStore, client, session]);
 
   if (!client) {
     return <div>Initializing WalletConnect...</div>;
@@ -93,12 +59,12 @@ export default function IframeWallet(props: AppProps) {
   if (!initialized) {
     return (
       <div>
-        {walletMode !== 'closed' ? (
+        {!initializing ? (
           <button
             onClick={() =>
               openPopup(
-                () => setWalletMode('connect'),
-                () => setWalletMode('closed'),
+                () => setInitializing(true),
+                () => setInitializing(false),
               )
             }
           >
@@ -113,30 +79,8 @@ export default function IframeWallet(props: AppProps) {
 
   return (
     <div>
-      Last wallet mode: {walletMode}
       <h1>Embedded worker</h1>
       <p>Connected session: {session?.topic}</p>
     </div>
   );
-}
-
-function addHandoverMessageListener(client: SignClient) {
-  console.log('ADD');
-  // TODO when to reject?
-  let handoverPromiseResolve: (result: HandoverResult) => void;
-  const handoverPromise = new Promise<HandoverResult>(resolve => (handoverPromiseResolve = resolve));
-  const handler = async (event: MessageEvent<any>) => {
-    if (event.origin === window.location.origin) {
-      switch (event.data.type) {
-        case IFRAME_HANDOVER_TYPE:
-          console.log('GET', IFRAME_HANDOVER_TYPE);
-          handoverPromiseResolve(await handleHandoverMessage(event.data.payload, client));
-          break;
-        default:
-          console.log('Unknown message', event.data);
-      }
-    }
-  };
-  window.addEventListener('message', handler);
-  return { handoverPromise, removeListener: () => window.removeEventListener('message', handler) };
 }
