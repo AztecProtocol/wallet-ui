@@ -5,6 +5,7 @@ import { OnboardingStepProps } from './props';
 
 export function CreateAccount(props: { chainId: number } & OnboardingStepProps) {
   const [sdk, setSdk] = useState<AztecSdk | null>(null);
+  const [depositFee, setDepositFee] = useState<AztecSdk | null>(null);
 
   useEffect(() => {
     createSdk(props.chainId).then(setSdk);

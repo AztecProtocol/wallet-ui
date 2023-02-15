@@ -37,8 +37,8 @@ export default defineConfig({
       name: 'configure-server',
       configureServer(server) {
         server.middlewares.use((req, _, next) => {
-          if (req.url === '/wc') {
-            req.url = '/wc.html';
+          if (req.url.startsWith('/wc')) {
+            req.url = req.url.replace('/wc', '/wc.html');
           }
           next();
         });

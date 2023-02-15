@@ -7,7 +7,9 @@ export const BBWasmContext = createContext(null);
 export function BBWasmProvider({ children }: { children: JSX.Element }) {
   const [bbWasm, setBBWasm] = useState<BarretenbergWasm | null>(null);
   useEffect(() => {
-    getWasm().then(wasm => setBBWasm(wasm));
+    getWasm()
+      .then(wasm => setBBWasm(wasm))
+      .catch(console.error);
   }, []);
 
   return <BBWasmContext.Provider value={bbWasm}>{children}</BBWasmContext.Provider>;
