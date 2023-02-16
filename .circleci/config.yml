@@ -74,10 +74,11 @@ deploy_filters: &deploy_filters
   branches:
     only:
       - main
+      - stage
 
 # Repeatable config for defining the workflow below.
 workflows:
-  website:
+  system:
     when:
       equal: [system, << pipeline.parameters.workflow >>]
     jobs:
