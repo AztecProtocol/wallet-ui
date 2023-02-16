@@ -1,11 +1,11 @@
-import { AztecKeyStore, AztecSdk } from '@aztec/sdk';
-import { useEffect, useState } from 'react';
+import { AztecKeyStore } from '@aztec/sdk';
+import { useContext, useState } from 'react';
 import { RegisterAccount } from './registerAccount';
 import { RecoveryKit } from './recoveryKit';
 import { SanityCheck } from './sanityCheck';
-import { createSdk } from '../../utils/createAztecSdk';
 import { KeyStoreCreation } from './keyStoreCreation';
 import { AliasSelection } from './aliasSelection';
+import { AztecSdkContext } from '../../utils/aztecSdkContext';
 
 type OnboardingStep = 'keystoreCreation' | 'aliasSelection' | 'recoveryKit' | 'sanityCheck' | 'registerAccount';
 
@@ -15,19 +15,13 @@ export interface OnboardingProps {
 }
 
 export default function Onboarding(props: OnboardingProps) {
-  const [sdk, setSdk] = useState<AztecSdk | null>(null);
   const [userAlias, setUserAlias] = useState<string>('');
   const [keyStore, setKeyStore] = useState<AztecKeyStore | null>();
   const [encryptedKeyStore, setEncryptedKeyStore] = useState<string | null>();
 
   const [currentStep, setCurrentStep] = useState<OnboardingStep>('keystoreCreation');
 
-  useEffect(() => {
-    createSdk(props.chainId).then(async sdk => {
-      await sdk.run();
-      setSdk(sdk);
-    });
-  }, []);
+  const { sdk } = useContext(AztecSdkContext);
 
   if (!sdk) {
     return <div>Starting the SDK...</div>;

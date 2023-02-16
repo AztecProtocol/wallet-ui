@@ -1,12 +1,15 @@
 import render from '../components/render';
+import { AztecSdkProvider } from '../utils/aztecSdkContext';
 import getChainId from '../utils/getChainId';
 import { BBWasmProvider, WithBBWasm } from '../utils/wasmContext';
 import PopupWallet from './PopupWallet';
 
 render(
-  <BBWasmProvider>
-    <WithBBWasm>
-      <PopupWallet chainId={getChainId()} />
-    </WithBBWasm>
-  </BBWasmProvider>,
+  <AztecSdkProvider chainId={getChainId()}>
+    <BBWasmProvider>
+      <WithBBWasm>
+        <PopupWallet />
+      </WithBBWasm>
+    </BBWasmProvider>
+  </AztecSdkProvider>,
 );

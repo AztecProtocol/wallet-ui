@@ -18,7 +18,7 @@ async function sendProof(
   depositorAddress: EthAddress,
   depositorSigner: EthereumProvider,
 ) {
-  const deposit = sdk.toBaseUnits(0, ethDeposit.toString());
+  const deposit = sdk.toBaseUnits(0, ethDeposit);
   const aztecWalletProvider = await sdk.createAztecWalletProvider(keyStore);
   await aztecWalletProvider.connect();
   const accountPublicKey = await sdk.addAccount(aztecWalletProvider);
@@ -31,7 +31,7 @@ async function sendProof(
     spendingKey,
     undefined,
     deposit,
-    depositFee[0],
+    depositFee[1],
     depositorAddress,
     aztecWalletProvider,
     depositorSigner,

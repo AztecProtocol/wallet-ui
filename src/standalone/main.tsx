@@ -8,6 +8,7 @@ import { BBWasmContext, BBWasmProvider, WithBBWasm } from '../utils/wasmContext'
 import StandaloneWallet from './StandaloneWallet';
 import { getWagmiRainbowConfig, WagmiRainbowConfig } from '../utils/config';
 import { useContext, useEffect, useState } from 'react';
+import { AztecSdkProvider } from '../utils/aztecSdkContext';
 
 function StandaloneApp() {
   const chainId = getChainId();
@@ -48,7 +49,9 @@ function StandaloneApp() {
 }
 
 render(
-  <BBWasmProvider>
-    <StandaloneApp />
-  </BBWasmProvider>,
+  <AztecSdkProvider chainId={getChainId()}>
+    <BBWasmProvider>
+      <StandaloneApp />
+    </BBWasmProvider>
+  </AztecSdkProvider>,
 );
