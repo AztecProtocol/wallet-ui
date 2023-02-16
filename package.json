@@ -41,6 +41,7 @@
   "dependencies": {
     "@aztec/barretenberg": "^2.1.84",
     "@aztec/sdk": "^2.1.83",
+    "@aztec/aztec-ui": "0.1.3",
     "@rainbow-me/rainbowkit": "^0.8.1",
     "@walletconnect/core": "2.2.1",
     "@walletconnect/sign-client": "2.2.1",
