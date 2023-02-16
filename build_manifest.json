@@ -1,0 +1,9 @@
+{
+  "wallet-ui": {
+    "buildDir": ".",
+    "projectDir": "",
+    "dockerfile": "Dockerfile",
+    "rebuildPatterns": ["."],
+    "dependencies": []
+  }
+}

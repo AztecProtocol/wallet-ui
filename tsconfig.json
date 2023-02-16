@@ -10,9 +10,5 @@
     "allowSyntheticDefaultImports": true,
     "inlineSourceMap": true
   },
-  "references": [
-    { "path": "../sdk/tsconfig.dest.json" },
-    { "path": "../barretenberg.js/tsconfig.dest.json" }
-  ],
   "include": ["src"]
 }
