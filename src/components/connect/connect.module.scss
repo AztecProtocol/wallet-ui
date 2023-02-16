@@ -1,0 +1,20 @@
+@use '../global.module.scss';
+
+.permissions {
+    font-size: 16px;
+    width: 100%;
+    line-height: 18px;
+}
+
+.list {
+    list-style: outside;
+    padding: 10px 0 0 35px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+}
+
+.logo {
+    width: 75px;
+}
