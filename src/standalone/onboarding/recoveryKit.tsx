@@ -1,4 +1,3 @@
-import { OnboardingStepProps } from './props';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount, useSignMessage } from 'wagmi';
 import { AztecKeyStore, ConstantKeyPair, RECOVERY_KEY_MESSAGE } from '@aztec/sdk';
@@ -7,7 +6,7 @@ import { generateRecoveryKey } from '../../keystore/recoveryKey';
 import { BBWasmContext } from '../../utils/wasmContext';
 import { downloadRecoveryKit } from '../../keystore';
 
-export function RecoveryKit(props: { userAlias: string; keyStore: AztecKeyStore } & OnboardingStepProps) {
+export function RecoveryKit(props: { userAlias: string; keyStore: AztecKeyStore; onFinish: () => void }) {
   const wasm = useContext(BBWasmContext);
   const [recoveryKey, setRecoveryKey] = useState<ConstantKeyPair | null>(null);
 

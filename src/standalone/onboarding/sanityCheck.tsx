@@ -1,6 +1,5 @@
 import { AztecBuffer, AztecKeyStore } from '@aztec/sdk';
 import { useContext, useState } from 'react';
-import { OnboardingStepProps } from './props';
 import { BarretenbergWasm } from '@aztec/sdk';
 import { BBWasmContext } from '../../utils/wasmContext';
 
@@ -17,7 +16,7 @@ async function checkSameKeystore(
   return openedAccountKey.getPublicKey().toString() === keyStoreAccountKey.getPublicKey().toString();
 }
 
-export function SanityCheck(props: { keyStore: AztecKeyStore } & OnboardingStepProps) {
+export function SanityCheck(props: { keyStore: AztecKeyStore; onFinish: () => void }) {
   const wasm = useContext(BBWasmContext);
   const [encryptionKey, setEncryptionKey] = useState<string>('');
   const [passcode, setPasscode] = useState<string>('');
@@ -33,7 +32,13 @@ export function SanityCheck(props: { keyStore: AztecKeyStore } & OnboardingStepP
       <button
         onClick={() =>
           checkSameKeystore(encryptionKey, passcode, props.keyStore, wasm)
-            .then(() => props.onFinish())
+            .then(isSame => {
+              if (isSame) {
+                props.onFinish();
+              } else {
+                console.warn('Keystore does not match');
+              }
+            })
             .catch(console.error)
         }
       >
