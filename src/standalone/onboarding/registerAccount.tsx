@@ -14,7 +14,7 @@ interface AssetValue {
 async function sendProof(
   sdk: AztecSdk,
   keyStore: AztecKeyStore,
-  depositFee: AssetValue,
+  registerFee: AssetValue,
   ethDeposit: string,
   alias: string,
   depositorAddress: EthAddress,
@@ -33,7 +33,7 @@ async function sendProof(
     spendingKey,
     undefined,
     deposit,
-    depositFee,
+    registerFee,
     depositorAddress,
     aztecWalletProvider,
     depositorSigner,
@@ -55,13 +55,13 @@ async function sendProof(
   console.log(`done!`);
 }
 
-function getFee(depositFees: AssetValue[], chainId: EthereumChainId) {
+function getFee(fees: AssetValue[], chainId: EthereumChainId) {
   const network = chainIdToNetwork(chainId);
   if (network?.isFrequent) {
     // Pay for the whole rollup
-    return depositFees[1];
+    return fees[1];
   }
-  return depositFees[0];
+  return fees[0];
 }
 
 export function RegisterAccount(props: {
@@ -72,7 +72,7 @@ export function RegisterAccount(props: {
   onFinish: () => void;
 }) {
   const [ethDeposit, setEthDeposit] = useState<string>('0');
-  const [depositFees, setDepositFees] = useState<AssetValue[] | null>(null);
+  const [registerFees, setRegisterFees] = useState<AssetValue[] | null>(null);
   const [sendingProof, setSendingProof] = useState<boolean>(false);
 
   const ethAccount = useAccount();
@@ -81,7 +81,7 @@ export function RegisterAccount(props: {
   const { ethAddress, ethSigner } = useActiveWalletEthSigner();
 
   useEffect(() => {
-    props.sdk.getRegisterFees(0).then(setDepositFees);
+    props.sdk.getRegisterFees(0).then(setRegisterFees);
   }, []);
 
   return (
@@ -90,16 +90,19 @@ export function RegisterAccount(props: {
       <h2>Deposit amount (optional) Current balance: {ethBalance.data?.formatted}</h2>
       <input value={ethDeposit} onChange={event => setEthDeposit(event.target.value)} />
       <h2>Gas fee</h2>
-      <input disabled={true} value={depositFees ? getFee(depositFees, props.chainId).value.toString() : 'Loading...'} />
+      <input
+        disabled={true}
+        value={registerFees ? getFee(registerFees, props.chainId).value.toString() : 'Loading...'}
+      />
       <br />
       <button
-        disabled={sendingProof || !depositFees || !ethAddress || !ethSigner}
+        disabled={sendingProof || !registerFees || !ethAddress || !ethSigner}
         onClick={() => {
           setSendingProof(true);
           sendProof(
             props.sdk,
             props.keyStore,
-            getFee(depositFees!, props.chainId),
+            getFee(registerFees!, props.chainId),
             ethDeposit,
             props.userAlias,
             ethAddress!,
