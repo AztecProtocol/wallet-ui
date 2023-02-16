@@ -3,12 +3,11 @@ import { WagmiConfig } from 'wagmi';
 import { lightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 
 import render from '../components/render';
-import getChainId from '../utils/getChainId';
-import { BBWasmContext, BBWasmProvider, WithBBWasm } from '../utils/wasmContext';
+import { BBWasmContext, BBWasmProvider } from '../utils/wasmContext';
 import StandaloneWallet from './StandaloneWallet';
-import { getWagmiRainbowConfig, WagmiRainbowConfig } from '../utils/config';
+import { getAztecChainId, getChainId, getWagmiRainbowConfig, WagmiRainbowConfig } from '../utils/config';
 import { useContext, useEffect, useState } from 'react';
-import { App } from '../components/app';
+import { AztecSdkProvider } from '../utils/aztecSdkContext';
 
 function StandaloneApp() {
   const chainId = getChainId();
@@ -42,15 +41,16 @@ function StandaloneApp() {
           overlayBlur: 'none',
         })}
       >
-        {/* <StandaloneWallet chainId={chainId} /> */}
-        <App />
+        <StandaloneWallet chainId={chainId} aztecChainId={getAztecChainId()} />
       </RainbowKitProvider>
     </WagmiConfig>
   );
 }
 
 render(
-  <BBWasmProvider>
-    <StandaloneApp />
-  </BBWasmProvider>,
+  <AztecSdkProvider chainId={getChainId()}>
+    <BBWasmProvider>
+      <StandaloneApp />
+    </BBWasmProvider>
+  </AztecSdkProvider>,
 );

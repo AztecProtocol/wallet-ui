@@ -1,5 +1,6 @@
-import { createAztecSdk, JsonRpcProvider } from '@aztec/sdk';
-import { getEthereumHost } from './config';
+import { AztecSdk, createAztecSdk, JsonRpcProvider } from '@aztec/sdk';
+import { createContext, useEffect, useState } from 'react';
+import { EthereumChainId, getEthereumHost } from './config';
 import { chainIdToNetwork } from './networks';
 
 async function getDeployTag() {
@@ -25,10 +26,33 @@ async function getRollupProviderUrl() {
   }
 }
 
-export async function createSdk(chainId: number) {
+export async function createSdk(chainId: EthereumChainId) {
   const aztecJsonRpcProvider = new JsonRpcProvider(getEthereumHost(chainId));
   return createAztecSdk(aztecJsonRpcProvider, {
     serverUrl: await getRollupProviderUrl(),
     minConfirmation: chainIdToNetwork(chainId)?.isFrequent ? 1 : undefined,
   });
+}
+
+interface AztecSdkContextData {
+  sdk?: AztecSdk;
+}
+
+export const AztecSdkContext = createContext<AztecSdkContextData>({});
+
+export function AztecSdkProvider({ children, chainId }: { children: JSX.Element; chainId: EthereumChainId }) {
+  const [sdk, setSdk] = useState<AztecSdk | undefined>();
+
+  useEffect(() => {
+    setSdk(undefined);
+    createSdk(chainId).then(setSdk);
+  }, [chainId]);
+
+  useEffect(() => {
+    if (sdk) {
+      sdk.run();
+    }
+  }, [sdk]);
+
+  return <AztecSdkContext.Provider value={{ sdk }}>{children}</AztecSdkContext.Provider>;
 }

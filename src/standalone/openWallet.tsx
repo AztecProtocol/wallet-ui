@@ -5,9 +5,10 @@ import { OpenKeystore } from '../components/openKeystore.js';
 import { getCachedEncryptedKeystore, getCachedPassword } from '../utils/sessionUtils.js';
 import { SessionTypes } from '@walletconnect/types';
 import { BBWasmContext } from '../utils/wasmContext.js';
+import { AztecChainId } from '../utils/config.js';
 
 export interface OpenWalletProps {
-  chainId: number;
+  aztecChainId: AztecChainId;
   onCreateAccount: () => void;
 }
 
@@ -23,7 +24,7 @@ export default function OpenWallet(props: OpenWalletProps) {
   } = useWalletConnectServer({
     onSessionProposal: async () => {
       const account = (await keyStore!.getAccountKey()).getPublicKey();
-      return createNamespace(props.chainId, account);
+      return createNamespace(props.aztecChainId, account);
     },
     onSessionEstablished: setSession,
   });

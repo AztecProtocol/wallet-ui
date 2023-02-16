@@ -1,12 +1,12 @@
 import render from '../components/render';
-import getChainId from '../utils/getChainId';
+import { getAztecChainId, getChainId } from '../utils/config';
 import { BBWasmProvider, WithBBWasm } from '../utils/wasmContext';
 import IframeWallet from './IframeWallet';
 
 render(
   <BBWasmProvider>
     <WithBBWasm>
-      <IframeWallet chainId={getChainId()} />
+      <IframeWallet chainId={getChainId()} aztecChainId={getAztecChainId()} />
     </WithBBWasm>
   </BBWasmProvider>,
 );
