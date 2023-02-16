@@ -72,7 +72,7 @@ export function RegisterAccount(props: {
   onFinish: () => void;
 }) {
   const [ethDeposit, setEthDeposit] = useState<string>('0');
-  const [depositFee, setDepositFee] = useState<AssetValue[] | null>(null);
+  const [depositFees, setDepositFees] = useState<AssetValue[] | null>(null);
   const [sendingProof, setSendingProof] = useState<boolean>(false);
 
   const ethAccount = useAccount();
@@ -81,7 +81,7 @@ export function RegisterAccount(props: {
   const { ethAddress, ethSigner } = useActiveWalletEthSigner();
 
   useEffect(() => {
-    props.sdk.getRegisterFees(0).then(setDepositFee);
+    props.sdk.getRegisterFees(0).then(setDepositFees);
   }, []);
 
   return (
@@ -90,16 +90,16 @@ export function RegisterAccount(props: {
       <h2>Deposit amount (optional) Current balance: {ethBalance.data?.formatted}</h2>
       <input value={ethDeposit} onChange={event => setEthDeposit(event.target.value)} />
       <h2>Gas fee</h2>
-      <input disabled={true} value={depositFee ? getFee(depositFee, props.chainId).value.toString() : 'Loading...'} />
+      <input disabled={true} value={depositFees ? getFee(depositFees, props.chainId).value.toString() : 'Loading...'} />
       <br />
       <button
-        disabled={sendingProof || !depositFee || !ethAddress || !ethSigner}
+        disabled={sendingProof || !depositFees || !ethAddress || !ethSigner}
         onClick={() => {
           setSendingProof(true);
           sendProof(
             props.sdk,
             props.keyStore,
-            getFee(depositFee!, props.chainId),
+            getFee(depositFees!, props.chainId),
             ethDeposit,
             props.userAlias,
             ethAddress!,
