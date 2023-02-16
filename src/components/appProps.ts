@@ -1,3 +1,6 @@
+import { AztecChainId, EthereumChainId } from '../utils/config';
+
 export interface AppProps {
-  chainId: number;
+  chainId: EthereumChainId;
+  aztecChainId: AztecChainId;
 }

@@ -4,8 +4,12 @@ import { metaMaskWallet, walletConnectWallet, braveWallet } from '@rainbow-me/ra
 import { configureChains, createClient, Chain } from 'wagmi';
 import { mainnet, localhost } from 'wagmi/chains';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
+import { Brand } from './brand';
 
-function getChain(chainId: number): Chain {
+export type EthereumChainId = Brand<number, 'EthereumChainId'>;
+export type AztecChainId = Brand<number, 'AztecChainId'>;
+
+function getWagmiChain(chainId: EthereumChainId): Chain {
   switch (chainId) {
     case 1:
       return mainnet;
@@ -22,7 +26,7 @@ function getChain(chainId: number): Chain {
   }
 }
 
-function getForkProvider(chainId: number): Chain {
+function getForkProvider(chainId: EthereumChainId): Chain {
   return {
     id: chainId,
     name: 'Aztec Ethereum Mainnet Fork',
@@ -32,7 +36,7 @@ function getForkProvider(chainId: number): Chain {
   };
 }
 
-function getPublicProvider(chainId: number) {
+function getPublicProvider(chainId: EthereumChainId) {
   try {
     return jsonRpcProvider({ rpc: () => ({ http: getEthereumHost(chainId) }) });
   } catch (e) {
@@ -40,7 +44,7 @@ function getPublicProvider(chainId: number) {
   }
 }
 
-export function getEthereumHost(chainId: number) {
+export function getEthereumHost(chainId: EthereumChainId) {
   switch (chainId) {
     case 5:
       return 'https://goerli.infura.io/v3/85712ac4df0446b58612ace3ed566352';
@@ -67,8 +71,8 @@ export function getEthereumHost(chainId: number) {
   }
 }
 
-export function getWagmiRainbowConfig(config: number) {
-  const { chains, provider, webSocketProvider } = configureChains([getChain(config)], [getPublicProvider(config)]);
+export function getWagmiRainbowConfig(config: EthereumChainId) {
+  const { chains, provider, webSocketProvider } = configureChains([getWagmiChain(config)], [getPublicProvider(config)]);
 
   const wallets = [metaMaskWallet({ chains }), walletConnectWallet({ chains }), braveWallet({ chains })];
   const connectors = connectorsForWallets([{ groupName: 'Supported', wallets }]);
@@ -82,3 +86,11 @@ export function getWagmiRainbowConfig(config: number) {
 }
 
 export type WagmiRainbowConfig = ReturnType<typeof getWagmiRainbowConfig>;
+
+export function getAztecChainId() {
+  return +(process.env.AZTEC_CHAIN_ID || '671337') as AztecChainId;
+}
+
+export function getChainId() {
+  return +(process.env.ETHEREUM_CHAIN_ID || '1337') as EthereumChainId;
+}

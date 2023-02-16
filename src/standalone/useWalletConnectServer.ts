@@ -8,6 +8,7 @@ import {
 } from "@walletconnect/types";
 import { GrumpkinAddress, RPC_METHODS } from "@aztec/sdk";
 import { storeSession } from "../utils/sessionUtils.js";
+import { AztecChainId } from "../utils/config.js";
 
 function getUri() {
   return new URLSearchParams(window.location.search).get("uri");
@@ -67,7 +68,7 @@ export function useWalletConnectServer({
   };
 }
 
-export function createNamespace(chainId: number, address: GrumpkinAddress) {
+export function createNamespace(chainId: AztecChainId, address: GrumpkinAddress) {
   return {
     aztec: {
       methods: [],

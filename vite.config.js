@@ -10,6 +10,13 @@ import path from 'path';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
+function rewriteUrlWithExtension(url, fileName) {
+  if (url.match(new RegExp(`^/${fileName}($|\\?)`))) {
+    return url.replace(new RegExp(`^/${fileName}`), `/${fileName}.html`);
+  }
+  return url;
+}
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -17,7 +24,8 @@ export default defineConfig({
     viteTsconfigPaths(),
     svgrPlugin(),
     EnvironmentPlugin({
-      VITE_CHAINID: 1337,
+      ETHEREUM_CHAIN_ID: 1337,
+      AZTEC_CHAIN_ID: 671337,
       NODE_ENV: 'development',
       WALLETCONNECT_PROJECT_ID: '',
     }),
@@ -37,9 +45,9 @@ export default defineConfig({
       name: 'configure-server',
       configureServer(server) {
         server.middlewares.use((req, _, next) => {
-          if (req.url.startsWith('/wc')) {
-            req.url = req.url.replace('/wc', '/wc.html');
-          }
+          ['wc', 'iframe', 'popup'].forEach(fileName => {
+            req.url = rewriteUrlWithExtension(req.url, fileName);
+          });
           next();
         });
       },
