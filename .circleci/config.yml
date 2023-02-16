@@ -43,7 +43,7 @@ setup_env: &setup_env
     command: ./build-system/scripts/setup_env "$CIRCLE_SHA1" "$CIRCLE_TAG" "$CIRCLE_JOB" "$CIRCLE_REPOSITORY_URL" "$CIRCLE_BRANCH"
 
 jobs:
-  wallet:
+  wallet-ui:
     machine:
       image: ubuntu-2004:202010-01
     resource_class: large
@@ -52,9 +52,9 @@ jobs:
       - *setup_env
       - run:
           name: 'Build and test'
-          command: build wallet
+          command: build wallet-ui
 
-  deploy-wallet:
+  deploy-wallet-ui:
     machine:
       image: ubuntu-2004:202010-01
     resource_class: medium
@@ -65,8 +65,9 @@ jobs:
           name: 'website'
           working_directory: website
           command: |
-            deploy_ecr wallet
-            deploy_npm wallet
+            deploy_ecr wallet-ui
+            deploy_npm wallet-ui
+            deploy_s3 wallet-ui
 
 # TODO: add tag filters
 deploy_filters: &deploy_filters
@@ -80,8 +81,8 @@ workflows:
     when:
       equal: [system, << pipeline.parameters.workflow >>]
     jobs:
-      - wallet
-      - deploy-wallet:
+      - wallet-ui
+      - deploy-wallet-ui:
           requires:
-            - wallet
+            - wallet-ui
           filters: *deploy_filters
