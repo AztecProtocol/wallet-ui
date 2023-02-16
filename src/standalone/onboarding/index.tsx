@@ -6,12 +6,13 @@ import { SanityCheck } from './sanityCheck';
 import { KeyStoreCreation } from './keyStoreCreation';
 import { AliasSelection } from './aliasSelection';
 import { AztecSdkContext } from '../../utils/aztecSdkContext';
+import { EthereumChainId } from '../../utils/config';
 
 type OnboardingStep = 'keystoreCreation' | 'aliasSelection' | 'recoveryKit' | 'sanityCheck' | 'registerAccount';
 
 export interface OnboardingProps {
   onAccountCreated: () => void;
-  chainId: number;
+  chainId: EthereumChainId;
 }
 
 export default function Onboarding(props: OnboardingProps) {
@@ -57,6 +58,7 @@ export default function Onboarding(props: OnboardingProps) {
       return (
         <RegisterAccount
           sdk={sdk}
+          chainId={props.chainId}
           keyStore={keyStore!}
           userAlias={userAlias}
           onFinish={() => props.onAccountCreated()}
