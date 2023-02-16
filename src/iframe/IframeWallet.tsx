@@ -1,15 +1,8 @@
 import { useState, useEffect, useContext } from 'react';
 import { AppProps } from '../components/appProps.js';
-import {
-  AztecKeyStore,
-  ServerRollupProvider,
-  WalletConnectAztecWalletProviderServer,
-  BarretenbergWasm,
-} from '@aztec/sdk';
-import { SignClient } from '@walletconnect/sign-client/dist/types/client.js';
-import { createSignClient } from '../walletConnect/createSignClient.js';
-import { SessionTypes } from '@walletconnect/types';
-import { IFRAME_HANDOVER_TYPE, getTopic, handleHandoverMessage, openPopup } from './handleHandover.js';
+import { BarretenbergWasm, ServerRollupProvider, WalletConnectAztecWalletProviderServer } from '@aztec/sdk';
+import { openPopup } from './handleHandover.js';
+import useWalletConnectKeyStore from './useWalletConnectKeyStore.js';
 import { BBWasmContext } from '../utils/wasmContext.js';
 
 export default function IframeWallet(props: AppProps) {
@@ -18,44 +11,21 @@ export default function IframeWallet(props: AppProps) {
   );
   const [initialized, setInitialized] = useState<boolean>(false);
   const [initializing, setInitializing] = useState<boolean>(false);
-
-  const [client, setClient] = useState<SignClient | null>(null);
-  const [session, setSession] = useState<SessionTypes.Struct | null>(null);
-  const [keyStore, setKeyStore] = useState<AztecKeyStore | null>(null);
-
   const wasm = useContext<BarretenbergWasm>(BBWasmContext);
 
-  useEffect(() => {
-    async function init() {
-      const client = await createSignClient(true);
-      setClient(client);
-      aztecAWPServer.setClient(client);
-      const cachedSession = client.session.getAll().find(({ topic }) => topic === getTopic());
-      if (cachedSession) {
-        setSession(cachedSession);
-      }
-    }
-    init().catch(console.error);
-  }, []);
-
-  useEffect(() => {
-    if (client) {
-      const handler = async (event: MessageEvent<any>) => {
-        if (event.origin === window.location.origin) {
-          switch (event.data.type) {
-            case IFRAME_HANDOVER_TYPE:
-              await handleHandoverMessage(event.data.payload, setKeyStore, setSession, client, wasm);
-              break;
-            default:
-              console.log('Unknown message', event.data);
-          }
-        }
-      };
-      window.addEventListener('message', handler);
-      return () => window.removeEventListener('message', handler);
-    }
-    return () => {};
-  }, [client]);
+  const showApproveProofsRequest = async (): Promise<{ approved: boolean; error: string }> => {
+    console.log('showApproveProofsRequest TODO');
+    return Promise.resolve({ approved: true, error: '' });
+  };
+  const showApproveProofInputsRequest = async (): Promise<{ approved: boolean; error: string }> => {
+    console.log('showApproveProofInputsRequest TODO');
+    return Promise.resolve({ approved: true, error: '' });
+  };
+  const { client, keyStore, session } = useWalletConnectKeyStore(
+    aztecAWPServer,
+    showApproveProofsRequest,
+    showApproveProofInputsRequest,
+  );
 
   useEffect(() => {
     if (!initialized) {
@@ -70,7 +40,7 @@ export default function IframeWallet(props: AppProps) {
   }, [initialized]);
 
   useEffect(() => {
-    if (client && session && keyStore) {
+    if (keyStore && client && session) {
       setInitialized(true);
       aztecAWPServer
         .initWalletProvider(
@@ -80,7 +50,7 @@ export default function IframeWallet(props: AppProps) {
         )
         .catch(console.error);
     }
-  }, [client, keyStore, session]);
+  }, [keyStore, client, session]);
 
   if (!client) {
     return <div>Initializing WalletConnect...</div>;
