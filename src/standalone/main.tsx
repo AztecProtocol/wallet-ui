@@ -8,6 +8,7 @@ import { BBWasmContext, BBWasmProvider, WithBBWasm } from '../utils/wasmContext'
 import StandaloneWallet from './StandaloneWallet';
 import { getWagmiRainbowConfig, WagmiRainbowConfig } from '../utils/config';
 import { useContext, useEffect, useState } from 'react';
+import { App } from '../components/app';
 
 function StandaloneApp() {
   const chainId = getChainId();
@@ -41,7 +42,8 @@ function StandaloneApp() {
           overlayBlur: 'none',
         })}
       >
-        <StandaloneWallet chainId={chainId} />
+        {/* <StandaloneWallet chainId={chainId} /> */}
+        <App />
       </RainbowKitProvider>
     </WagmiConfig>
   );
