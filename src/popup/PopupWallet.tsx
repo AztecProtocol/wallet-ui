@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from 'react';
-import { AppProps } from '../components/appProps.js';
 import { OpenKeystore } from '../components/openKeystore.js';
 import { sendHandoverMessage } from './handoverSession.js';
 import { getCachedEncryptedKeystore, getCachedPassword } from '../utils/sessionUtils.js';

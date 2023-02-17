@@ -1,13 +1,12 @@
 import { AztecBuffer, AztecKeyStore, BarretenbergWasm } from '@aztec/sdk';
 import { useContext, useEffect, useState } from 'react';
 import { createNamespace, useWalletConnectServer, extractAndStoreSession } from './useWalletConnectServer.js';
-import { OpenKeystore } from '../components/openKeystore.js';
-import { getCachedEncryptedKeystore, getCachedPassword, setCachedPassword } from '../utils/sessionUtils.js';
+import { getCachedPassword } from '../utils/sessionUtils.js';
 import { SessionTypes } from '@walletconnect/types';
 import { BBWasmContext } from '../utils/wasmContext.js';
 import { AztecChainId } from '../utils/config.js';
 import { SignIn } from '../components/sign_in/index.js';
-import { NextStepResult } from '../components/StepCard/index.js';
+import { Connect } from '../components/connect/connect.js';
 
 export interface OpenWalletProps {
   aztecChainId: AztecChainId;
@@ -18,6 +17,7 @@ export interface OpenWalletProps {
 export default function OpenWallet(props: OpenWalletProps) {
   const [keyStore, setKeyStore] = useState<AztecKeyStore | null>(null);
   const [session, setSession] = useState<SessionTypes.Struct | null>(null);
+  const [proposal, setProposal] = useState<number | null>(null);
   const wasm = useContext<BarretenbergWasm>(BBWasmContext);
 
   const {
@@ -25,11 +25,9 @@ export default function OpenWallet(props: OpenWalletProps) {
     initError: wcInitError,
     init: wcInit,
   } = useWalletConnectServer({
-    onSessionProposal: async () => {
-      const account = (await keyStore!.getAccountKey()).getPublicKey();
-      return createNamespace(props.aztecChainId, account);
+    onSessionProposal: proposal => {
+      setProposal(proposal.id);
     },
-    onSessionEstablished: setSession,
   });
 
   useEffect(() => {
@@ -73,7 +71,6 @@ export default function OpenWallet(props: OpenWalletProps) {
               [],
             );
             setKeyStore(keyStore);
-            setCachedPassword(passcode);
           } catch (error: any) {
             return { error: error.toString() };
           }
@@ -86,5 +83,35 @@ export default function OpenWallet(props: OpenWalletProps) {
     return <div>Initializing WC... {wcInitError ? wcInitError.message : ''}</div>;
   }
 
-  return <>Keystore open!</>;
+  if (proposal && keyStore) {
+    return (
+      <Connect
+        onUserResponse={async accepted => {
+          if (accepted) {
+            const account = (await keyStore!.getAccountKey()).getPublicKey();
+            const namespaces = createNamespace(props.aztecChainId, account);
+
+            const { acknowledged } = await client.approve({
+              id: proposal!,
+              namespaces,
+            });
+
+            const session = await acknowledged();
+            setSession(session);
+          } else {
+            await client.reject({
+              id: proposal!,
+              reason: {
+                code: 4001,
+                message: 'User rejected session proposal',
+              },
+            });
+            window.close();
+          }
+        }}
+      />
+    );
+  }
+
+  return null;
 }

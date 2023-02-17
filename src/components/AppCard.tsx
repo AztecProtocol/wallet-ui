@@ -8,6 +8,18 @@ interface AppCardProps {
   children: ReactNode;
 }
 
+export function addErrorToast(error: string, setToasts: any) {
+  setToasts((prevToasts: any) => [
+    ...prevToasts,
+    {
+      text: error,
+      key: Date.now(),
+      autocloseInMs: 5e3,
+      closable: true,
+    },
+  ]);
+}
+
 export default function AppCard({ children }: AppCardProps) {
   const [toasts, setToasts] = useState([]);
 

@@ -3,7 +3,7 @@ import logo from '../assets/zkmoney-logo.png';
 import { useContext, useState } from 'react';
 import style from './sign_in.module.scss';
 import { NextStepResult } from '../StepCard';
-import { ToastsContext } from '../AppCard';
+import { addErrorToast, ToastsContext } from '../AppCard';
 
 interface SignInProps {
   isValidPasscode: (passcode: string) => boolean;
@@ -54,15 +54,7 @@ export function SignIn({ isValidPasscode, onLoginWithDifferentAccount, onFinish 
               onClick={async () => {
                 const error = (await onFinish(passcode))?.error;
                 if (error) {
-                  setToasts((prevToasts: any) => [
-                    ...prevToasts,
-                    {
-                      text: error,
-                      key: Date.now(),
-                      autocloseInMs: 5e3,
-                      closable: true,
-                    },
-                  ]);
+                  addErrorToast(error, setToasts);
                 }
               }}
             />

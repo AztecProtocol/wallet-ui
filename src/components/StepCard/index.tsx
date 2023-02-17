@@ -1,6 +1,6 @@
 import { Button, ButtonTheme, Card, CardHeaderSize } from '@aztec/aztec-ui';
-import { ReactNode, useContext, useState } from 'react';
-import { ToastsContext } from '../AppCard';
+import { ReactNode, useContext } from 'react';
+import { addErrorToast, ToastsContext } from '../AppCard';
 import style from './StepCard.module.scss';
 
 export type NextStepResult = { error: string } | void;
@@ -59,15 +59,7 @@ export default function StepCard({
                   onClick={async () => {
                     const error = (await handleNextStep())?.error;
                     if (error) {
-                      setToasts((prevToasts: any) => [
-                        ...prevToasts,
-                        {
-                          text: error,
-                          key: Date.now(),
-                          autocloseInMs: 5e3,
-                          closable: true,
-                        },
-                      ]);
+                      addErrorToast(error, setToasts);
                     }
                   }}
                   text="Next"
