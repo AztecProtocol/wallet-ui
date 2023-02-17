@@ -1,7 +1,7 @@
 // @ts-ignore
 import { Field } from '@aztec/aztec-ui';
 import { useState } from 'react';
-import StepCard, { NextStepResult } from '../../../../components/StepCard';
+import StepCard, { NextStepResult } from '../../StepCard';
 
 interface ReenterPasscodeProps {
   isSamePasscode: (password: string) => boolean;

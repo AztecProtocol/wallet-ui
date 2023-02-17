@@ -1,18 +1,14 @@
-import { Route, Routes } from 'react-router';
 import { ToastGroup, ToastGroupPosition } from '@aztec/aztec-ui';
-import { createContext, useState } from 'react';
-import { SignIn } from './sign_in';
-import { CreateAccount } from './create_account';
-import { Connect } from './connect';
+import { createContext, ReactNode, useState } from 'react';
 import style from './app.module.scss';
 
 export const ToastsContext = createContext<any>([]);
 
-interface WalletAppProps {
-  state: 'login' | 'create' | 'connect';
+interface AppCardProps {
+  children: ReactNode;
 }
 
-export function WalletApp(props: WalletAppProps) {
+export default function AppCard({ children }: AppCardProps) {
   const [toasts, setToasts] = useState([]);
 
   function closeToast(key: string) {
@@ -22,9 +18,7 @@ export function WalletApp(props: WalletAppProps) {
   return (
     <div className={style.app}>
       <ToastsContext.Provider value={setToasts}>
-        {props.state === 'login' && <SignIn />}
-        {props.state === 'create' && <CreateAccount step="PasscodeAlias" />}
-        {props.state === 'connect' && <Connect />}
+        {children}
         <ToastGroup toasts={toasts} position={ToastGroupPosition.BottomCenter} onCloseToast={closeToast} />
       </ToastsContext.Provider>
     </div>

@@ -1,6 +1,6 @@
 import { Button, ButtonTheme, Card, CardHeaderSize } from '@aztec/aztec-ui';
 import { ReactNode, useContext, useState } from 'react';
-import { ToastsContext } from '../WalletApp';
+import { ToastsContext } from '../AppCard';
 import style from './StepCard.module.scss';
 
 export type NextStepResult = { error: string } | void;

@@ -8,8 +8,8 @@ import StandaloneWallet from './StandaloneWallet';
 import { getAztecChainId, getChainId, getWagmiRainbowConfig, WagmiRainbowConfig } from '../utils/config';
 import { useContext, useEffect, useState } from 'react';
 import { AztecSdkProvider } from '../utils/aztecSdkContext';
-import { WalletApp } from '../components/WalletApp';
 import { BrowserRouter } from 'react-router-dom';
+import AppCard from '../components/AppCard';
 
 function StandaloneApp() {
   const chainId = getChainId();
@@ -43,10 +43,9 @@ function StandaloneApp() {
           overlayBlur: 'none',
         })}
       >
-        <BrowserRouter>
-          <WalletApp state="create" />
-        </BrowserRouter>
-        <StandaloneWallet chainId={chainId} aztecChainId={getAztecChainId()} />
+        <AppCard>
+          <StandaloneWallet chainId={chainId} aztecChainId={getAztecChainId()} />
+        </AppCard>
       </RainbowKitProvider>
     </WagmiConfig>
   );

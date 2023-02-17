@@ -1,8 +1,7 @@
-// @ts-ignore
 import { FieldStatus, Field } from '@aztec/aztec-ui';
 import { useContext, useState } from 'react';
-import StepCard, { NextStepResult } from '../../../../components/StepCard';
-import { ToastsContext } from '../../../../components/WalletApp';
+import StepCard, { NextStepResult } from '../../StepCard';
+import { ToastsContext } from '../../AppCard';
 
 interface ConnectWalletProps {
   onBack?: () => void;

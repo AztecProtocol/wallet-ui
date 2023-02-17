@@ -2,9 +2,9 @@
 import { Field, Layer } from '@aztec/aztec-ui';
 import { AztecSdk, AztecKeyStore, EthAddress, EthereumProvider } from '@aztec/sdk';
 import { useEffect, useState } from 'react';
-import StepCard, { NextStepResult } from '../../../../components/StepCard';
-import { EthereumChainId } from '../../../../utils/config';
-import { chainIdToNetwork } from '../../../../utils/networks';
+import { EthereumChainId } from '../../../utils/config';
+import { chainIdToNetwork } from '../../../utils/networks';
+import StepCard, { NextStepResult } from '../../StepCard';
 import CreatingAccount from './CreatingAccount';
 
 const assetOptions = [

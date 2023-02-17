@@ -1,7 +1,7 @@
 // @ts-ignore
 import { Loader } from '@aztec/aztec-ui';
 import { useEffect, useState } from 'react';
-import { NextStepResult } from '../../../../components/StepCard';
+import { NextStepResult } from '../../StepCard';
 import style from './CreatingAccount.module.scss';
 interface CreatingAccountProps {
   onFinish: () => Promise<NextStepResult>;

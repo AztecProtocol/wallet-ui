@@ -1,17 +1,24 @@
 import { AztecKeyStore, AztecSdk } from '@aztec/sdk';
 import { useContext, useState } from 'react';
-import { NextStepResult } from '../../components/StepCard';
+import PasscodeAlias from '../../components/create_account_flow/01_PasscodeAlias/PasscodeAlias';
+import ConnectWallet from '../../components/create_account_flow/02_ConnectWallet/ConnectWallet';
+import Backup from '../../components/create_account_flow/03_Backup/Backup';
+import ReenterPasscode from '../../components/create_account_flow/04_ReenterPasscode/ReenterPasscode';
+import Deposit from '../../components/create_account_flow/05_Deposit/Deposit';
 import { AztecSdkContext } from '../../utils/aztecSdkContext';
 import { EthereumChainId } from '../../utils/config';
-import PasscodeAlias from './steps/01_PasscodeAlias/PasscodeAlias';
-import ConnectWallet from './steps/02_ConnectWallet/ConnectWallet';
-import Backup from './steps/03_Backup/Backup';
-import ReenterPasscode from './steps/04_ReenterPasscode/ReenterPasscode';
-import Deposit from './steps/05_Deposit/Deposit';
 
 export interface CreateAccountProps {
   onAccountCreated: () => void;
   chainId: EthereumChainId;
+}
+
+enum Step {
+  _01_PasscodeAlias,
+  _02_ConnectWallet,
+  _03_Backup,
+  _04_ReenterPasscode,
+  _05_Deposit,
 }
 
 export default function CreateAccount({ onAccountCreated, chainId }: CreateAccountProps) {
@@ -19,7 +26,7 @@ export default function CreateAccount({ onAccountCreated, chainId }: CreateAccou
   const [passcode, setPasscode] = useState('');
   const [keyStore, setKeyStore] = useState<AztecKeyStore>();
   const [encryptedKeyStore, setEncryptedKeyStore] = useState<string>();
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(Step._01_PasscodeAlias);
 
   const { sdk } = useContext(AztecSdkContext);
 
@@ -33,7 +40,7 @@ export default function CreateAccount({ onAccountCreated, chainId }: CreateAccou
   // We want to remember passcode and alias, so unmount only the visual display, not the state hooks
   const renderPasscodeAlias = () => (
     <PasscodeAlias
-      mounted={currentStep === 0}
+      mounted={currentStep === Step._01_PasscodeAlias}
       isValidAlias={(alias: string) => {
         return alias.length > 0; // TODO better alias validation
       }}
@@ -53,8 +60,8 @@ export default function CreateAccount({ onAccountCreated, chainId }: CreateAccou
   );
   const renderStep = () => {
     switch (currentStep) {
-      // case 0 is handled above
-      case 1:
+      // case 1 is handled above
+      case Step._02_ConnectWallet:
         return (
           <ConnectWallet
             onBack={onBack}
@@ -63,7 +70,7 @@ export default function CreateAccount({ onAccountCreated, chainId }: CreateAccou
             }}
           />
         );
-      case 2:
+      case Step._03_Backup:
         return (
           <Backup
             onBack={onBack}
@@ -75,7 +82,7 @@ export default function CreateAccount({ onAccountCreated, chainId }: CreateAccou
             }}
           />
         );
-      case 3:
+      case Step._04_ReenterPasscode:
         return (
           <ReenterPasscode
             onBack={onBack}
@@ -87,7 +94,7 @@ export default function CreateAccount({ onAccountCreated, chainId }: CreateAccou
             }}
           />
         );
-      case 4:
+      case Step._05_Deposit:
         return (
           <Deposit
             onBack={onBack}
