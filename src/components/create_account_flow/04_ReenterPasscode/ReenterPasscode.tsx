@@ -13,7 +13,7 @@ export default function ReenterPasscode({ onBack, isSamePasscode, onFinish }: Re
 
   return (
     <StepCard
-      header={'Re-enter your account details'}
+      header="Re-enter your account details"
       nextButtonDisabled={!isSamePasscode(password)}
       handlePreviousStep={onBack}
       handleNextStep={() => onFinish(encryptionKey, password)}

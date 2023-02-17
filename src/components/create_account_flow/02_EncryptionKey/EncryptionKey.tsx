@@ -26,7 +26,7 @@ export default function EncryptionKey({ onBack, onFinish, encryptedKeyStore }: E
 
   return (
     <StepCard
-      header={'Store the Aztec key'}
+      header="Store the Aztec key"
       handlePreviousStep={onBack}
       handleNextStep={async () => {
         try {
@@ -52,7 +52,7 @@ export default function EncryptionKey({ onBack, onFinish, encryptedKeyStore }: E
         style={{ position: 'fixed', top: '-50px', left: 0 }}
       />
       <Field
-        label={'Aztec key'}
+        label="Aztec key"
         onClick={async () => {
           navigator.clipboard.writeText(encryptedKeyStore);
           showToast();

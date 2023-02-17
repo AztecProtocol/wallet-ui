@@ -48,7 +48,7 @@ export function SignIn({
               password={true}
               autoComplete="current-password"
               status={passcode.length > 0 ? FieldStatus.Success : undefined}
-              label={'Passcode'}
+              label="Passcode"
               placeholder="Enter passcode"
               onChangeValue={setPasscode}
             />

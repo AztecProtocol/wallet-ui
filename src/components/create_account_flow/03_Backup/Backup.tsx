@@ -22,7 +22,7 @@ export default function Backup({ generateRecoveryKey, doDownloadRecoveryKit, onB
 
   return (
     <StepCard
-      header={'Back Up Your Credentials'}
+      header="Back Up Your Credentials"
       nextButtonDisabled={!kitDownloaded}
       handlePreviousStep={onBack}
       handleNextStep={() => onFinish()}
