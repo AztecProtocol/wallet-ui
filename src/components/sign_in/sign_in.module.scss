@@ -1,28 +1,28 @@
 @use '../global.module.scss';
 
 .appWrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
 }
 
 .links {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-self: start;
 }
 
 .link {
-    margin-right: auto;
+  margin-right: auto;
 }
 
 .fields {
-    width: 100%;
+  width: 100%;
 }
 
 .logo {
-    width: 75px;
+  width: 75px;
 }
