@@ -86,9 +86,13 @@ export default function Deposit({ chainId, getInitialRegisterFees, sendProof, on
       nextButtonDisabled={sendingProof || !registerFees}
       handlePreviousStep={onBack}
       handleNextStep={async () => {
-        setSendingProof(true);
-        await sendProof!(ethDeposit, getFee(registerFees!, chainId), { ethAddress, ethSigner }, setLog);
-        setSendingProofFinished(true);
+        try {
+          setSendingProof(true);
+          await sendProof!(ethDeposit, getFee(registerFees!, chainId), { ethAddress, ethSigner }, setLog);
+          setSendingProofFinished(true);
+        } catch (error) {
+          setLog((error as Error).message);
+        }
       }}
       header="Make your First Deposit"
     >

@@ -30,41 +30,36 @@ export default async function sendRegisterProof({
   depositor,
   updateLog,
 }: SendRegisterProofArgs) {
-  try {
-    const deposit = sdk.toBaseUnits(0, ethDeposit);
-    const aztecWalletProvider = await sdk.createAztecWalletProvider(keyStore);
-    await aztecWalletProvider.connect();
-    const accountPublicKey = await sdk.addAccount(aztecWalletProvider);
-    const spendingKey = await aztecWalletProvider.getSpendingPublicKey();
-    await sdk.awaitAccountSynchronised(accountPublicKey);
+  const deposit = sdk.toBaseUnits(0, ethDeposit);
+  const aztecWalletProvider = await sdk.createAztecWalletProvider(keyStore);
+  await aztecWalletProvider.connect();
+  const accountPublicKey = await sdk.addAccount(aztecWalletProvider);
+  const spendingKey = await aztecWalletProvider.getSpendingPublicKey();
 
-    const controller = sdk.createRegisterController(
-      accountPublicKey,
-      alias,
-      spendingKey,
-      undefined,
-      deposit,
-      registerFee,
-      depositor.ethAddress,
-      aztecWalletProvider,
-      depositor.ethSigner,
-    );
+  const controller = sdk.createRegisterController(
+    accountPublicKey,
+    alias,
+    spendingKey,
+    undefined,
+    deposit,
+    registerFee,
+    depositor.ethAddress,
+    aztecWalletProvider,
+    depositor.ethSigner,
+  );
 
-    const requiredFunds = await controller.getRequiredFunds();
-    if (requiredFunds > 0n) {
-      updateLog(`depositing funds to contract...`);
-      await controller.depositFundsToContract();
-      updateLog(`awaiting transaction confirmation...`);
-      await controller.awaitDepositFundsToContract();
-    }
-    updateLog(`generating proof...`);
-    await controller.createProofs();
-    updateLog(`signing proof...`);
-    await controller.sign();
-    updateLog(`sending proof...`);
-    await controller.send();
-    updateLog(`done!`);
-  } catch (err: any) {
-    updateLog(err.toString());
+  const requiredFunds = await controller.getRequiredFunds();
+  if (requiredFunds > 0n) {
+    updateLog(`depositing funds to contract...`);
+    await controller.depositFundsToContract();
+    updateLog(`awaiting transaction confirmation...`);
+    await controller.awaitDepositFundsToContract();
   }
+  updateLog(`generating proof...`);
+  await controller.createProofs();
+  updateLog(`signing proof...`);
+  await controller.sign();
+  updateLog(`sending proof...`);
+  await controller.send();
+  updateLog(`done!`);
 }
