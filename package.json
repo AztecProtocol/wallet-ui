@@ -43,9 +43,7 @@
   ],
   "dependencies": {
     "@aztec/aztec-ui": "^0.0.2",
-    "@aztec/barretenberg": "2.2.0-alpha.3",
-    "@aztec/blockchain": "2.2.0-alpha.3",
-    "@aztec/sdk": "2.2.0-alpha.3",
+    "@ludamad-aztec/sdk": "2.2.0-alpha.5",
     "@rainbow-me/rainbowkit": "^0.8.1",
     "@walletconnect/core": "2.2.1",
     "@walletconnect/sign-client": "2.2.1",

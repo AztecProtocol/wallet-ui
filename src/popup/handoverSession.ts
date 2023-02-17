@@ -1,4 +1,4 @@
-import { AztecKeyStore } from '@aztec/sdk';
+import { AztecKeyStore } from '@ludamad-aztec/sdk';
 import { SessionTypes } from '@walletconnect/types';
 import { IFRAME_HANDOVER_TYPE } from '../iframe/handleHandover.js';
 import { getSession, keyStoreToString } from '../utils/sessionUtils.js';

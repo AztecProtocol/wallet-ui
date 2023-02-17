@@ -69,26 +69,6 @@
     debug "^4.3.4"
     ethers "5.5.1"
 
-"@aztec/sdk@2.2.0-alpha.3":
-  version "2.2.0-alpha.3"
-  resolved "https://registry.yarnpkg.com/@aztec/sdk/-/sdk-2.2.0-alpha.3.tgz#fdb03e8c01edc6becdb22051c97cdf8673cc1aa3"
-  integrity sha512-i/zFfUiJzFcHNbAwaXV6Eg4ENlebY8n+K1gyL+yhkDO0i8hMozHX7KXCWGwR859C95QeglChXyeG3MOEfUrVog==
-  dependencies:
-    "@aztec/barretenberg" "2.2.0-alpha.3"
-    "@aztec/blockchain" "2.2.0-alpha.3"
-    detect-node "^2.1.0"
-    dexie "3.0.1"
-    events "^3.3.0"
-    level-js "^6.1.0"
-    leveldown "^6.1.1"
-    levelup "^5.1.1"
-    memdown "^6.1.1"
-    serve "^14.0.1"
-    sqlite3 "^5.0.9"
-    supports-color "7.2.0"
-    tslib "^2.4.0"
-    typeorm "^0.3.10"
-
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.10.4", "@babel/code-frame@^7.12.13", "@babel/code-frame@^7.18.6":
   version "7.18.6"
   resolved "https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.18.6.tgz"
@@ -1674,6 +1654,26 @@
   integrity sha512-va15kYZr7KZNNPZdxONGQzpUr+4sxVu7V/VG7a8mRfPPXUyhEYj5RzXCQmGrlP3tAh0L3HHm5AjBMFYRqlM9SA==
   dependencies:
     "@lit-labs/ssr-dom-shim" "^1.0.0"
+
+"@ludamad-aztec/sdk@2.2.0-alpha.5":
+  version "2.2.0-alpha.5"
+  resolved "https://registry.yarnpkg.com/@ludamad-aztec/sdk/-/sdk-2.2.0-alpha.5.tgz#5404e57db7ca9cd77912ec3211347f796b002c98"
+  integrity sha512-zRyn3MRKyxYscgqLJI8HTKrPyDgmblALNfIoagZANavVf+NtryezMGeGsRGs8dE+WsXoZOJWH7kuAGchUZ3WPg==
+  dependencies:
+    "@aztec/barretenberg" "2.2.0-alpha.3"
+    "@aztec/blockchain" "2.2.0-alpha.3"
+    detect-node "^2.1.0"
+    dexie "3.0.1"
+    events "^3.3.0"
+    level-js "^6.1.0"
+    leveldown "^6.1.1"
+    levelup "^5.1.1"
+    memdown "^6.1.1"
+    serve "^14.0.1"
+    sqlite3 "^5.0.9"
+    supports-color "7.2.0"
+    tslib "^2.4.0"
+    typeorm "^0.3.10"
 
 "@mapbox/node-pre-gyp@^1.0.0":
   version "1.0.10"

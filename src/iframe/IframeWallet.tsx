@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { AppProps } from '../components/appProps.js';
-import { BarretenbergWasm, ServerRollupProvider, WalletConnectAztecWalletProviderServer } from '@aztec/sdk';
+import { BarretenbergWasm, ServerRollupProvider, WalletConnectAztecWalletProviderServer } from '@ludamad-aztec/sdk';
 import { openPopup } from './handleHandover.js';
 import useWalletConnectKeyStore from './useWalletConnectKeyStore.js';
 import { BBWasmContext } from '../utils/wasmContext.js';

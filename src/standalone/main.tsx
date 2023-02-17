@@ -12,7 +12,7 @@ import CreateAccount from './create_account';
 import OpenWallet from './openWallet';
 import { getCachedEncryptedKeystore, setCachedEncryptedKeystore } from '../utils/sessionUtils';
 import { useWalletConnectServer, WalletConnectProposal } from './useWalletConnectServer';
-import { AztecKeyStore } from '@aztec/sdk';
+import { AztecKeyStore } from '@ludamad-aztec/sdk';
 import { AcceptProposal } from './acceptProposal';
 
 function StandaloneApp() {

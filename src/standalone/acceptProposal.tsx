@@ -1,4 +1,4 @@
-import { KeyStore } from '@aztec/sdk';
+import { KeyStore } from '@ludamad-aztec/sdk';
 import { SignClient } from '@walletconnect/sign-client/dist/types/client';
 import { SessionTypes } from '@walletconnect/types';
 import { useEffect, useState } from 'react';

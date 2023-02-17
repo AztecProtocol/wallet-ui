@@ -1,4 +1,4 @@
-import { AztecKeyStore, ConstantKeyPair } from '@aztec/sdk';
+import { AztecKeyStore, ConstantKeyPair } from '@ludamad-aztec/sdk';
 import { useContext, useState } from 'react';
 import PasscodeAlias from '../../components/create_account_flow/01_PasscodeAlias/PasscodeAlias';
 import EncryptionKey from '../../components/create_account_flow/02_EncryptionKey/EncryptionKey';

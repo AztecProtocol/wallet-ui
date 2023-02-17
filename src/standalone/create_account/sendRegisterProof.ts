@@ -1,5 +1,4 @@
-import { AztecKeyStore, EthAddress, EthereumProvider } from '@aztec/sdk';
-import { AztecSdk } from '@aztec/sdk/dest/aztec_sdk/aztec_sdk';
+import { AztecKeyStore, AztecSdk, EthAddress, EthereumProvider } from '@ludamad-aztec/sdk';
 
 // Ideally we want to get this from bb.js
 export interface AssetValue {

@@ -1,4 +1,4 @@
-import { EthAddress, EthereumProvider, EthersAdapter } from '@aztec/sdk';
+import { EthAddress, EthereumProvider, EthersAdapter } from '@ludamad-aztec/sdk';
 import { useMemo } from 'react';
 import { useAccount, useSigner } from 'wagmi';
 
