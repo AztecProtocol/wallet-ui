@@ -9,19 +9,16 @@ import styles from './Backup.module.scss';
 interface BackupProps {
   generateRecoveryKey: (signMessage: () => Promise<`0x${string}`>) => Promise<ConstantKeyPair>;
   doDownloadRecoveryKit: (recoveryKey: ConstantKeyPair) => Promise<void>;
-  doDownloadKey: () => Promise<NextStepResult>;
   onBack?: () => void;
   onFinish: () => Promise<NextStepResult>;
 }
 export default function Backup({
   generateRecoveryKey,
   doDownloadRecoveryKit,
-  doDownloadKey,
   onBack,
   onFinish,
 }: BackupProps) {
   const [kitDownloaded, setKitDownloaded] = useState(false);
-  const [keyDownloaded, setKeyDownloaded] = useState(false);
 
   const signMessage = useSignMessage({
     message: RECOVERY_KEY_MESSAGE,
@@ -31,7 +28,7 @@ export default function Backup({
   return (
     <StepCard
       header={'Back Up Your Credentials'}
-      nextButtonDisabled={!kitDownloaded || !keyDownloaded}
+      nextButtonDisabled={!kitDownloaded}
       handlePreviousStep={onBack}
       handleNextStep={() => onFinish()}
     >
@@ -45,14 +42,6 @@ export default function Backup({
             const recoveryKey = await generateRecoveryKey(signMessage.signMessageAsync);
             await doDownloadRecoveryKit(recoveryKey);
             setKitDownloaded(true);
-          }}
-        />
-        <ImageButton
-          icon={ImageButtonIcon.Download}
-          label="Download your key"
-          onClick={async () => {
-            await doDownloadKey();
-            setKeyDownloaded(true);
           }}
         />
       </div>

@@ -10,14 +10,14 @@ import { AztecSdkProvider } from '../utils/aztecSdkContext';
 import AppCard from '../components/AppCard';
 import CreateAccount from './create_account';
 import OpenWallet from './openWallet';
-import { getCachedEncryptedKeystore } from '../utils/sessionUtils';
+import { getCachedEncryptedKeystore, setCachedEncryptedKeystore } from '../utils/sessionUtils';
 import { useWalletConnectServer, WalletConnectProposal } from './useWalletConnectServer';
 
 function StandaloneApp() {
   const chainId = getChainId();
   const [wagmiConfig, setWagmiConfig] = useState<WagmiRainbowConfig>();
-  const [encryptedKeys, setEncryptedKeys] = useState(getCachedEncryptedKeystore());
   const [proposal, setProposal] = useState<WalletConnectProposal | null>(null);
+  const [isCreatingAccount, setIsCreatingAccount] = useState(false);
 
   const {
     client,
@@ -57,19 +57,21 @@ function StandaloneApp() {
         })}
       >
         <AppCard>
-          {proposal && !encryptedKeys && (
+          {proposal && isCreatingAccount && (
             <CreateAccount
               chainId={chainId}
-              onAccountCreated={newEncryptedKeys => setEncryptedKeys(newEncryptedKeys)}
+              onAccountCreated={newEncryptedKeys => {
+                setCachedEncryptedKeystore(newEncryptedKeys);
+                setIsCreatingAccount(false);
+              }}
             />
           )}
-          {proposal && encryptedKeys && (
+          {proposal && !isCreatingAccount && (
             <OpenWallet
-              encryptedKeystore={encryptedKeys}
               aztecChainId={getAztecChainId()}
               proposal={proposal}
               client={client}
-              onCreateAccount={() => setEncryptedKeys('')}
+              onCreateAccount={() => setIsCreatingAccount(true)}
             />
           )}
         </AppCard>

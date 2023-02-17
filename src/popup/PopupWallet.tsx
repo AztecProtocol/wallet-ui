@@ -10,7 +10,7 @@ import { ApprovalDialog } from '../components/approval_dialog/approval_dialog.js
 export default function PopupWallet() {
   const [keyStore, setKeyStore] = useState<AztecKeyStore | null>(null);
   const [sessionToHandover] = useState<SessionTypes.Struct | undefined>(getSessionToHandover()?.session);
-  const [encryptedKeys] = useState(getCachedEncryptedKeystore());
+  const [cachedEncryptedKeys] = useState(getCachedEncryptedKeystore());
 
   const wasm = useContext<BarretenbergWasm>(BBWasmContext);
 
@@ -26,17 +26,18 @@ export default function PopupWallet() {
     }
   }, []);
 
-  if (sessionToHandover && encryptedKeys) {
+  if (sessionToHandover) {
     if (!keyStore) {
       return (
         <SignIn
-          dappName={sessionToHandover.peer.metadata.name}
-          dappLogoUrl={sessionToHandover.peer.metadata.icons[0]}
+          showCreate={false}
+          showForgot={false}
+          initialEncryptedKeystore={cachedEncryptedKeys}
           isValidPasscode={function (passcode: string): boolean {
             return passcode.length > 0; // TODO
           }}
-          onLoginWithDifferentAccount={() => {}}
-          onFinish={async function (passcode: string) {
+          onCreateAccount={() => {}}
+          onFinish={async function (encryptedKeys: string, passcode: string) {
             try {
               const keyStore = await AztecKeyStore.open(AztecBuffer.from(encryptedKeys, 'hex'), passcode, wasm, []);
               setKeyStore(keyStore);

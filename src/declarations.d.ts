@@ -6,5 +6,6 @@ declare global {
     ethereum: any;
     aztecSdk: any;
     handoverSession?: string;
+    PasswordCredential?: any;
   }
 }
