@@ -49,7 +49,11 @@ export function getSession(topic: string) {
   if (!storedSession) {
     return null;
   }
-  return safeJsonParse<{ session: SessionTypes.Struct; key: string }>(storedSession);
+  const parsed = safeJsonParse<{ session: SessionTypes.Struct; key: string }>(storedSession);
+  if (typeof parsed === 'string') {
+    return null;
+  }
+  return parsed;
 }
 
 export function deleteSession(topic: string) {

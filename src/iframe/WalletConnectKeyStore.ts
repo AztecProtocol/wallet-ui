@@ -2,44 +2,70 @@ import { SchnorrSignature, ProofInput, KeyStore, KeyPair, Permission, AztecKeySt
 
 export class WalletConnectKeyStore implements KeyStore {
   constructor(
-    private aztecKeyStore: AztecKeyStore,
+    private aztecKeyStore: AztecKeyStore | undefined,
     // UI connecting functions
     // Show approval dialogues
     private showApproveProofsRequest: () => Promise<{ approved: boolean; error: string }>,
     private showApproveProofInputsRequest: () => Promise<{ approved: boolean; error: string }>,
   ) {}
+
+  private ensureHaveKeyStore() {
+    if (!this.aztecKeyStore) {
+      throw new Error('Wallet not connected');
+    }
+  }
+
   public connect() {
-    return this.aztecKeyStore.connect();
+    this.ensureHaveKeyStore();
+    return this.aztecKeyStore!.connect();
   }
 
   public disconnect() {
-    return this.aztecKeyStore.disconnect();
+    this.ensureHaveKeyStore();
+    return this.aztecKeyStore!.disconnect();
   }
 
   public getAccountKey(): Promise<KeyPair> {
-    return this.aztecKeyStore.getAccountKey();
+    this.ensureHaveKeyStore();
+    return this.aztecKeyStore!.getAccountKey();
   }
 
   public async getSpendingPublicKey() {
-    return this.aztecKeyStore.getSpendingPublicKey();
+    this.ensureHaveKeyStore();
+    return this.aztecKeyStore!.getSpendingPublicKey();
   }
 
   public getPermissions() {
-    return this.aztecKeyStore.getPermissions();
+    this.ensureHaveKeyStore();
+    return this.aztecKeyStore!.getPermissions();
   }
 
   public setPermissions(permissions: Permission[]) {
-    return this.aztecKeyStore.setPermissions(permissions);
+    this.ensureHaveKeyStore();
+    return this.aztecKeyStore!.setPermissions(permissions);
   }
   public async approveProofsRequest() {
+    if (!this.aztecKeyStore) {
+      return {
+        approved: false,
+        error: 'Wallet not connected',
+      };
+    }
     return await this.showApproveProofsRequest();
   }
 
   public async approveProofInputsRequest() {
+    if (!this.aztecKeyStore) {
+      return {
+        approved: false,
+        error: 'Wallet not connected',
+      };
+    }
     return await this.showApproveProofInputsRequest();
   }
 
   public signProofs(proofInputs: ProofInput[]): Promise<SchnorrSignature[]> {
-    return this.aztecKeyStore.signProofs(proofInputs);
+    this.ensureHaveKeyStore();
+    return this.aztecKeyStore!.signProofs(proofInputs);
   }
 }

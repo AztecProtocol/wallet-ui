@@ -11,26 +11,37 @@ import AppCard from '../components/AppCard';
 import CreateAccount from './create_account';
 import OpenWallet from './openWallet';
 import { getCachedEncryptedKeystore } from '../utils/sessionUtils';
+import { useWalletConnectServer, WalletConnectProposal } from './useWalletConnectServer';
 
 function StandaloneApp() {
   const chainId = getChainId();
   const [wagmiConfig, setWagmiConfig] = useState<WagmiRainbowConfig>();
   const [encryptedKeys, setEncryptedKeys] = useState(getCachedEncryptedKeystore());
+  const [proposal, setProposal] = useState<WalletConnectProposal | null>(null);
+
+  const {
+    client,
+    initError: wcInitError,
+    init: wcInit,
+  } = useWalletConnectServer({
+    onSessionProposal: proposal => {
+      setProposal(proposal);
+    },
+  });
 
   async function init() {
     setWagmiConfig(getWagmiRainbowConfig(chainId));
+    await wcInit();
   }
 
   useEffect(() => {
-    (async () => {
-      await init();
-    })();
+    init();
   }, []);
 
   const wasm = useContext(BBWasmContext);
 
-  if (!wasm || !wagmiConfig) {
-    return <div>Loading...</div>;
+  if (!wasm || !wagmiConfig || !client) {
+    return <div>Loading... {wcInitError ? wcInitError.message : ''}</div>;
   }
 
   return (
@@ -46,16 +57,18 @@ function StandaloneApp() {
         })}
       >
         <AppCard>
-          {!encryptedKeys && (
+          {proposal && !encryptedKeys && (
             <CreateAccount
               chainId={chainId}
               onAccountCreated={newEncryptedKeys => setEncryptedKeys(newEncryptedKeys)}
             />
           )}
-          {encryptedKeys && (
+          {proposal && encryptedKeys && (
             <OpenWallet
               encryptedKeystore={encryptedKeys}
               aztecChainId={getAztecChainId()}
+              proposal={proposal}
+              client={client}
               onCreateAccount={() => setEncryptedKeys('')}
             />
           )}
