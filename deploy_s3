@@ -1,0 +1,14 @@
+#!/bin/bash
+# called by build-system
+set -e
+AWS_BUCKET_NAME=$1
+
+for entry in wc iframe popup ; do
+    aws s3 cp \
+        s3://$AWS_BUCKET_NAME/$entry.html \
+        s3://$AWS_BUCKET_NAME/$entry \
+        --no-guess-mime-type \
+        --content-type="text/html; charset=utf-8" \
+        --cache-control "no-cache" \
+        --metadata-directive="REPLACE"
+done

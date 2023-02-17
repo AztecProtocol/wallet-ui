@@ -25,8 +25,9 @@ export default defineConfig({
     svgrPlugin(),
     EnvironmentPlugin({
       ETHEREUM_CHAIN_ID: 1,
-      AZTEC_CHAIN_ID: 677868,
+      AZTEC_CHAIN_ID: 677868, // TODO remove this
       NODE_ENV: 'production',
+      ROLLUP_HOST: 'https://api.aztec.network/aztec-connect-prod/falafel',
       WALLETCONNECT_PROJECT_ID: process.env.WALLETCONNECT_PROJECT_ID || '3c8bb328309b91d45b5cc8b2dc392065',
     }),
     viteStaticCopy({
