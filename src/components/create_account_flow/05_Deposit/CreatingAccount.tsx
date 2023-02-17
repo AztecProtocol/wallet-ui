@@ -1,4 +1,3 @@
-// @ts-ignore
 import { Loader } from '@aztec/aztec-ui';
 import { useEffect, useState } from 'react';
 import { NextStepResult } from '../../StepCard';

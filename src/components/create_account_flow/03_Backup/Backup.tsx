@@ -1,4 +1,3 @@
-// @ts-ignore
 import { ImageButton, ImageButtonIcon } from '@aztec/aztec-ui';
 import { useState } from 'react';
 import StepCard, { NextStepResult } from '../../StepCard';

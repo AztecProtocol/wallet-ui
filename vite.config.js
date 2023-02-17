@@ -1,12 +1,10 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-// import inject from '@rollup/plugin-inject';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
 import svgrPlugin from 'vite-plugin-svgr';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import EnvironmentPlugin from 'vite-plugin-environment';
 import path from 'path';
-// import nodeStdlibBrowser from 'node-stdlib-browser';
 
 // Get require functionality in ESM
 import { createRequire } from 'module';
@@ -29,7 +27,7 @@ export default defineConfig({
       ETHEREUM_CHAIN_ID: 1337,
       AZTEC_CHAIN_ID: 671337,
       NODE_ENV: 'development',
-      WALLETCONNECT_PROJECT_ID: '3c8bb328309b91d45b5cc8b2dc392065',
+      WALLETCONNECT_PROJECT_ID: '',
     }),
     viteStaticCopy({
       targets: [

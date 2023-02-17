@@ -1,4 +1,3 @@
-// @ts-ignore
 import { Card, CardHeaderSize, Button, ButtonTheme } from '@aztec/aztec-ui';
 import logo from '../assets/zkmoney-logo.png';
 import style from './connect.module.scss';

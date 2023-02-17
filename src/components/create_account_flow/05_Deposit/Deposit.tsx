@@ -1,6 +1,4 @@
-// @ts-ignore
 import { Field, Layer } from '@aztec/aztec-ui';
-import { AztecSdk, AztecKeyStore, EthAddress, EthereumProvider } from '@aztec/sdk';
 import { useEffect, useState } from 'react';
 import { EthIdentity } from '../../../standalone/create_account/sendRegisterProof';
 import { useActiveWalletEthSigner } from '../../../utils/activeWalletHooks';
