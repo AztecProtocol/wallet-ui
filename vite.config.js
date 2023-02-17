@@ -54,25 +54,27 @@ export default defineConfig({
     },
   ],
   resolve: {
-    alias: {},
+    alias: { buffer: 'buffer/' },
   },
   build: {
     outDir: 'dest',
-    // sourcemap: true,
     rollupOptions: {
       input: {
-        debug: path.resolve(__dirname, 'src/debug/main.tsx'),
         iframe: path.resolve(__dirname, 'src/iframe/main.tsx'),
         popup: path.resolve(__dirname, 'src/popup/main.tsx'),
         standalone: path.resolve(__dirname, 'src/standalone/main.tsx'),
-        'debug-index': path.resolve(__dirname, 'debug.html'),
         'iframe-index': path.resolve(__dirname, 'iframe.html'),
         'popup-index': path.resolve(__dirname, 'popup.html'),
         wc: path.resolve(__dirname, 'wc.html'),
       },
     },
+    commonjsOptions: {
+      transformMixedEsModules: true, // Enable @walletconnect/web3-provider which has some code in CommonJS
+    },
   },
   optimizeDeps: {
+    // NOTE: fixes locally linked aztec-ui, but only for dev builds
+    include: ['@aztec/aztec-ui'],
     esbuildOptions: {
       define: {
         global: 'globalThis',

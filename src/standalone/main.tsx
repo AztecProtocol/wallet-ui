@@ -4,14 +4,18 @@ import { lightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 
 import render from '../components/render';
 import { BBWasmContext, BBWasmProvider } from '../utils/wasmContext';
-import StandaloneWallet from './StandaloneWallet';
 import { getAztecChainId, getChainId, getWagmiRainbowConfig, WagmiRainbowConfig } from '../utils/config';
 import { useContext, useEffect, useState } from 'react';
 import { AztecSdkProvider } from '../utils/aztecSdkContext';
+import AppCard from '../components/AppCard';
+import CreateAccount from './create_account';
+import OpenWallet from './openWallet';
+import { getCachedEncryptedKeystore } from '../utils/sessionUtils';
 
 function StandaloneApp() {
   const chainId = getChainId();
-  const [wagmiConfig, setWagmiConfig] = useState<WagmiRainbowConfig | undefined>(undefined);
+  const [wagmiConfig, setWagmiConfig] = useState<WagmiRainbowConfig>();
+  const [encryptedKeys, setEncryptedKeys] = useState(getCachedEncryptedKeystore());
 
   async function init() {
     setWagmiConfig(getWagmiRainbowConfig(chainId));
@@ -41,7 +45,21 @@ function StandaloneApp() {
           overlayBlur: 'none',
         })}
       >
-        <StandaloneWallet chainId={chainId} aztecChainId={getAztecChainId()} />
+        <AppCard>
+          {!encryptedKeys && (
+            <CreateAccount
+              chainId={chainId}
+              onAccountCreated={newEncryptedKeys => setEncryptedKeys(newEncryptedKeys)}
+            />
+          )}
+          {encryptedKeys && (
+            <OpenWallet
+              encryptedKeystore={encryptedKeys}
+              aztecChainId={getAztecChainId()}
+              onCreateAccount={() => setEncryptedKeys('')}
+            />
+          )}
+        </AppCard>
       </RainbowKitProvider>
     </WagmiConfig>
   );
