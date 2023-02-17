@@ -1,6 +1,6 @@
 import { Button, ButtonTheme, Card, CardHeaderSize } from '@aztec/aztec-ui';
 import { ReactNode, useContext } from 'react';
-import { addErrorToast, ToastsContext } from '../AppCard';
+import { ToastsContext, addErrorToast } from '../../utils/toastsContext';
 import style from './StepCard.module.scss';
 
 export type NextStepResult = { error: string } | void;

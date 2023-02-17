@@ -30,7 +30,6 @@ export default function CreateAccount({ onAccountCreated, chainId }: CreateAccou
   const [userAlias, setUserAlias] = useState('');
   const [passcode, setPasscode] = useState('');
   const [keyStore, setKeyStore] = useState<AztecKeyStore>();
-  const [recoveryKey, setRecoveryKey] = useState<ConstantKeyPair>();
   const [encryptedKeyStore, setEncryptedKeyStore] = useState<string>();
   const [currentStep, setCurrentStep] = useState(Step._01_PasscodeAlias);
   const wasm = useContext(BBWasmContext)!;
@@ -75,16 +74,11 @@ export default function CreateAccount({ onAccountCreated, chainId }: CreateAccou
             onFinish={async () => {
               onNext();
             }}
-            generateEncryptionKey={async function (recoveryKey: ConstantKeyPair) {
-              const { keyStore, encryptedKeyStore } = await createAndExportKeyStore(recoveryKey!, passcode, wasm);
+            generateEncryptionKey={async function () {
+              const { keyStore, encryptedKeyStore } = await createAndExportKeyStore(passcode, wasm);
               setKeyStore(keyStore);
               setEncryptedKeyStore(encryptedKeyStore);
               return encryptedKeyStore;
-            }}
-            generateRecoveryKey={async function (signMessage: () => Promise<`0x${string}`>) {
-              const keyPair = await generateRecoveryKey(await signMessage(), wasm);
-              setRecoveryKey(keyPair);
-              return keyPair;
             }}
           />
         );
@@ -98,8 +92,11 @@ export default function CreateAccount({ onAccountCreated, chainId }: CreateAccou
             doDownloadKey={async function () {
               // TODO download functionality for encrypted keys
             }}
-            doDownloadRecoveryKit={async function () {
-              await downloadRecoveryKit(keyStore!, recoveryKey!, userAlias);
+            generateRecoveryKey={async function (signMessage: () => Promise<`0x${string}`>) {
+              return generateRecoveryKey(await signMessage(), wasm);
+            }}
+            doDownloadRecoveryKit={async function (recoveryKey: ConstantKeyPair) {
+              await downloadRecoveryKit(keyStore!, recoveryKey, userAlias);
             }}
           />
         );

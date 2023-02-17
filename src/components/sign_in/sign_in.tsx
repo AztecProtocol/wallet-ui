@@ -3,7 +3,7 @@ import logo from '../assets/zkmoney-logo.png';
 import { useContext, useState } from 'react';
 import style from './sign_in.module.scss';
 import { NextStepResult } from '../StepCard';
-import { addErrorToast, ToastsContext } from '../AppCard';
+import { ToastsContext, addErrorToast } from '../../utils/toastsContext';
 
 interface SignInProps {
   isValidPasscode: (passcode: string) => boolean;

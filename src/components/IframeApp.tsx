@@ -1,14 +1,14 @@
 import { ReactNode } from 'react';
 import { ToastsProvider } from '../utils/toastsContext';
-import style from './app.module.scss';
+import style from './iframeApp.module.scss';
 
-interface AppCardProps {
+interface IframeAppProps {
   children: ReactNode;
 }
 
-export default function AppCard({ children }: AppCardProps) {
+export default function IframeApp({ children }: IframeAppProps) {
   return (
-    <div className={style.app}>
+    <div className={style.backdrop}>
       <ToastsProvider>{children}</ToastsProvider>
     </div>
   );

@@ -1,5 +1,5 @@
 import { AztecSdk, createAztecSdk, JsonRpcProvider } from '@aztec/sdk';
-import { createContext, useEffect, useState } from 'react';
+import { createContext, ReactNode, useEffect, useState } from 'react';
 import { EthereumChainId, getEthereumHost } from './config';
 import { chainIdToNetwork } from './networks';
 
@@ -40,7 +40,7 @@ interface AztecSdkContextData {
 
 export const AztecSdkContext = createContext<AztecSdkContextData>({});
 
-export function AztecSdkProvider({ children, chainId }: { children: JSX.Element; chainId: EthereumChainId }) {
+export function AztecSdkProvider({ children, chainId }: { children: ReactNode; chainId: EthereumChainId }) {
   const [sdk, setSdk] = useState<AztecSdk | undefined>();
 
   useEffect(() => {

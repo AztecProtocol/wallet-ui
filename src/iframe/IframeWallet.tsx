@@ -4,6 +4,12 @@ import { BarretenbergWasm, ServerRollupProvider, WalletConnectAztecWalletProvide
 import { openPopup } from './handleHandover.js';
 import useWalletConnectKeyStore from './useWalletConnectKeyStore.js';
 import { BBWasmContext } from '../utils/wasmContext.js';
+import { PopupTrigger } from '../components/popup_trigger/popup_trigger.js';
+
+function getDappHostname() {
+  const url = new URL(document.referrer);
+  return url.hostname;
+}
 
 export default function IframeWallet(props: AppProps) {
   const [aztecAWPServer] = useState<WalletConnectAztecWalletProviderServer>(
@@ -58,22 +64,15 @@ export default function IframeWallet(props: AppProps) {
 
   if (!initialized) {
     return (
-      <div>
-        {!initializing ? (
-          <button
-            onClick={() =>
-              openPopup(
-                () => setInitializing(true),
-                () => setInitializing(false),
-              )
-            }
-          >
-            Connect
-          </button>
-        ) : (
-          'Connecting...'
-        )}
-      </div>
+      <PopupTrigger
+        dappHostname={getDappHostname()}
+        onClick={() => {
+          openPopup(
+            () => setInitializing(true),
+            () => setInitializing(false),
+          );
+        }}
+      />
     );
   }
 

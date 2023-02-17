@@ -2,8 +2,8 @@ import { Card, CardHeaderSize, Button, ButtonTheme } from '@aztec/aztec-ui';
 import { NextStepResult } from '../StepCard';
 import logo from '../assets/zkmoney-logo.png';
 import style from './connect.module.scss';
-import { addErrorToast, ToastsContext } from '../AppCard';
 import { useContext } from 'react';
+import { ToastsContext, addErrorToast } from '../../utils/toastsContext';
 
 export function Connect(props: { onUserResponse: (accepted: boolean) => Promise<NextStepResult> }) {
   const setToasts = useContext(ToastsContext);
