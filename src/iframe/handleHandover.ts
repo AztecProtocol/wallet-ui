@@ -10,16 +10,16 @@ export function getTopic() {
   return new URLSearchParams(window.location.search).get('topic');
 }
 
-export type HandoverResult = { session?: SessionTypes.Struct; keyStore: AztecKeyStore };
+export type HandoverResult = { session?: SessionTypes.Struct; keyStore?: AztecKeyStore };
 
 export async function handleHandoverMessage(
   payload: {
-    keyStore: string;
+    keyStore?: string;
     sessionData?: { session: SessionTypes.Struct; key: string };
   },
   signClient: SignClient,
 ): Promise<HandoverResult> {
-  const keyStore = stringToKeyStore(payload.keyStore, await getWasm(), []);
+  const keyStore = payload.keyStore ? stringToKeyStore(payload.keyStore, await getWasm(), []) : undefined;
   if (payload.sessionData) {
     // Subscribe to our wallet connect session from the iframe
     const { session, key } = payload.sessionData;
