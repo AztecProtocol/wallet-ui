@@ -32,16 +32,12 @@ export async function handleHandoverMessage(
   return { keyStore };
 }
 
-export function openPopup(onOpen: () => void, onClose: () => void) {
+export function openPopup() {
   const walletWindow = window.open(window.location.origin + '/popup', '_blank', 'popup=true');
   if (walletWindow) {
     const topic = getTopic();
     if (topic) {
       walletWindow.handoverSession = topic;
     }
-    onOpen();
-    walletWindow.onunload = function () {
-      onClose();
-    };
   }
 }

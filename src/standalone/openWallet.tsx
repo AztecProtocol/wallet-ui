@@ -1,34 +1,30 @@
 import { AztecBuffer, AztecKeyStore, BarretenbergWasm } from '@aztec/sdk';
 import { useContext, useEffect, useState } from 'react';
-import { createNamespace, useWalletConnectServer, extractAndStoreSession } from './useWalletConnectServer.js';
+import {
+  createNamespace,
+  extractAndStoreSession,
+  WalletConnectProposal,
+} from './useWalletConnectServer.js';
 import { getCachedPassword } from '../utils/sessionUtils.js';
 import { SessionTypes } from '@walletconnect/types';
 import { BBWasmContext } from '../utils/wasmContext.js';
 import { AztecChainId } from '../utils/config.js';
 import { SignIn } from '../components/sign_in/index.js';
 import { Connect } from '../components/connect/connect.js';
+import { SignClient } from '@walletconnect/sign-client/dist/types/client.js';
 
 export interface OpenWalletProps {
   aztecChainId: AztecChainId;
+  client: SignClient;
   onCreateAccount: () => void;
   encryptedKeystore: string;
+  proposal: WalletConnectProposal;
 }
 
 export default function OpenWallet(props: OpenWalletProps) {
   const [keyStore, setKeyStore] = useState<AztecKeyStore | null>(null);
   const [session, setSession] = useState<SessionTypes.Struct | null>(null);
-  const [proposal, setProposal] = useState<number | null>(null);
   const wasm = useContext<BarretenbergWasm>(BBWasmContext);
-
-  const {
-    client,
-    initError: wcInitError,
-    init: wcInit,
-  } = useWalletConnectServer({
-    onSessionProposal: proposal => {
-      setProposal(proposal.id);
-    },
-  });
 
   useEffect(() => {
     const cachedPassword = getCachedPassword();
@@ -42,22 +38,18 @@ export default function OpenWallet(props: OpenWalletProps) {
   }, []);
 
   useEffect(() => {
-    if (keyStore) {
-      wcInit().catch(console.error);
-    }
-  }, [keyStore]);
-
-  useEffect(() => {
-    if (client && session) {
-      extractAndStoreSession(client, session)
+    if (session) {
+      extractAndStoreSession(props.client, session)
         .then(() => window.close())
         .catch(console.error);
     }
-  }, [client, session]);
+  }, [session]);
 
   if (!keyStore) {
     return (
       <SignIn
+        dappName={props.proposal.params.proposer.metadata.name}
+        dappLogoUrl={props.proposal.params.proposer.metadata.icons[0]}
         isValidPasscode={function (passcode: string): boolean {
           return passcode.length > 0; // TODO
         }}
@@ -79,39 +71,33 @@ export default function OpenWallet(props: OpenWalletProps) {
     );
   }
 
-  if (!client) {
-    return <div>Initializing WC... {wcInitError ? wcInitError.message : ''}</div>;
-  }
+  return (
+    <Connect
+      dappName={props.proposal.params.proposer.metadata.name}
+      dappLogoUrl={props.proposal.params.proposer.metadata.icons[0]}
+      onUserResponse={async accepted => {
+        if (accepted) {
+          const account = (await keyStore!.getAccountKey()).getPublicKey();
+          const namespaces = createNamespace(props.aztecChainId, account);
 
-  if (proposal && keyStore) {
-    return (
-      <Connect
-        onUserResponse={async accepted => {
-          if (accepted) {
-            const account = (await keyStore!.getAccountKey()).getPublicKey();
-            const namespaces = createNamespace(props.aztecChainId, account);
+          const { acknowledged } = await props.client.approve({
+            id: props.proposal.id,
+            namespaces,
+          });
 
-            const { acknowledged } = await client.approve({
-              id: proposal!,
-              namespaces,
-            });
-
-            const session = await acknowledged();
-            setSession(session);
-          } else {
-            await client.reject({
-              id: proposal!,
-              reason: {
-                code: 4001,
-                message: 'User rejected session proposal',
-              },
-            });
-            window.close();
-          }
-        }}
-      />
-    );
-  }
-
-  return null;
+          const session = await acknowledged();
+          setSession(session);
+        } else {
+          await props.client.reject({
+            id: props.proposal.id,
+            reason: {
+              code: 4001,
+              message: 'User rejected session proposal',
+            },
+          });
+          window.close();
+        }
+      }}
+    />
+  );
 }

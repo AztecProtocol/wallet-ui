@@ -16,7 +16,6 @@ export default function IframeWallet(props: AppProps) {
     new WalletConnectAztecWalletProviderServer(),
   );
   const [initialized, setInitialized] = useState<boolean>(false);
-  const [initializing, setInitializing] = useState<boolean>(false);
   const wasm = useContext<BarretenbergWasm>(BBWasmContext);
 
   const showApproveProofsRequest = async (): Promise<{ approved: boolean; error: string }> => {
@@ -67,10 +66,7 @@ export default function IframeWallet(props: AppProps) {
       <PopupTrigger
         dappHostname={getDappHostname()}
         onClick={() => {
-          openPopup(
-            () => setInitializing(true),
-            () => setInitializing(false),
-          );
+          openPopup();
         }}
       />
     );

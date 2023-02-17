@@ -1,5 +1,6 @@
 import { Field, Layer } from '@aztec/aztec-ui';
 import { useEffect, useState } from 'react';
+import { useBalance } from 'wagmi';
 import { EthIdentity } from '../../../standalone/create_account/sendRegisterProof';
 import { useActiveWalletEthSigner } from '../../../utils/activeWalletHooks';
 import { EthereumChainId } from '../../../utils/config';
@@ -72,6 +73,8 @@ export default function Deposit({ chainId, getInitialRegisterFees, sendProof, on
   const [sendingProofFinished, setSendingProofFinished] = useState<boolean>(false);
   const { ethAddress, ethSigner } = useActiveWalletEthSigner();
 
+  const ethBalance = useBalance({ address: ethAddress?.toString() });
+
   useEffect(() => {
     getInitialRegisterFees().then(setRegisterFees);
   }, []);
@@ -93,12 +96,12 @@ export default function Deposit({ chainId, getInitialRegisterFees, sendProof, on
       <Field
         label={'Deposit Amount (optional)'}
         value={ethDeposit}
-        balance={ethDeposit}
+        balance={ethBalance.data?.formatted}
         layer={Layer.L1}
         selectedAsset={{ symbol: 'ETH', id: 0 }}
         onChangeValue={setEthDeposit}
-        onClickMax={() => console.log('Clicked balance indicator')}
-        allowAssetSelection={true}
+        onClickMax={() => setEthDeposit(ethBalance.data?.formatted || '0')}
+        allowAssetSelection={false}
         assetOptions={assetOptions}
       />
       <h2>Gas fee</h2>

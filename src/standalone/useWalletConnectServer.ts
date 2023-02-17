@@ -10,6 +10,8 @@ function getUri() {
   return new URLSearchParams(window.location.search).get('uri');
 }
 
+export type WalletConnectProposal = Omit<SignClientTypes.BaseEventArgs<ProposalTypes.Struct>, 'topic'>;
+
 export async function applyUriIfNecessary(client: SignClient) {
   const uri = getUri();
   if (uri) {
@@ -20,7 +22,7 @@ export async function applyUriIfNecessary(client: SignClient) {
 export function useWalletConnectServer({
   onSessionProposal,
 }: {
-  onSessionProposal: (proposal: Omit<SignClientTypes.BaseEventArgs<ProposalTypes.Struct>, 'topic'>) => void;
+  onSessionProposal: (proposal: WalletConnectProposal) => void;
 }) {
   const [client, setClient] = useState<SignClient | null>(null);
   const [initError, setInitError] = useState<Error | null>(null);

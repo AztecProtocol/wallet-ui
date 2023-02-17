@@ -6,12 +6,14 @@ import { NextStepResult } from '../StepCard';
 import { ToastsContext, addErrorToast } from '../../utils/toastsContext';
 
 interface SignInProps {
+  dappName: string;
+  dappLogoUrl?: string;
   isValidPasscode: (passcode: string) => boolean;
   onLoginWithDifferentAccount: () => void;
   // Save expensive validation for onFinish
   onFinish: (passcode: string) => Promise<NextStepResult>;
 }
-export function SignIn({ isValidPasscode, onLoginWithDifferentAccount, onFinish }: SignInProps) {
+export function SignIn({ dappName, dappLogoUrl, isValidPasscode, onLoginWithDifferentAccount, onFinish }: SignInProps) {
   const setToasts = useContext(ToastsContext);
   const [passcode, setPasscode] = useState('');
   return (
@@ -23,8 +25,8 @@ export function SignIn({ isValidPasscode, onLoginWithDifferentAccount, onFinish 
       cardContent={
         <div className={style.cardContent}>
           <div className={style.header}>
-            <img className={style.logo} src={logo} alt="Logo" />
-            <div>Sign in to continue to zk.money</div>
+            <img className={style.logo} src={dappLogoUrl || logo} alt="Logo" />
+            <div>Sign in to continue to {dappName}</div>
           </div>
           <div className={style.fields}>
             <Field
