@@ -29,7 +29,6 @@ export function SignIn({
     <Card
       className={style.card}
       headerSize={CardHeaderSize.NONE}
-      cardHeader="Sign in to Aztec Wallet"
       cardTheme={CardTheme.LIGHT}
       cardContent={
         <div className={style.cardContent}>
@@ -40,8 +39,8 @@ export function SignIn({
               password={true}
               autoComplete="current-password"
               status={encryptedKeystore.length > 0 ? FieldStatus.Success : undefined}
-              label="Encrypted keystore"
-              placeholder="Enter encrypted keystore"
+              label="Unlock with Aztec key"
+              placeholder="Enter Aztec key"
               onChangeValue={setEncryptedKeystore}
             />
             <Field
@@ -49,7 +48,7 @@ export function SignIn({
               password={true}
               autoComplete="current-password"
               status={passcode.length > 0 ? FieldStatus.Success : undefined}
-              label="Passcode"
+              label={'Passcode'}
               placeholder="Enter passcode"
               onChangeValue={setPasscode}
             />
@@ -62,7 +61,8 @@ export function SignIn({
             <div />
             <Button
               theme={ButtonTheme.Primary}
-              text="Next"
+              text="Unlock"
+              className={style.unlockButton}
               disabled={!isValidPasscode(passcode)}
               onClick={async () => {
                 const error = (await onFinish(encryptedKeystore, passcode))?.error;

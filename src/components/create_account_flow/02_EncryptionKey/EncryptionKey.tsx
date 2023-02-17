@@ -26,13 +26,13 @@ export default function EncryptionKey({ onBack, onFinish, encryptedKeyStore }: E
 
   return (
     <StepCard
-      header={'Store the encrypted keys'}
+      header={'Store the Aztec key'}
       handlePreviousStep={onBack}
       handleNextStep={async () => {
         try {
           await navigator.credentials.store(
             new PasswordCredential({
-              id: 'Encrypted keys',
+              id: 'Aztec key',
               password: encryptedKeyStore,
             }),
           );
@@ -47,12 +47,12 @@ export default function EncryptionKey({ onBack, onFinish, encryptedKeyStore }: E
         id="username"
         name="username"
         autoComplete="username"
-        value="Encrypted keys"
+        value="Aztec key"
         readOnly
         style={{ position: 'fixed', top: '-50px', left: 0 }}
       />
       <Field
-        label={'Encrypted keys'}
+        label={'Aztec key'}
         onClick={async () => {
           navigator.clipboard.writeText(encryptedKeyStore);
           showToast();
@@ -63,7 +63,7 @@ export default function EncryptionKey({ onBack, onFinish, encryptedKeyStore }: E
         autoComplete="new-password"
       />
       <p>
-        The encrypted keys can be opened with your passcode. <br />
+        The Aztec key can be opened with your passcode. <br />
         You can store them in the browser's password manager or another secure location.
       </p>
     </StepCard>

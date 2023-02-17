@@ -12,12 +12,15 @@ import CreateAccount from './create_account';
 import OpenWallet from './openWallet';
 import { getCachedEncryptedKeystore, setCachedEncryptedKeystore } from '../utils/sessionUtils';
 import { useWalletConnectServer, WalletConnectProposal } from './useWalletConnectServer';
+import { AztecKeyStore } from '@aztec/sdk';
+import { AcceptProposal } from './acceptProposal';
 
 function StandaloneApp() {
   const chainId = getChainId();
   const [wagmiConfig, setWagmiConfig] = useState<WagmiRainbowConfig>();
   const [proposal, setProposal] = useState<WalletConnectProposal | null>(null);
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
+  const [keyStore, setKeyStore] = useState<AztecKeyStore | null>(null);
 
   const {
     client,
@@ -40,7 +43,36 @@ function StandaloneApp() {
 
   const wasm = useContext(BBWasmContext);
 
-  if (!wasm || !wagmiConfig || !client) {
+  if (!wagmiConfig) {
+    return null;
+  }
+
+  function renderView() {
+    if (client && proposal && wasm) {
+      if (keyStore) {
+        return (
+          <AcceptProposal aztecChainId={getAztecChainId()} client={client} proposal={proposal} keyStore={keyStore} />
+        );
+      }
+      if (isCreatingAccount) {
+        return (
+          <CreateAccount
+            chainId={chainId}
+            onAccountCreated={newEncryptedKeys => {
+              setCachedEncryptedKeystore(newEncryptedKeys);
+              setIsCreatingAccount(false);
+            }}
+          />
+        );
+      } else {
+        return (
+          <OpenWallet
+            onKeyStoreOpened={keyStore => setKeyStore(keyStore)}
+            onCreateAccount={() => setIsCreatingAccount(true)}
+          />
+        );
+      }
+    }
     return <div>Loading... {wcInitError ? wcInitError.message : ''}</div>;
   }
 
@@ -56,25 +88,7 @@ function StandaloneApp() {
           overlayBlur: 'none',
         })}
       >
-        <AppCard>
-          {proposal && isCreatingAccount && (
-            <CreateAccount
-              chainId={chainId}
-              onAccountCreated={newEncryptedKeys => {
-                setCachedEncryptedKeystore(newEncryptedKeys);
-                setIsCreatingAccount(false);
-              }}
-            />
-          )}
-          {proposal && !isCreatingAccount && (
-            <OpenWallet
-              aztecChainId={getAztecChainId()}
-              proposal={proposal}
-              client={client}
-              onCreateAccount={() => setIsCreatingAccount(true)}
-            />
-          )}
-        </AppCard>
+        <AppCard>{renderView()}</AppCard>
       </RainbowKitProvider>
     </WagmiConfig>
   );
