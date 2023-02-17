@@ -4,7 +4,7 @@
   "license": "GPL-2.0",
   "type": "module",
   "scripts": {
-    "build": "yarn clean && BUILD_PATH='./dest' vite build ; cp dest/iframe.html dest/iframe ; cp dest/wc.html dest/wc ; cp dest/popup.html dest/popup",
+    "build": "yarn clean && BUILD_PATH='./dest' vite build",
     "build:devnet": "yarn clean && BUILD_PATH='./dest' vite build --config vite.dev.config.js",
     "serve": "serve -p 1235 ./dest",
     "start": "PORT=1235 vite",
