@@ -1,54 +1,37 @@
-import { useState } from "react";
+import { useState } from 'react';
 // @ts-ignore
-import { Button, ButtonTheme, Card, CardHeaderSize } from "aztec-ui";
-import {
-  Backup,
-  ConnectWallet,
-  Deposit,
-  PasscodeAlias,
-  ReenterPasscode,
-} from "./steps";
-import { CreatingAccount } from "./steps/creating_account";
-import style from "./create_account.module.scss";
+import { Button, ButtonTheme, Card, CardHeaderSize } from '@aztec/aztec-ui';
+import { Backup, ConnectWallet, Deposit, PasscodeAlias, ReenterPasscode } from '../../standalone/create_account/steps';
+import { CreatingAccount } from '../../standalone/create_account/steps/creating_account';
+import style from './create_account.module.scss';
 
-enum Steps {
-  PasscodeAlias,
-  ConnectWallet,
-  Backup,
-  ReenterPasscode,
-  Deposit,
-  Creating,
-}
+export type OnboardingStep = 'PasscodeAlias' | 'ConnectWallet' | 'Backup' | 'ReenterPasscode' | 'Deposit' | 'Creating';
 
-function renderStep(step: Steps) {
+function renderStep(step: OnboardingStep) {
   switch (step) {
-    case Steps.PasscodeAlias:
+    case 'PasscodeAlias':
       return <PasscodeAlias />;
-    case Steps.ConnectWallet:
+    case 'ConnectWallet':
       return <ConnectWallet />;
-    case Steps.Backup:
+    case 'Backup':
       return <Backup />;
-    case Steps.ReenterPasscode:
+    case 'ReenterPasscode':
       return <ReenterPasscode />;
-    case Steps.Deposit:
+    case 'Deposit':
       return <Deposit />;
-    case Steps.Creating:
+    case 'Creating':
       return <div />;
   }
 }
 
-export function CreateAccount() {
-  const [step, setStep] = useState(0);
+interface CreateAccount2Props {
+  step: OnboardingStep;
+  handleNextStep?: () => void;
+  handlePreviousStep?: () => void;
+}
 
-  const handlePreviousPage = () => {
-    setStep((prevStep) => prevStep - 1);
-  };
-
-  const handleNextPage = () => {
-    setStep((prevStep) => prevStep + 1);
-  };
-
-  if (step === Steps.Creating) {
+export function CreateAccount({ step, handleNextStep, handlePreviousStep }: CreateAccount2Props) {
+  if (step === 'Creating') {
     return <CreatingAccount />;
   }
 
@@ -56,7 +39,7 @@ export function CreateAccount() {
     <Card
       className={style.card}
       headerSize={CardHeaderSize.MEDIUM}
-      gradient={["#f6f6f6", "#f6f6f6"]}
+      gradient={['#f6f6f6', '#f6f6f6']}
       headerTextColor="black"
       cardHeader="Account Creation"
       cardContent={
@@ -64,22 +47,15 @@ export function CreateAccount() {
           <div className={style.cardContent}>
             {renderStep(step)}
             <div className={style.buttons}>
-              {step > 0 ? (
+              {handlePreviousStep && (
                 <Button
                   className={style.nextButton}
                   theme={ButtonTheme.Secondary}
-                  onClick={handlePreviousPage}
+                  onClick={handlePreviousStep}
                   text="Back"
                 />
-              ) : (
-                <div />
               )}
-              <Button
-                className={style.nextButton}
-                theme={ButtonTheme.Primary}
-                onClick={handleNextPage}
-                text="Next"
-              />
+              <Button className={style.nextButton} theme={ButtonTheme.Primary} onClick={handleNextStep} text="Next" />
             </div>
           </div>
         </form>
@@ -87,3 +63,49 @@ export function CreateAccount() {
     />
   );
 }
+
+// export function CreateAccount() {
+//   const [step, setStep] = useState(0);
+
+//   const handlePreviousStep = () => {
+//     setStep(prevStep => prevStep - 1);
+//   };
+
+//   const handleNextStep = () => {
+//     setStep(prevStep => prevStep + 1);
+//   };
+
+//   if (step === Steps.Creating) {
+//     return <CreatingAccount />;
+//   }
+
+//   return (
+//     <Card
+//       className={style.card}
+//       headerSize={CardHeaderSize.MEDIUM}
+//       gradient={['#f6f6f6', '#f6f6f6']}
+//       headerTextColor="black"
+//       cardHeader="Account Creation"
+//       cardContent={
+//         <form>
+//           <div className={style.cardContent}>
+//             {renderStep(step)}
+//             <div className={style.buttons}>
+//               {step > 0 ? (
+//                 <Button
+//                   className={style.nextButton}
+//                   theme={ButtonTheme.Secondary}
+//                   onClick={handlePreviousStep}
+//                   text="Back"
+//                 />
+//               ) : (
+//                 <div />
+//               )}
+//               <Button className={style.nextButton} theme={ButtonTheme.Primary} onClick={handleNextStep} text="Next" />
+//             </div>
+//           </div>
+//         </form>
+//       }
+//     />
+//   );
+// }

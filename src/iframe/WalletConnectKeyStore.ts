@@ -1,5 +1,4 @@
 import { SchnorrSignature, ProofInput, KeyStore, KeyPair, Permission, AztecKeyStore } from '@aztec/sdk';
-import { SessionTypes } from '@walletconnect/types';
 
 export class WalletConnectKeyStore implements KeyStore {
   constructor(

@@ -1,21 +1,11 @@
-import {
-  Card,
-  CardTheme,
-  CardHeaderSize,
-  Button,
-  ButtonTheme,
-  Field,
-  Hyperlink,
-  FieldStatus,
-  // @ts-ignore
-} from "aztec-ui";
-import logo from "../assets/zkmoney-logo.png";
-import { useState } from "react";
-import { useNavigate } from "react-router";
-import style from "./sign_in.module.scss";
+import { Card, CardTheme, CardHeaderSize, Button, ButtonTheme, Field, Hyperlink, FieldStatus } from '@aztec/aztec-ui';
+import logo from '../assets/zkmoney-logo.png';
+import { useState } from 'react';
+import { useNavigate } from 'react-router';
+import style from './sign_in.module.scss';
 
 export function SignIn() {
-  const [passcode, setPasscode] = useState("");
+  const [passcode, setPasscode] = useState('');
   const navigate = useNavigate();
 
   return (
@@ -41,22 +31,8 @@ export function SignIn() {
               onChangeValue={setPasscode}
             />
             <div className={style.links}>
-              <Hyperlink
-                className={style.link}
-                label="Log in with a different account"
-                href="/create"
-                target="_self"
-              />
-              {/* <Hyperlink
-                className={style.link}
-                label="Create Aztec Wallet account"
-                href="/create"
-                target="_self"
-              /> */}
-              <Hyperlink
-                className={style.link}
-                label="I've forgotten my passcode"
-              />
+              <Hyperlink className={style.link} label="Log in with a different account" href="/create" target="_self" />
+              <Hyperlink className={style.link} label="I've forgotten my passcode" />
             </div>
           </div>
           <div className={style.buttons}>
@@ -65,7 +41,7 @@ export function SignIn() {
               theme={ButtonTheme.Primary}
               text="Next"
               disabled={passcode.length === 0}
-              onClick={() => navigate("/connect")}
+              onClick={() => navigate('/connect')}
             />
           </div>
         </div>

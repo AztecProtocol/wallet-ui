@@ -6,7 +6,7 @@ async function validateAlias(sdk: AztecSdk, alias: string) {
   return !isRegistered;
 }
 
-export function AliasSelection(props: {
+export function AliasAndPasscodeSelection(props: {
   sdk: AztecSdk;
   encryptedKeyStore: string;
   onFinish: (userAlias: string) => void;

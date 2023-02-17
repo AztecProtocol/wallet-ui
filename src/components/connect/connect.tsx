@@ -1,7 +1,7 @@
 // @ts-ignore
-import { Card, CardHeaderSize, Button, ButtonTheme } from "aztec-ui";
-import logo from "../assets/zkmoney-logo.png";
-import style from "./connect.module.scss";
+import { Card, CardHeaderSize, Button, ButtonTheme } from '@aztec/aztec-ui';
+import logo from '../assets/zkmoney-logo.png';
+import style from './connect.module.scss';
 
 export function Connect() {
   return (
@@ -26,14 +26,14 @@ export function Connect() {
               theme={ButtonTheme.Secondary}
               text="Deny"
               onClick={() => {
-                window.location.assign("http://zk.money/balance");
+                window.location.assign('http://zk.money/balance');
               }}
             />
             <Button
               theme={ButtonTheme.Primary}
               text="Allow"
               onClick={() => {
-                window.location.assign("http://zk.money/balance");
+                window.location.assign('http://zk.money/balance');
               }}
             />
           </div>
