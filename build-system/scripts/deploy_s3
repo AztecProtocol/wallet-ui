@@ -48,7 +48,7 @@ aws s3 cp \
       s3://$AWS_BUCKET_NAME/wc.html \
       s3://$AWS_BUCKET_NAME/wc \
       --no-guess-mime-type \
-      --content-type="text/http; charset=utf-8" \
+      --content-type="text/html; charset=utf-8" \
       --cache-control "no-cache" \
       --metadata-directive="REPLACE"
 
