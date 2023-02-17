@@ -24,7 +24,7 @@ export function RecoveryKit(props: { userAlias: string; keyStore: AztecKeyStore;
       <button
         disabled={!account.address}
         onClick={() => {
-          generateRecoveryKey(signMessage, wasm).then(setRecoveryKey);
+          generateRecoveryKey(signMessage.signMessageAsync, wasm).then(setRecoveryKey);
         }}
       >
         Sign

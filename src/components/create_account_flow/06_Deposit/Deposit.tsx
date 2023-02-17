@@ -2,6 +2,7 @@
 import { Field, Layer } from '@aztec/aztec-ui';
 import { AztecSdk, AztecKeyStore, EthAddress, EthereumProvider } from '@aztec/sdk';
 import { useEffect, useState } from 'react';
+import { useActiveWalletEthSigner } from '../../../utils/activeWalletHooks';
 import { EthereumChainId } from '../../../utils/config';
 import { chainIdToNetwork } from '../../../utils/networks';
 import StepCard, { NextStepResult } from '../../StepCard';
@@ -41,50 +42,6 @@ interface AssetValue {
   value: bigint;
 }
 
-async function sendProof(
-  sdk: AztecSdk,
-  keyStore: AztecKeyStore,
-  registerFee: AssetValue,
-  ethDeposit: string,
-  alias: string,
-  depositorAddress: EthAddress,
-  depositorSigner: EthereumProvider,
-) {
-  const deposit = sdk.toBaseUnits(0, ethDeposit);
-  const aztecWalletProvider = await sdk.createAztecWalletProvider(keyStore);
-  await aztecWalletProvider.connect();
-  const accountPublicKey = await sdk.addAccount(aztecWalletProvider);
-  const spendingKey = await aztecWalletProvider.getSpendingPublicKey();
-  await sdk.awaitAccountSynchronised(accountPublicKey);
-
-  const controller = sdk.createRegisterController(
-    accountPublicKey,
-    alias,
-    spendingKey,
-    undefined,
-    deposit,
-    registerFee,
-    depositorAddress,
-    aztecWalletProvider,
-    depositorSigner,
-  );
-
-  const requiredFunds = await controller.getRequiredFunds();
-  if (requiredFunds > 0n) {
-    console.log(`depositing funds to contract...`);
-    await controller.depositFundsToContract();
-    console.log(`awaiting transaction confirmation...`);
-    await controller.awaitDepositFundsToContract();
-  }
-  console.log(`generating proof...`);
-  await controller.createProofs();
-  console.log(`signing proof...`);
-  await controller.sign();
-  console.log(`sending proof...`);
-  await controller.send();
-  console.log(`done!`);
-}
-
 function getFee(fees: AssetValue[], chainId: EthereumChainId) {
   const network = chainIdToNetwork(chainId);
   if (network?.isFrequent) {
@@ -99,7 +56,12 @@ interface DepositProps {
   getInitialRegisterFees(): Promise<AssetValue[]>;
   chainId: EthereumChainId;
   // Disabled if send proof is undefined, e.g. if a component is loading
-  sendProof?: (ethDeposit: string, registerFees: AssetValue[]) => void;
+  sendProof: (
+    ethDeposit: string,
+    registerFee: AssetValue,
+    depositorAddress: EthAddress,
+    depositorSigner: EthereumProvider,
+  ) => Promise<void>;
   onFinish: () => Promise<NextStepResult>;
 }
 
@@ -108,6 +70,7 @@ export default function Deposit({ chainId, getInitialRegisterFees, sendProof, on
   const [sendingProof, setSendingProof] = useState<boolean>(false);
   const [registerFees, setRegisterFees] = useState<AssetValue[]>();
   const [sendingProofFinished, setSendingProofFinished] = useState<boolean>(false);
+  const { ethAddress, ethSigner } = useActiveWalletEthSigner();
 
   useEffect(() => {
     getInitialRegisterFees().then(setRegisterFees);
@@ -117,11 +80,11 @@ export default function Deposit({ chainId, getInitialRegisterFees, sendProof, on
   }
   return (
     <StepCard
-      nextButtonDisabled={sendingProof || !registerFees || !sendProof}
+      nextButtonDisabled={sendingProof || !registerFees}
       handlePreviousStep={onBack}
       handleNextStep={async () => {
         setSendingProof(true);
-        await sendProof!(ethDeposit, registerFees!);
+        await sendProof!(ethDeposit, getFee(registerFees!, chainId), ethAddress, ethSigner);
         return await onFinish();
       }}
       header={'Make your First Deposit'}

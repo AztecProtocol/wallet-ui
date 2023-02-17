@@ -1,12 +1,16 @@
-import { AztecKeyStore, AztecSdk } from '@aztec/sdk';
+import { AztecKeyStore, ConstantKeyPair, EthAddress, EthereumProvider } from '@aztec/sdk';
 import { useContext, useState } from 'react';
 import PasscodeAlias from '../../components/create_account_flow/01_PasscodeAlias/PasscodeAlias';
 import ConnectWallet from '../../components/create_account_flow/02_ConnectWallet/ConnectWallet';
-import Backup from '../../components/create_account_flow/03_Backup/Backup';
-import ReenterPasscode from '../../components/create_account_flow/04_ReenterPasscode/ReenterPasscode';
-import Deposit from '../../components/create_account_flow/05_Deposit/Deposit';
+import Backup from '../../components/create_account_flow/04_Backup/Backup';
+import ReenterPasscode from '../../components/create_account_flow/05_ReenterPasscode/ReenterPasscode';
+import Deposit from '../../components/create_account_flow/06_Deposit/Deposit';
+import { downloadRecoveryKit, generateRecoveryKey } from '../../keystore';
 import { AztecSdkContext } from '../../utils/aztecSdkContext';
 import { EthereumChainId } from '../../utils/config';
+import { BBWasmContext } from '../../utils/wasmContext';
+import { createAndExportKeyStore } from './keyStoreCreation';
+import sendProof, { AssetValue } from './sendProof';
 
 export interface CreateAccountProps {
   onAccountCreated: () => void;
@@ -16,7 +20,7 @@ export interface CreateAccountProps {
 enum Step {
   _01_PasscodeAlias,
   _02_ConnectWallet,
-  _03_Backup,
+  _03_BackupKeys,
   _04_ReenterPasscode,
   _05_Deposit,
 }
@@ -25,8 +29,10 @@ export default function CreateAccount({ onAccountCreated, chainId }: CreateAccou
   const [userAlias, setUserAlias] = useState('');
   const [passcode, setPasscode] = useState('');
   const [keyStore, setKeyStore] = useState<AztecKeyStore>();
+  const [recoveryKey, setRecoveryKey] = useState<ConstantKeyPair>();
   const [encryptedKeyStore, setEncryptedKeyStore] = useState<string>();
   const [currentStep, setCurrentStep] = useState(Step._01_PasscodeAlias);
+  const wasm = useContext(BBWasmContext)!;
 
   const { sdk } = useContext(AztecSdkContext);
 
@@ -68,9 +74,32 @@ export default function CreateAccount({ onAccountCreated, chainId }: CreateAccou
             onFinish={async () => {
               onNext();
             }}
+            generateEncryptionKey={async function (recoveryKey: ConstantKeyPair) {
+              const { keyStore, encryptedKeyStore } = await createAndExportKeyStore(recoveryKey!, passcode, wasm);
+              setKeyStore(keyStore);
+              return encryptedKeyStore;
+            }}
+            generateRecoveryKey={async function (signMessage: () => Promise<`0x${string}`>) {
+              const keyPair = await generateRecoveryKey(await signMessage(), wasm);
+              setRecoveryKey(keyPair);
+              return keyPair;
+            }}
           />
         );
-      case Step._03_Backup:
+      // case Step._03_RecoveryKey:
+      //   return (
+      //     <RecoveryKit
+      //       onBack={onBack}
+      //       onFinish={async () => {
+      //         onNext();
+      //       }}
+      //       downloadRecoveryKit={async function () {
+      //         // TODO download functionality
+      //       }}
+      //       generateRecoveryKey={async function () {}}
+      //     />
+      //   );
+      case Step._03_BackupKeys:
         return (
           <Backup
             onBack={onBack}
@@ -78,7 +107,10 @@ export default function CreateAccount({ onAccountCreated, chainId }: CreateAccou
               onNext();
             }}
             doDownloadKey={async function () {
-              // TODO download functionality
+              // TODO download functionality for encrypted keys
+            }}
+            doDownloadRecoveryKit={async function () {
+              await downloadRecoveryKit(keyStore!, recoveryKey!, userAlias);
             }}
           />
         );
@@ -103,6 +135,14 @@ export default function CreateAccount({ onAccountCreated, chainId }: CreateAccou
             }}
             getInitialRegisterFees={() => sdk.getRegisterFees(0)}
             chainId={chainId}
+            sendProof={async function (
+              ethDeposit: string,
+              registerFee: AssetValue,
+              depositorAddress: EthAddress,
+              depositorSigner: EthereumProvider,
+            ) {
+              await sendProof(sdk!, keyStore!, registerFee, ethDeposit, userAlias, depositorAddress, depositorSigner);
+            }}
           />
         );
     }

@@ -5,7 +5,7 @@ import { useContext, useState } from 'react';
 import { generateRecoveryKey } from '../../keystore/recoveryKey';
 import { BBWasmContext } from '../../utils/wasmContext';
 
-async function createAndExportKeyStore(recoveryKey: ConstantKeyPair, passcode: string, wasm: BarretenbergWasm) {
+export async function createAndExportKeyStore(recoveryKey: ConstantKeyPair, passcode: string, wasm: BarretenbergWasm) {
   const keyStore = await AztecKeyStore.create(wasm);
   const encryptedKeyStore = await keyStore.export(passcode, recoveryKey);
   return { keyStore, encryptedKeyStore: encryptedKeyStore.toString('hex') };
@@ -30,7 +30,7 @@ export function KeyStoreCreation(props: { onFinish: (keyStore: AztecKeyStore, en
       <button
         disabled={!account.address || !!recoveryKey}
         onClick={() => {
-          generateRecoveryKey(signMessage, wasm).then(setRecoveryKey);
+          generateRecoveryKey(signMessage.signMessageAsync, wasm).then(setRecoveryKey);
         }}
       >
         Sign
