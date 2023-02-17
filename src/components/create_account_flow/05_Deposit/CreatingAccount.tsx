@@ -6,8 +6,9 @@ import style from './CreatingAccount.module.scss';
 interface CreatingAccountProps {
   onFinish: () => Promise<NextStepResult>;
   finished: boolean;
+  log?: string;
 }
-export default function CreatingAccount({ onFinish, finished }: CreatingAccountProps) {
+export default function CreatingAccount({ onFinish, finished, log }: CreatingAccountProps) {
   const [isCreating, setIsCreating] = useState(true);
 
   useEffect(() => {
@@ -24,6 +25,7 @@ export default function CreatingAccount({ onFinish, finished }: CreatingAccountP
       {isCreating ? (
         <>
           <div>Creating your wallet...</div>
+          <div style={{ fontSize: 12 }}>{log}</div>
           <Loader />
         </>
       ) : (

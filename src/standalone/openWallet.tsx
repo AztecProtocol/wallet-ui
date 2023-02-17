@@ -2,14 +2,17 @@ import { AztecBuffer, AztecKeyStore, BarretenbergWasm } from '@aztec/sdk';
 import { useContext, useEffect, useState } from 'react';
 import { createNamespace, useWalletConnectServer, extractAndStoreSession } from './useWalletConnectServer.js';
 import { OpenKeystore } from '../components/openKeystore.js';
-import { getCachedEncryptedKeystore, getCachedPassword } from '../utils/sessionUtils.js';
+import { getCachedEncryptedKeystore, getCachedPassword, setCachedPassword } from '../utils/sessionUtils.js';
 import { SessionTypes } from '@walletconnect/types';
 import { BBWasmContext } from '../utils/wasmContext.js';
 import { AztecChainId } from '../utils/config.js';
+import { SignIn } from '../components/sign_in/index.js';
+import { NextStepResult } from '../components/StepCard/index.js';
 
 export interface OpenWalletProps {
   aztecChainId: AztecChainId;
   onCreateAccount: () => void;
+  encryptedKeystore: string;
 }
 
 export default function OpenWallet(props: OpenWalletProps) {
@@ -30,10 +33,9 @@ export default function OpenWallet(props: OpenWalletProps) {
   });
 
   useEffect(() => {
-    const cachedEncryptedKeystore = getCachedEncryptedKeystore();
     const cachedPassword = getCachedPassword();
-    if (cachedEncryptedKeystore && cachedPassword) {
-      AztecKeyStore.open(AztecBuffer.from(cachedEncryptedKeystore, 'hex'), cachedPassword, wasm, [])
+    if (props.encryptedKeystore && cachedPassword) {
+      AztecKeyStore.open(AztecBuffer.from(props.encryptedKeystore, 'hex'), cachedPassword, wasm, [])
         .then(keyStore => {
           setKeyStore(keyStore);
         })
@@ -57,11 +59,26 @@ export default function OpenWallet(props: OpenWalletProps) {
 
   if (!keyStore) {
     return (
-      <div>
-        <OpenKeystore onKeystoreOpened={setKeyStore} />
-        <br />
-        <button onClick={props.onCreateAccount}>Create keystore</button>
-      </div>
+      <SignIn
+        isValidPasscode={function (passcode: string): boolean {
+          return passcode.length > 0; // TODO
+        }}
+        onLoginWithDifferentAccount={props.onCreateAccount}
+        onFinish={async function (passcode: string) {
+          try {
+            const keyStore = await AztecKeyStore.open(
+              AztecBuffer.from(props.encryptedKeystore, 'hex'),
+              passcode,
+              wasm,
+              [],
+            );
+            setKeyStore(keyStore);
+            setCachedPassword(passcode);
+          } catch (error: any) {
+            return { error: error.toString() };
+          }
+        }}
+      />
     );
   }
 

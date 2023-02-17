@@ -1,13 +1,19 @@
 import { Card, CardTheme, CardHeaderSize, Button, ButtonTheme, Field, Hyperlink, FieldStatus } from '@aztec/aztec-ui';
 import logo from '../assets/zkmoney-logo.png';
-import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useContext, useState } from 'react';
 import style from './sign_in.module.scss';
+import { NextStepResult } from '../StepCard';
+import { ToastsContext } from '../AppCard';
 
-export function SignIn() {
+interface SignInProps {
+  isValidPasscode: (passcode: string) => boolean;
+  onLoginWithDifferentAccount: () => void;
+  // Save expensive validation for onFinish
+  onFinish: (passcode: string) => Promise<NextStepResult>;
+}
+export function SignIn({ isValidPasscode, onLoginWithDifferentAccount, onFinish }: SignInProps) {
+  const setToasts = useContext(ToastsContext);
   const [passcode, setPasscode] = useState('');
-  const navigate = useNavigate();
-
   return (
     <Card
       className={style.card}
@@ -31,7 +37,11 @@ export function SignIn() {
               onChangeValue={setPasscode}
             />
             <div className={style.links}>
-              <Hyperlink className={style.link} label="Log in with a different account" href="/create" target="_self" />
+              <Hyperlink
+                className={style.link}
+                label="Log in with a different account"
+                onClick={onLoginWithDifferentAccount}
+              />
               <Hyperlink className={style.link} label="I've forgotten my passcode" />
             </div>
           </div>
@@ -40,8 +50,21 @@ export function SignIn() {
             <Button
               theme={ButtonTheme.Primary}
               text="Next"
-              disabled={passcode.length === 0}
-              onClick={() => navigate('/connect')}
+              disabled={!isValidPasscode(passcode)}
+              onClick={async () => {
+                const error = (await onFinish(passcode))?.error;
+                if (error) {
+                  setToasts((prevToasts: any) => [
+                    ...prevToasts,
+                    {
+                      text: error,
+                      key: Date.now(),
+                      autocloseInMs: 5e3,
+                      closable: true,
+                    },
+                  ]);
+                }
+              }}
             />
           </div>
         </div>

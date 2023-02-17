@@ -2,6 +2,7 @@
 import { Field, Layer } from '@aztec/aztec-ui';
 import { AztecSdk, AztecKeyStore, EthAddress, EthereumProvider } from '@aztec/sdk';
 import { useEffect, useState } from 'react';
+import { EthIdentity } from '../../../standalone/create_account/sendRegisterProof';
 import { useActiveWalletEthSigner } from '../../../utils/activeWalletHooks';
 import { EthereumChainId } from '../../../utils/config';
 import { chainIdToNetwork } from '../../../utils/networks';
@@ -59,8 +60,8 @@ interface DepositProps {
   sendProof: (
     ethDeposit: string,
     registerFee: AssetValue,
-    depositorAddress: EthAddress,
-    depositorSigner: EthereumProvider,
+    ethIdentity: EthIdentity,
+    setLog: (msg: string) => void,
   ) => Promise<void>;
   onFinish: () => Promise<NextStepResult>;
 }
@@ -69,6 +70,7 @@ export default function Deposit({ chainId, getInitialRegisterFees, sendProof, on
   const [ethDeposit, setEthDeposit] = useState<string>('0');
   const [sendingProof, setSendingProof] = useState<boolean>(false);
   const [registerFees, setRegisterFees] = useState<AssetValue[]>();
+  const [log, setLog] = useState('');
   const [sendingProofFinished, setSendingProofFinished] = useState<boolean>(false);
   const { ethAddress, ethSigner } = useActiveWalletEthSigner();
 
@@ -76,7 +78,7 @@ export default function Deposit({ chainId, getInitialRegisterFees, sendProof, on
     getInitialRegisterFees().then(setRegisterFees);
   }, []);
   if (sendingProof) {
-    return <CreatingAccount onFinish={onFinish} finished={sendingProofFinished} />;
+    return <CreatingAccount log={log} onFinish={onFinish} finished={sendingProofFinished} />;
   }
   return (
     <StepCard
@@ -84,8 +86,8 @@ export default function Deposit({ chainId, getInitialRegisterFees, sendProof, on
       handlePreviousStep={onBack}
       handleNextStep={async () => {
         setSendingProof(true);
-        await sendProof!(ethDeposit, getFee(registerFees!, chainId), ethAddress, ethSigner);
-        return await onFinish();
+        await sendProof!(ethDeposit, getFee(registerFees!, chainId), { ethAddress, ethSigner }, setLog);
+        setSendingProofFinished(true);
       }}
       header={'Make your First Deposit'}
     >

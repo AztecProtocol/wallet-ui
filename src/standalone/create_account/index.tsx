@@ -2,18 +2,19 @@ import { AztecKeyStore, ConstantKeyPair, EthAddress, EthereumProvider } from '@a
 import { useContext, useState } from 'react';
 import PasscodeAlias from '../../components/create_account_flow/01_PasscodeAlias/PasscodeAlias';
 import ConnectWallet from '../../components/create_account_flow/02_ConnectWallet/ConnectWallet';
-import Backup from '../../components/create_account_flow/04_Backup/Backup';
-import ReenterPasscode from '../../components/create_account_flow/05_ReenterPasscode/ReenterPasscode';
-import Deposit from '../../components/create_account_flow/06_Deposit/Deposit';
+import Backup from '../../components/create_account_flow/03_Backup/Backup';
+import ReenterPasscode from '../../components/create_account_flow/04_ReenterPasscode/ReenterPasscode';
+import Deposit from '../../components/create_account_flow/05_Deposit/Deposit';
 import { downloadRecoveryKit, generateRecoveryKey } from '../../keystore';
 import { AztecSdkContext } from '../../utils/aztecSdkContext';
 import { EthereumChainId } from '../../utils/config';
+import { setCachedEncryptedKeystore } from '../../utils/sessionUtils';
 import { BBWasmContext } from '../../utils/wasmContext';
-import { createAndExportKeyStore } from './keyStoreCreation';
-import sendProof, { AssetValue } from './sendProof';
+import createAndExportKeyStore from './createAndExportKeyStore';
+import sendRegisterProof, { AssetValue, EthIdentity } from './sendRegisterProof';
 
 export interface CreateAccountProps {
-  onAccountCreated: () => void;
+  onAccountCreated: (encryptedKeys: string) => void;
   chainId: EthereumChainId;
 }
 
@@ -77,6 +78,7 @@ export default function CreateAccount({ onAccountCreated, chainId }: CreateAccou
             generateEncryptionKey={async function (recoveryKey: ConstantKeyPair) {
               const { keyStore, encryptedKeyStore } = await createAndExportKeyStore(recoveryKey!, passcode, wasm);
               setKeyStore(keyStore);
+              setEncryptedKeyStore(encryptedKeyStore);
               return encryptedKeyStore;
             }}
             generateRecoveryKey={async function (signMessage: () => Promise<`0x${string}`>) {
@@ -86,19 +88,6 @@ export default function CreateAccount({ onAccountCreated, chainId }: CreateAccou
             }}
           />
         );
-      // case Step._03_RecoveryKey:
-      //   return (
-      //     <RecoveryKit
-      //       onBack={onBack}
-      //       onFinish={async () => {
-      //         onNext();
-      //       }}
-      //       downloadRecoveryKit={async function () {
-      //         // TODO download functionality
-      //       }}
-      //       generateRecoveryKey={async function () {}}
-      //     />
-      //   );
       case Step._03_BackupKeys:
         return (
           <Backup
@@ -131,17 +120,26 @@ export default function CreateAccount({ onAccountCreated, chainId }: CreateAccou
           <Deposit
             onBack={onBack}
             onFinish={async () => {
-              onAccountCreated();
+              onAccountCreated(encryptedKeyStore!);
             }}
             getInitialRegisterFees={() => sdk.getRegisterFees(0)}
             chainId={chainId}
             sendProof={async function (
               ethDeposit: string,
               registerFee: AssetValue,
-              depositorAddress: EthAddress,
-              depositorSigner: EthereumProvider,
+              depositor: EthIdentity,
+              setLog: (msg: string) => void,
             ) {
-              await sendProof(sdk!, keyStore!, registerFee, ethDeposit, userAlias, depositorAddress, depositorSigner);
+              await sendRegisterProof({
+                sdk: sdk!,
+                keyStore: keyStore!,
+                registerFee,
+                ethDeposit,
+                alias: userAlias,
+                depositor,
+                updateLog: setLog,
+              });
+              setCachedEncryptedKeystore(encryptedKeyStore!);
             }}
           />
         );
