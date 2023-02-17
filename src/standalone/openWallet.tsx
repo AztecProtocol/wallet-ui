@@ -1,10 +1,6 @@
 import { AztecBuffer, AztecKeyStore, BarretenbergWasm } from '@aztec/sdk';
 import { useContext, useEffect, useState } from 'react';
-import {
-  createNamespace,
-  extractAndStoreSession,
-  WalletConnectProposal,
-} from './useWalletConnectServer.js';
+import { createNamespace, extractAndStoreSession, WalletConnectProposal } from './useWalletConnectServer.js';
 import { getCachedPassword } from '../utils/sessionUtils.js';
 import { SessionTypes } from '@walletconnect/types';
 import { BBWasmContext } from '../utils/wasmContext.js';
