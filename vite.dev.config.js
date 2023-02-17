@@ -24,9 +24,9 @@ export default defineConfig({
     viteTsconfigPaths(),
     svgrPlugin(),
     EnvironmentPlugin({
-      ETHEREUM_CHAIN_ID: 1,
-      AZTEC_CHAIN_ID: 677868,
-      NODE_ENV: 'production',
+      ETHEREUM_CHAIN_ID: 1337,
+      AZTEC_CHAIN_ID: 671337,
+      NODE_ENV: 'development',
       WALLETCONNECT_PROJECT_ID: process.env.WALLETCONNECT_PROJECT_ID,
     }),
     viteStaticCopy({
