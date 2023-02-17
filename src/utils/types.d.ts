@@ -1,3 +1,3 @@
-declare module "browserify-cipher" {
+declare module 'browserify-cipher' {
   function createVerify(...args: any[]): any;
 }

@@ -12,12 +12,7 @@ interface BackupProps {
   onBack?: () => void;
   onFinish: () => Promise<NextStepResult>;
 }
-export default function Backup({
-  generateRecoveryKey,
-  doDownloadRecoveryKit,
-  onBack,
-  onFinish,
-}: BackupProps) {
+export default function Backup({ generateRecoveryKey, doDownloadRecoveryKit, onBack, onFinish }: BackupProps) {
   const [kitDownloaded, setKitDownloaded] = useState(false);
 
   const signMessage = useSignMessage({

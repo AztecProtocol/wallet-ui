@@ -5,12 +5,15 @@
   "type": "module",
   "scripts": {
     "build": "yarn clean && BUILD_PATH='./dest' vite build",
-    "start": "serve -p 1235 ./dest",
-    "start:dev": "PORT=1235 vite",
+    "build:devnet": "yarn clean && BUILD_PATH='./dest' vite build --config vite.dev.config.js",
+    "serve": "serve -p 1235 ./dest",
+    "start": "PORT=1235 vite",
+    "start:devnet": "PORT=1235 vite --config vite.dev.config.js",
     "clean": "rm -rf ./dest",
     "test": "NODE_NO_WARNINGS=1 node --experimental-vm-modules $(yarn bin jest) --no-cache --testTimeout=1000000",
     "test-debug": "NODE_NO_WARNINGS=1 node --inspect-brk=0.0.0.0:9220 --experimental-vm-modules $(yarn bin jest) --no-cache --runInBand --testTimeout=1000000",
-    "formatting": "run -T prettier --check ./src && run -T eslint --max-warnings 0 ./src"
+    "do-format": "prettier -w ./src",
+    "formatting": "prettier --check ./src"
   },
   "jest": {
     "preset": "ts-jest/presets/default-esm",
@@ -39,6 +42,7 @@
     "last 1 chrome version"
   ],
   "dependencies": {
+    "@aztec/aztec-ui": "^0.0.2",
     "@aztec/barretenberg": "2.2.0-alpha.2",
     "@aztec/blockchain": "2.2.0-alpha.2",
     "@aztec/sdk": "2.2.0-alpha.2",
@@ -76,18 +80,18 @@
     "copy-webpack-plugin": "^11.0.0",
     "cross-fetch": "^3.1.5",
     "debug": "^4.3.4",
+    "eslint": "^8.34.0",
     "events": "^3.3.0",
     "html-webpack-plugin": "^5.5.0",
     "jest": "^29.4.1",
     "jest-environment-jsdom": "^29.4.2",
     "jest-fetch-mock": "^3.0.3",
     "msw": "^1.0.0",
-    "node-stdlib-browser": "^1.2.0",
+    "prettier": "^2.8.4",
     "react": "^18.2.0",
     "react-device-detect": "^2.2.2",
     "react-dom": "^18.2.0",
     "resolve-typescript-plugin": "^1.2.0",
-    "rollup-plugin-node-polyfills": "^0.2.1",
     "sass": "^1.58.1",
     "stream-browserify": "^3.0.0",
     "styled-components": "^5.3.5",
