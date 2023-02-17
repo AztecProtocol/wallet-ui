@@ -1,14 +1,13 @@
-import { AztecKeyStore, ConstantKeyPair, EthAddress, EthereumProvider } from '@aztec/sdk';
+import { AztecKeyStore, ConstantKeyPair } from '@aztec/sdk';
 import { useContext, useState } from 'react';
 import PasscodeAlias from '../../components/create_account_flow/01_PasscodeAlias/PasscodeAlias';
-import ConnectWallet from '../../components/create_account_flow/02_ConnectWallet/ConnectWallet';
+import EncryptionKey from '../../components/create_account_flow/02_EncryptionKey/EncryptionKey';
 import Backup from '../../components/create_account_flow/03_Backup/Backup';
 import ReenterPasscode from '../../components/create_account_flow/04_ReenterPasscode/ReenterPasscode';
 import Deposit from '../../components/create_account_flow/05_Deposit/Deposit';
 import { downloadRecoveryKit, generateRecoveryKey } from '../../keystore';
 import { AztecSdkContext } from '../../utils/aztecSdkContext';
 import { EthereumChainId } from '../../utils/config';
-import { setCachedEncryptedKeystore } from '../../utils/sessionUtils';
 import { BBWasmContext } from '../../utils/wasmContext';
 import createAndExportKeyStore from './createAndExportKeyStore';
 import sendRegisterProof, { AssetValue, EthIdentity } from './sendRegisterProof';
@@ -20,7 +19,7 @@ export interface CreateAccountProps {
 
 enum Step {
   _01_PasscodeAlias,
-  _02_ConnectWallet,
+  _02_EncryptionKey,
   _03_BackupKeys,
   _04_ReenterPasscode,
   _05_Deposit,
@@ -59,27 +58,24 @@ export default function CreateAccount({ onAccountCreated, chainId }: CreateAccou
         }
         setPasscode(passcode);
         setUserAlias(alias);
+        const { keyStore, encryptedKeyStore } = await createAndExportKeyStore(passcode, wasm);
+        setKeyStore(keyStore);
+        setEncryptedKeyStore(encryptedKeyStore);
         onNext();
-        return undefined;
       }}
     />
   );
   const renderStep = () => {
     switch (currentStep) {
       // case 1 is handled above
-      case Step._02_ConnectWallet:
+      case Step._02_EncryptionKey:
         return (
-          <ConnectWallet
+          <EncryptionKey
             onBack={onBack}
             onFinish={async () => {
               onNext();
             }}
-            generateEncryptionKey={async function () {
-              const { keyStore, encryptedKeyStore } = await createAndExportKeyStore(passcode, wasm);
-              setKeyStore(keyStore);
-              setEncryptedKeyStore(encryptedKeyStore);
-              return encryptedKeyStore;
-            }}
+            encryptedKeyStore={encryptedKeyStore!}
           />
         );
       case Step._03_BackupKeys:
@@ -88,9 +84,6 @@ export default function CreateAccount({ onAccountCreated, chainId }: CreateAccou
             onBack={onBack}
             onFinish={async () => {
               onNext();
-            }}
-            doDownloadKey={async function () {
-              // TODO download functionality for encrypted keys
             }}
             generateRecoveryKey={async function (signMessage: () => Promise<`0x${string}`>) {
               return generateRecoveryKey(await signMessage(), wasm);
@@ -136,7 +129,6 @@ export default function CreateAccount({ onAccountCreated, chainId }: CreateAccou
                 depositor,
                 updateLog: setLog,
               });
-              setCachedEncryptedKeystore(encryptedKeyStore!);
             }}
           />
         );

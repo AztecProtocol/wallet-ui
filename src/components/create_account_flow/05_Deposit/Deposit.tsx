@@ -90,11 +90,11 @@ export default function Deposit({ chainId, getInitialRegisterFees, sendProof, on
         await sendProof!(ethDeposit, getFee(registerFees!, chainId), { ethAddress, ethSigner }, setLog);
         setSendingProofFinished(true);
       }}
-      header={'Make your First Deposit'}
+      header="Make your First Deposit"
     >
       {/* <input value={ethDeposit} onChange={event => setEthDeposit(event.target.value)} /> */}
       <Field
-        label={'Deposit Amount (optional)'}
+        label="Deposit Amount (optional)"
         value={ethDeposit}
         balance={ethBalance.data?.formatted}
         layer={Layer.L1}

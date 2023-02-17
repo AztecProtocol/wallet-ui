@@ -26,7 +26,7 @@ export default function PasscodeAlias({
   }
   return (
     <StepCard
-      header={'Choose Alias & Passcode'}
+      header="Choose Alias & Passcode"
       nextButtonDisabled={!isValidAlias(alias) || !isValidPasscode(passcode) || reconfirmPasscode !== passcode}
       handlePreviousStep={onBack}
       handleNextStep={() => onFinish(passcode, alias)}
@@ -44,7 +44,7 @@ export default function PasscodeAlias({
         label="Choose a passcode"
         status={isValidPasscode(alias) ? FieldStatus.Success : undefined}
         placeholder="Enter passcode"
-        autoComplete={'new-password'}
+        autoComplete="new-password"
         onChangeValue={setPasscode}
       />
       <Field
@@ -59,7 +59,7 @@ export default function PasscodeAlias({
             : undefined
         }
         placeholder="Re-enter passcode"
-        autoComplete={'new-password'}
+        autoComplete="new-password"
         onChangeValue={setReconfirmPasscode}
       />
     </StepCard>
