@@ -1,44 +1,28 @@
 import '@rainbow-me/rainbowkit/styles.css';
 import { WagmiConfig } from 'wagmi';
 import { lightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { AztecKeyStore } from '@ludamad-aztec/sdk';
 
 import render from '../components/render';
 import { BBWasmContext, BBWasmProvider } from '../utils/wasmContext';
-import { getAztecChainId, getChainId, getWagmiRainbowConfig, WagmiRainbowConfig } from '../utils/config';
+import { getChainId, getWagmiRainbowConfig, WagmiRainbowConfig } from '../utils/config';
 import { useContext, useEffect, useState } from 'react';
 import { AztecSdkProvider } from '../utils/aztecSdkContext';
 import AppCard from '../components/AppCard';
 import CreateAccount from './create_account';
 import OpenWallet from './openWallet';
-import { getCachedEncryptedKeystore, setCachedEncryptedKeystore } from '../utils/sessionUtils';
-import { useWalletConnectServer, WalletConnectProposal } from './useWalletConnectServer';
-import { AztecKeyStore } from '@ludamad-aztec/sdk';
-import { AcceptProposal } from './acceptProposal';
+import { setCachedEncryptedKeystore } from '../utils/sessionUtils';
+import { SignClientProvider } from '../walletConnect/signClientContext';
+import WalletOpen from './wallet_open';
 
 function StandaloneApp() {
   const chainId = getChainId();
   const [wagmiConfig, setWagmiConfig] = useState<WagmiRainbowConfig>();
-  const [proposal, setProposal] = useState<WalletConnectProposal | null>(null);
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
   const [keyStore, setKeyStore] = useState<AztecKeyStore | null>(null);
 
-  const {
-    client,
-    initError: wcInitError,
-    init: wcInit,
-  } = useWalletConnectServer({
-    onSessionProposal: proposal => {
-      setProposal(proposal);
-    },
-  });
-
-  async function init() {
-    setWagmiConfig(getWagmiRainbowConfig(chainId));
-    await wcInit();
-  }
-
   useEffect(() => {
-    init();
+    setWagmiConfig(getWagmiRainbowConfig(chainId));
   }, []);
 
   const wasm = useContext(BBWasmContext);
@@ -48,11 +32,9 @@ function StandaloneApp() {
   }
 
   function renderView() {
-    if (client && proposal && wasm) {
+    if (wasm) {
       if (keyStore) {
-        return (
-          <AcceptProposal aztecChainId={getAztecChainId()} client={client} proposal={proposal} keyStore={keyStore} />
-        );
+        return <WalletOpen keyStore={keyStore} />;
       }
       if (isCreatingAccount) {
         return (
@@ -67,13 +49,16 @@ function StandaloneApp() {
       } else {
         return (
           <OpenWallet
-            onKeyStoreOpened={keyStore => setKeyStore(keyStore)}
+            onKeyStoreOpened={(keyStore, encryptedKeystore) => {
+              setKeyStore(keyStore);
+              setCachedEncryptedKeystore(encryptedKeystore);
+            }}
             onCreateAccount={() => setIsCreatingAccount(true)}
           />
         );
       }
     }
-    return <div>Loading... {wcInitError ? wcInitError.message : ''}</div>;
+    return <div>Loading...</div>;
   }
 
   return (
@@ -97,7 +82,9 @@ function StandaloneApp() {
 render(
   <AztecSdkProvider chainId={getChainId()}>
     <BBWasmProvider>
-      <StandaloneApp />
+      <SignClientProvider iframed={false}>
+        <StandaloneApp />
+      </SignClientProvider>
     </BBWasmProvider>
   </AztecSdkProvider>,
 );

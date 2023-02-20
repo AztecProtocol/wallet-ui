@@ -6,7 +6,7 @@ import { SignIn } from '../components/sign_in/index.js';
 
 export interface OpenWalletProps {
   onCreateAccount: () => void;
-  onKeyStoreOpened: (keyStore: AztecKeyStore) => void;
+  onKeyStoreOpened: (keyStore: AztecKeyStore, encryptedKeystore: string) => void;
 }
 
 export default function OpenWallet(props: OpenWalletProps) {
@@ -24,7 +24,7 @@ export default function OpenWallet(props: OpenWalletProps) {
       onFinish={async function (encryptedKeystore: string, passcode: string) {
         try {
           const keyStore = await AztecKeyStore.open(AztecBuffer.from(encryptedKeystore, 'hex'), passcode, wasm, []);
-          props.onKeyStoreOpened(keyStore);
+          props.onKeyStoreOpened(keyStore, encryptedKeystore);
         } catch (error: any) {
           return { error: error.toString() };
         }

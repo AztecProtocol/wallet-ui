@@ -1,9 +1,8 @@
 import { WalletConnectAztecWalletProviderServer } from '@ludamad-aztec/sdk';
-import { SignClient } from '@walletconnect/sign-client/dist/types/client';
 import { SessionTypes } from '@walletconnect/types';
-import { useState, useEffect } from 'react';
-import { createSignClient } from '../walletConnect/createSignClient';
-import { getTopic, handleHandoverMessage, HandoverResult, IFRAME_HANDOVER_TYPE } from './handleHandover';
+import { useState, useEffect, useContext } from 'react';
+import { SignClientContext } from '../walletConnect/signClientContext';
+import { getTopic, handleHandoverMessage, IFRAME_HANDOVER_TYPE } from './handleHandover';
 import { WalletConnectKeyStore } from './WalletConnectKeyStore';
 
 /**
@@ -15,25 +14,18 @@ export default function useWalletConnectKeyStore(
   showApproveProofsRequest: () => Promise<{ approved: boolean; error: string }>,
   showApproveProofInputsRequest: () => Promise<{ approved: boolean; error: string }>,
 ) {
-  const [client, setClient] = useState<SignClient>();
+  const { client } = useContext(SignClientContext);
+
   const [session, setSession] = useState<SessionTypes.Struct>();
   const [keyStore, setKeyStore] = useState<WalletConnectKeyStore>();
 
   useEffect(() => {
-    async function init() {
-      const client = await createSignClient(true);
-      setClient(client);
+    if (client) {
       aztecAWPServer.setClient(client);
       const cachedSession = client.session.getAll().find(({ topic }) => topic === getTopic());
       if (cachedSession) {
         setSession(cachedSession);
       }
-    }
-    init().catch(console.error);
-  }, []);
-
-  useEffect(() => {
-    if (client) {
       const handler = async (event: MessageEvent<any>) => {
         if (event.origin === window.location.origin) {
           switch (event.data.type) {
