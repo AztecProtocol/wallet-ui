@@ -10,19 +10,21 @@ export interface OpenWalletProps {
 }
 
 export default function OpenWallet(props: OpenWalletProps) {
-  const [cachedEncryptedKeystore] = useState<string | null>(getCachedEncryptedKeystore());
+  const [cachedEncryptedKeystore, setCachedEncryptedKeystore] = useState<string | null>(getCachedEncryptedKeystore());
   const wasm = useContext<BarretenbergWasm>(BBWasmContext);
 
   return (
     <SignIn
-      initialEncryptedKeystore={cachedEncryptedKeystore}
-      showCreate={true}
+      showEncryptedKeystore={!cachedEncryptedKeystore}
+      showCreate={!cachedEncryptedKeystore}
       isValidPasscode={function (passcode: string): boolean {
         return passcode.length > 0; // TODO
       }}
       onCreateAccount={props.onCreateAccount}
-      onFinish={async function (encryptedKeystore: string, passcode: string) {
+      onChangeAccount={() => setCachedEncryptedKeystore(null)}
+      onFinish={async function (userInputEncryptedKeystore: string, passcode: string) {
         try {
+          const encryptedKeystore = cachedEncryptedKeystore || userInputEncryptedKeystore;
           const keyStore = await AztecKeyStore.open(AztecBuffer.from(encryptedKeystore, 'hex'), passcode, wasm, []);
           props.onKeyStoreOpened(keyStore, encryptedKeystore);
         } catch (error: any) {

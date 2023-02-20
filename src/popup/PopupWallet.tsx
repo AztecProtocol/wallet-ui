@@ -10,15 +10,14 @@ import { ApprovalDialog } from '../components/approval_dialog/approval_dialog.js
 export default function PopupWallet() {
   const [keyStore, setKeyStore] = useState<AztecKeyStore | null>(null);
   const [sessionToHandover] = useState<SessionTypes.Struct | undefined>(getSessionToHandover()?.session);
-  const [cachedEncryptedKeys] = useState(getCachedEncryptedKeystore());
+  const [cachedEncryptedKeys, setCachedEncryptedKeys] = useState(getCachedEncryptedKeystore());
 
   const wasm = useContext<BarretenbergWasm>(BBWasmContext);
 
   useEffect(() => {
-    const cachedEncryptedKeystore = getCachedEncryptedKeystore();
     const cachedPassword = getCachedPassword();
-    if (cachedEncryptedKeystore && cachedPassword) {
-      AztecKeyStore.open(AztecBuffer.from(cachedEncryptedKeystore, 'hex'), cachedPassword, wasm, [])
+    if (cachedEncryptedKeys && cachedPassword) {
+      AztecKeyStore.open(AztecBuffer.from(cachedEncryptedKeys, 'hex'), cachedPassword, wasm, [])
         .then((keyStore: AztecKeyStore) => {
           setKeyStore(keyStore);
         })
@@ -30,16 +29,18 @@ export default function PopupWallet() {
     if (!keyStore) {
       return (
         <SignIn
+          showEncryptedKeystore={!cachedEncryptedKeys}
           showCreate={false}
           showForgot={false}
-          initialEncryptedKeystore={cachedEncryptedKeys}
           isValidPasscode={function (passcode: string): boolean {
             return passcode.length > 0; // TODO
           }}
           onCreateAccount={() => {}}
+          onChangeAccount={() => setCachedEncryptedKeys(null)}
           onFinish={async function (encryptedKeys: string, passcode: string) {
             try {
-              const keyStore = await AztecKeyStore.open(AztecBuffer.from(encryptedKeys, 'hex'), passcode, wasm, []);
+              const encryptedKeystore = cachedEncryptedKeys || encryptedKeys;
+              const keyStore = await AztecKeyStore.open(AztecBuffer.from(encryptedKeystore, 'hex'), passcode, wasm, []);
               setKeyStore(keyStore);
             } catch (error: any) {
               return { error: error.toString() };
