@@ -8,9 +8,10 @@ import Deposit from '../../components/create_account_flow/05_Deposit/Deposit';
 import { downloadRecoveryKit, generateRecoveryKey } from '../../keystore';
 import { AztecSdkContext } from '../../utils/aztecSdkContext';
 import { EthereumChainId } from '../../utils/config';
+import { AssetValue, mapFeesToFeeOptions } from '../../utils/fees';
 import { BBWasmContext } from '../../utils/wasmContext';
 import createAndExportKeyStore from './createAndExportKeyStore';
-import sendRegisterProof, { AssetValue, EthIdentity } from './sendRegisterProof';
+import sendRegisterProof, { EthIdentity } from './sendRegisterProof';
 
 export interface CreateAccountProps {
   onAccountCreated: (encryptedKeys: string) => void;
@@ -114,7 +115,13 @@ export default function CreateAccount({ onAccountCreated, onCancel, chainId }: C
             onFinish={async () => {
               onAccountCreated(encryptedKeyStore!);
             }}
-            getInitialRegisterFees={() => sdk.getRegisterFees(0)}
+            getInitialRegisterFees={async () => {
+              const fees = await sdk.getRegisterFees(0);
+              return {
+                fees,
+                feeOptions: mapFeesToFeeOptions(sdk, fees),
+              };
+            }}
             chainId={chainId}
             sendProof={async function (
               ethDeposit: string,

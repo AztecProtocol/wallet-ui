@@ -1,60 +1,19 @@
-import { Field, Layer } from '@aztec/aztec-ui';
+import { FeeSelector, FeeSelectorStatus, Field, Layer, RadioButtonOption } from '@aztec/aztec-ui';
 import { useEffect, useState } from 'react';
 import { useBalance } from 'wagmi';
+
 import { EthIdentity } from '../../../standalone/create_account/sendRegisterProof';
 import { useActiveWalletEthSigner } from '../../../utils/activeWalletHooks';
 import { EthereumChainId } from '../../../utils/config';
+import { AssetValue, TxSettlementTime } from '../../../utils/fees';
 import { chainIdToNetwork } from '../../../utils/networks';
 import StepCard, { NextStepResult } from '../../StepCard';
 import CreatingAccount from './CreatingAccount';
 
-const assetOptions = [
-  { value: 0, label: 'ETH' },
-  { value: 1, label: 'DAI' },
-  { value: 2, label: 'USDC' },
-  { value: 2, label: 'USDT' },
-];
-
-const feeOptions = [
-  {
-    id: 0,
-    content: {
-      label: 'Slow',
-      timeStr: '10 hours',
-      feeAmountStr: '0.00031 ETH',
-      feeBulkPriceStr: '$10.40',
-    },
-  },
-  {
-    id: 1,
-    content: {
-      label: 'Instant',
-      timeStr: '7 minutes',
-      feeAmountStr: '0.0061 ETH',
-      feeBulkPriceStr: '$205.36',
-    },
-  },
-];
-
-// Ideally we want to get this from bb.js
-interface AssetValue {
-  assetId: number;
-  value: bigint;
-}
-
-function getFee(fees: AssetValue[], chainId: EthereumChainId) {
-  const network = chainIdToNetwork(chainId);
-  if (network?.isFrequent) {
-    // Pay for the whole rollup
-    return fees[1];
-  }
-  return fees[0];
-}
-
 interface DepositProps {
-  onBack?: () => void;
-  getInitialRegisterFees(): Promise<AssetValue[]>;
   chainId: EthereumChainId;
+  onBack?: () => void;
+  getInitialRegisterFees(): Promise<{ fees: AssetValue[]; feeOptions: RadioButtonOption<TxSettlementTime>[] }>;
   // Disabled if send proof is undefined, e.g. if a component is loading
   sendProof: (
     ethDeposit: string,
@@ -68,15 +27,22 @@ interface DepositProps {
 export default function Deposit({ chainId, getInitialRegisterFees, sendProof, onFinish, onBack }: DepositProps) {
   const [ethDeposit, setEthDeposit] = useState<string>('0');
   const [sendingProof, setSendingProof] = useState<boolean>(false);
-  const [registerFees, setRegisterFees] = useState<AssetValue[]>();
+  const [registerFees, setRegisterFees] = useState<AssetValue[]>([]);
+  const [registerFeeOptions, setRegisterFeeOptions] = useState<RadioButtonOption<TxSettlementTime>[]>([]);
+  const [selectedFee, setSelectedFee] = useState<TxSettlementTime>(
+    chainIdToNetwork(chainId)?.isFrequent ? TxSettlementTime.INSTANT : TxSettlementTime.NEXT_ROLLUP,
+  );
   const [log, setLog] = useState('');
   const [sendingProofFinished, setSendingProofFinished] = useState<boolean>(false);
-  const { ethAddress, ethSigner } = useActiveWalletEthSigner();
 
+  const { ethAddress, ethSigner } = useActiveWalletEthSigner();
   const ethBalance = useBalance({ address: ethAddress?.toString() });
 
   useEffect(() => {
-    getInitialRegisterFees().then(setRegisterFees);
+    getInitialRegisterFees().then(({ fees, feeOptions }) => {
+      setRegisterFees(fees);
+      setRegisterFeeOptions(feeOptions);
+    });
   }, []);
   if (sendingProof) {
     return <CreatingAccount log={log} onFinish={onFinish} finished={sendingProofFinished} />;
@@ -88,7 +54,7 @@ export default function Deposit({ chainId, getInitialRegisterFees, sendProof, on
       handleNextStep={async () => {
         try {
           setSendingProof(true);
-          await sendProof!(ethDeposit, getFee(registerFees!, chainId), { ethAddress, ethSigner }, setLog);
+          await sendProof(ethDeposit, registerFees[selectedFee], { ethAddress, ethSigner }, setLog);
           setSendingProofFinished(true);
         } catch (error) {
           setLog((error as Error).message);
@@ -104,23 +70,18 @@ export default function Deposit({ chainId, getInitialRegisterFees, sendProof, on
         layer={Layer.L1}
         selectedAsset={{ symbol: 'ETH', id: 0 }}
         onChangeValue={setEthDeposit}
-        onClickMax={() => setEthDeposit(ethBalance.data?.formatted || '0')}
         allowAssetSelection={false}
-        assetOptions={assetOptions}
       />
-      <h2>Gas fee</h2>
-      <input
-        disabled={true}
-        value={registerFees ? getFee(registerFees, chainId).value.toString() : 'Loading...'}
-      ></input>
-      {/* TODO real fee selection */}
-      {/* <FeeSelector
-            value={0}
-            label={"Gas Fee"}
-            placeholder={"Placeholder"}
-            options={feeOptions}
-            onChangeValue={() => {}}
-          /> */}
+      <FeeSelector
+        placeholder={'Select a speed'}
+        label={'Select a speed for your transaction'}
+        sublabel={`There are several options to choose from, depending on your budget`}
+        value={selectedFee}
+        options={registerFeeOptions}
+        status={selectedFee !== null ? FeeSelectorStatus.Success : undefined}
+        balance={ethBalance.data?.formatted}
+        onChangeValue={setSelectedFee}
+      />
     </StepCard>
   );
 }
