@@ -1,48 +1,31 @@
-import { useState, useEffect, useContext } from 'react';
-import { AppProps } from '../components/appProps.js';
+import { useState, useEffect, useContext, useMemo } from 'react';
 import { BarretenbergWasm, ServerRollupProvider, WalletConnectAztecWalletProviderServer } from '@aztec/sdk';
 import { openPopup } from './handleHandover.js';
 import useWalletConnectKeyStore from './useWalletConnectKeyStore.js';
 import { BBWasmContext } from '../utils/wasmContext.js';
 import { PopupTrigger } from '../components/popup_trigger/popup_trigger.js';
+import { ApproveKeyStoreRequest } from '../components/approve_keystore_request/approve_keystore_request.js';
+import { useIframeToggle } from './useIframeToggle.js';
 
 function getDappHostname() {
   const url = new URL(document.referrer);
   return url.hostname;
 }
 
-export default function IframeWallet(props: AppProps) {
-  const [aztecAWPServer] = useState<WalletConnectAztecWalletProviderServer>(
-    new WalletConnectAztecWalletProviderServer(),
-  );
+export default function IframeWallet() {
+  const aztecAWPServer = useMemo(() => new WalletConnectAztecWalletProviderServer(), []);
+
   const [initialized, setInitialized] = useState<boolean>(false);
+
   const wasm = useContext<BarretenbergWasm>(BBWasmContext);
 
-  const showApproveProofsRequest = async (): Promise<{ approved: boolean; error: string }> => {
-    console.log('showApproveProofsRequest TODO');
-    return Promise.resolve({ approved: true, error: '' });
-  };
-  const showApproveProofInputsRequest = async (): Promise<{ approved: boolean; error: string }> => {
-    console.log('showApproveProofInputsRequest TODO');
-    return Promise.resolve({ approved: true, error: '' });
-  };
-  const { client, keyStore, session } = useWalletConnectKeyStore(
-    aztecAWPServer,
-    showApproveProofsRequest,
-    showApproveProofInputsRequest,
-  );
+  const { client, keyStore, session, requests } = useWalletConnectKeyStore(aztecAWPServer);
+  const { setIframeOpen } = useIframeToggle(aztecAWPServer);
 
   useEffect(() => {
-    if (!initialized) {
-      // Sending the open iframe soon after IFRAME_READY makes it not to be listened :/
-      setTimeout(() => {
-        console.log('requesting open');
-        aztecAWPServer.openIframe().catch(console.error);
-      }, 500);
-    } else {
-      aztecAWPServer.closeIframe().catch(console.error);
-    }
-  }, [initialized]);
+    console.log('Handling change', initialized, requests.length > 0, !initialized || requests.length > 0);
+    setIframeOpen(!initialized || requests.length > 0);
+  }, [initialized, requests]);
 
   useEffect(() => {
     if (keyStore && client && session) {
@@ -68,6 +51,21 @@ export default function IframeWallet(props: AppProps) {
         onClick={() => {
           openPopup();
         }}
+      />
+    );
+  }
+
+  if (requests.length > 0) {
+    const request = requests[0];
+    return (
+      <ApproveKeyStoreRequest
+        request={request.keyStoreRequest}
+        onUserResponse={approved =>
+          request.deferredPromise.resolve({
+            approved,
+            error: approved ? '' : 'User rejected request',
+          })
+        }
       />
     );
   }

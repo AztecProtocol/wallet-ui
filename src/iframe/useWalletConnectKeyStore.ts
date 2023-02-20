@@ -1,23 +1,23 @@
 import { WalletConnectAztecWalletProviderServer } from '@aztec/sdk';
 import { SessionTypes } from '@walletconnect/types';
 import { useState, useEffect, useContext } from 'react';
+import { createDeferredPromise, DeferredPromise } from '../utils/deferredPromise';
 import { SignClientContext } from '../walletConnect/signClientContext';
 import { getTopic, handleHandoverMessage, IFRAME_HANDOVER_TYPE } from './handleHandover';
-import { WalletConnectKeyStore } from './WalletConnectKeyStore';
+import { KeyStoreRequestResponse, KeyStoreRequest, WalletConnectKeyStore } from './WalletConnectKeyStore';
 
 /**
  * Performs loading of WalletConnectKeyStore using a wallet connect handover
  * session from a popup/opened window from the popup/ folder.
  */
-export default function useWalletConnectKeyStore(
-  aztecAWPServer: WalletConnectAztecWalletProviderServer,
-  showApproveProofsRequest: () => Promise<{ approved: boolean; error: string }>,
-  showApproveProofInputsRequest: () => Promise<{ approved: boolean; error: string }>,
-) {
+export default function useWalletConnectKeyStore(aztecAWPServer: WalletConnectAztecWalletProviderServer) {
   const { client } = useContext(SignClientContext);
 
   const [session, setSession] = useState<SessionTypes.Struct>();
   const [keyStore, setKeyStore] = useState<WalletConnectKeyStore>();
+  const [requests, setRequests] = useState<
+    { keyStoreRequest: KeyStoreRequest; deferredPromise: DeferredPromise<KeyStoreRequestResponse> }[]
+  >([]);
 
   useEffect(() => {
     if (client) {
@@ -34,7 +34,19 @@ export default function useWalletConnectKeyStore(
               if (session) {
                 setSession(session);
               }
-              setKeyStore(new WalletConnectKeyStore(keyStore, showApproveProofsRequest, showApproveProofInputsRequest));
+              setKeyStore(
+                new WalletConnectKeyStore(keyStore, async keyStoreRequest => {
+                  const { promise, deferredPromise } = createDeferredPromise<KeyStoreRequestResponse>();
+                  const request = { keyStoreRequest: keyStoreRequest, deferredPromise };
+
+                  setRequests(requests => [...requests, request]);
+                  try {
+                    return await promise;
+                  } finally {
+                    setRequests(requests => requests.filter(r => r !== request));
+                  }
+                }),
+              );
               break;
             default:
               console.log('Unknown message', event.data);
@@ -47,5 +59,5 @@ export default function useWalletConnectKeyStore(
     return () => {};
   }, [client]);
 
-  return { client, keyStore, session };
+  return { client, keyStore, session, requests };
 }
