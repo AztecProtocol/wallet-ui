@@ -1,7 +1,7 @@
 import '@rainbow-me/rainbowkit/styles.css';
 import { WagmiConfig } from 'wagmi';
 import { lightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
-import { AztecKeyStore } from '@ludamad-aztec/sdk';
+import { AztecKeyStore } from '@aztec/sdk';
 
 import render from '../components/render';
 import { BBWasmContext, BBWasmProvider } from '../utils/wasmContext';

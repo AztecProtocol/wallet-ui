@@ -1,4 +1,4 @@
-import { SchnorrSignature, ProofInput, KeyStore, KeyPair, Permission, AztecKeyStore } from '@ludamad-aztec/sdk';
+import { SchnorrSignature, ProofInput, KeyStore, KeyPair, Permission, AztecKeyStore } from '@aztec/sdk';
 
 export class WalletConnectKeyStore implements KeyStore {
   constructor(

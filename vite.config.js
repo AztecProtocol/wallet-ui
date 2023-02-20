@@ -33,11 +33,11 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         {
-          src: `${path.dirname(require.resolve('@ludamad-aztec/sdk'))}/aztec-connect.wasm`,
+          src: `${path.dirname(require.resolve('@aztec/sdk'))}/aztec-connect.wasm`,
           dest: '',
         },
         {
-          src: `${path.dirname(require.resolve('@ludamad-aztec/sdk'))}/web_worker.js`,
+          src: `${path.dirname(require.resolve('@aztec/sdk'))}/web_worker.js`,
           dest: '',
         },
       ],

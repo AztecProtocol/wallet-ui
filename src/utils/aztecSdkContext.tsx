@@ -1,4 +1,4 @@
-import { AztecSdk, createAztecSdk, JsonRpcProvider } from '@ludamad-aztec/sdk';
+import { AztecSdk, createAztecSdk, JsonRpcProvider } from '@aztec/sdk';
 import { createContext, ReactNode, useEffect, useState } from 'react';
 import { EthereumChainId, getEthereumHost } from './config';
 import { chainIdToNetwork } from './networks';

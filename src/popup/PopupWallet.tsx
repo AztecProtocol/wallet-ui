@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { sendHandoverMessage, getSessionToHandover } from './handoverSession.js';
 import { getCachedEncryptedKeystore, getCachedPassword } from '../utils/sessionUtils.js';
-import { AztecKeyStore, AztecBuffer, BarretenbergWasm } from '@ludamad-aztec/sdk';
+import { AztecKeyStore, AztecBuffer, BarretenbergWasm } from '@aztec/sdk';
 import { BBWasmContext } from '../utils/wasmContext.js';
 import { SignIn } from '../components/sign_in/sign_in.js';
 import { SessionTypes } from '@walletconnect/types';
