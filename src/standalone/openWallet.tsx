@@ -1,5 +1,5 @@
 import { AztecBuffer, AztecKeyStore, BarretenbergWasm } from '@aztec/sdk';
-import { useContext, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { getCachedEncryptedKeystore } from '../utils/sessionUtils.js';
 import { BBWasmContext } from '../utils/wasmContext.js';
 import { SignIn } from '../components/sign_in/index.js';
@@ -10,7 +10,7 @@ export interface OpenWalletProps {
 }
 
 export default function OpenWallet(props: OpenWalletProps) {
-  const [cachedEncryptedKeystore, setCachedEncryptedKeystore] = useState<string | null>(getCachedEncryptedKeystore());
+  const cachedEncryptedKeystore = useMemo(() => getCachedEncryptedKeystore(), []);
   const wasm = useContext<BarretenbergWasm>(BBWasmContext);
 
   return (
@@ -21,7 +21,6 @@ export default function OpenWallet(props: OpenWalletProps) {
         return passcode.length > 0; // TODO
       }}
       onCreateAccount={props.onCreateAccount}
-      onChangeAccount={() => setCachedEncryptedKeystore(null)}
       onFinish={async function (userInputEncryptedKeystore: string, passcode: string) {
         try {
           const encryptedKeystore = cachedEncryptedKeystore || userInputEncryptedKeystore;

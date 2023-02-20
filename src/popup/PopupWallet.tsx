@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { sendHandoverMessage, getSessionToHandover } from './handoverSession.js';
 import { getCachedEncryptedKeystore, getCachedPassword } from '../utils/sessionUtils.js';
 import { AztecKeyStore, AztecBuffer, BarretenbergWasm } from '@aztec/sdk';
@@ -10,7 +10,7 @@ import { ApprovalDialog } from '../components/approval_dialog/approval_dialog.js
 export default function PopupWallet() {
   const [keyStore, setKeyStore] = useState<AztecKeyStore | null>(null);
   const [sessionToHandover] = useState<SessionTypes.Struct | undefined>(getSessionToHandover()?.session);
-  const [cachedEncryptedKeys, setCachedEncryptedKeys] = useState(getCachedEncryptedKeystore());
+  const cachedEncryptedKeys = useMemo(() => getCachedEncryptedKeystore(), []);
 
   const wasm = useContext<BarretenbergWasm>(BBWasmContext);
 
@@ -36,7 +36,6 @@ export default function PopupWallet() {
             return passcode.length > 0; // TODO
           }}
           onCreateAccount={() => {}}
-          onChangeAccount={() => setCachedEncryptedKeys(null)}
           onFinish={async function (encryptedKeys: string, passcode: string) {
             try {
               const encryptedKeystore = cachedEncryptedKeys || encryptedKeys;

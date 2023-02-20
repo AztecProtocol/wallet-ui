@@ -7,9 +7,9 @@ import { PopupTrigger } from '../components/popup_trigger/popup_trigger.js';
 import { ApproveKeyStoreRequest } from '../components/approve_keystore_request/approve_keystore_request.js';
 import { useIframeToggle } from './useIframeToggle.js';
 
-function getDappHostname() {
+function getDappOrigin() {
   const url = new URL(document.referrer);
-  return url.hostname;
+  return url.origin;
 }
 
 export default function IframeWallet() {
@@ -23,7 +23,6 @@ export default function IframeWallet() {
   const { setIframeOpen } = useIframeToggle(aztecAWPServer);
 
   useEffect(() => {
-    console.log('Handling change', initialized, requests.length > 0, !initialized || requests.length > 0);
     setIframeOpen(!initialized || requests.length > 0);
   }, [initialized, requests]);
 
@@ -47,7 +46,7 @@ export default function IframeWallet() {
   if (!initialized) {
     return (
       <PopupTrigger
-        dappHostname={getDappHostname()}
+        dappOrigin={getDappOrigin()}
         onClick={() => {
           openPopup();
         }}
@@ -59,6 +58,7 @@ export default function IframeWallet() {
     const request = requests[0];
     return (
       <ApproveKeyStoreRequest
+        dappOrigin={getDappOrigin()}
         request={request.keyStoreRequest}
         onUserResponse={approved =>
           request.deferredPromise.resolve({

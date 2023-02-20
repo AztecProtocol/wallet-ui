@@ -5,10 +5,8 @@ const MIN_TIME_OPEN = 500;
 
 async function changeOpenState(server: WalletConnectAztecWalletProviderServer, openState: boolean) {
   if (openState) {
-    console.log('Opening iframe');
     await server.openIframe();
   } else {
-    console.log('Closing iframe');
     await server.closeIframe();
   }
 }
@@ -34,7 +32,6 @@ export function useIframeToggle(server: WalletConnectAztecWalletProviderServer) 
   useEffect(() => {
     if (currentStateChange !== null) {
       changeOpenState(server, currentStateChange).then(() => {
-        console.log('Finished open/close operation', currentStateChange);
         setCurrentStateChange(null);
       });
     }
@@ -42,7 +39,6 @@ export function useIframeToggle(server: WalletConnectAztecWalletProviderServer) 
 
   return {
     setIframeOpen(open: boolean) {
-      console.log('Requested open/close operation', open);
       setNextStateChange(open);
     },
   };

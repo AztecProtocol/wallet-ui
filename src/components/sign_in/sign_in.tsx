@@ -10,7 +10,6 @@ interface SignInProps {
   showForgot?: boolean;
   isValidPasscode: (passcode: string) => boolean;
   onCreateAccount: () => void;
-  onChangeAccount: () => void;
   // Save expensive validation for onFinish
   onFinish: (encryptedKeystore: string, passcode: string) => Promise<NextStepResult>;
 }
@@ -20,7 +19,6 @@ export function SignIn({
   showForgot,
   isValidPasscode,
   onCreateAccount,
-  onChangeAccount,
   onFinish,
 }: SignInProps) {
   const setToasts = useContext(ToastsContext);
@@ -58,9 +56,6 @@ export function SignIn({
             />
             <div className={style.links}>
               {showCreate && <Hyperlink className={style.link} label="Create new account" onClick={onCreateAccount} />}
-              {!showEncryptedKeystore && (
-                <Hyperlink className={style.link} label="Access with a different account" onClick={onChangeAccount} />
-              )}
               {showForgot && <Hyperlink className={style.link} label="I've forgotten my passcode" />}
             </div>
           </div>
