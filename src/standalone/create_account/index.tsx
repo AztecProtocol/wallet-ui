@@ -14,6 +14,7 @@ import sendRegisterProof, { AssetValue, EthIdentity } from './sendRegisterProof'
 
 export interface CreateAccountProps {
   onAccountCreated: (encryptedKeys: string) => void;
+  onCancel: () => void;
   chainId: EthereumChainId;
 }
 
@@ -25,7 +26,7 @@ enum Step {
   _05_Deposit,
 }
 
-export default function CreateAccount({ onAccountCreated, chainId }: CreateAccountProps) {
+export default function CreateAccount({ onAccountCreated, onCancel, chainId }: CreateAccountProps) {
   const [userAlias, setUserAlias] = useState('');
   const [passcode, setPasscode] = useState('');
   const [keyStore, setKeyStore] = useState<AztecKeyStore>();
@@ -63,6 +64,7 @@ export default function CreateAccount({ onAccountCreated, chainId }: CreateAccou
         setEncryptedKeyStore(encryptedKeyStore);
         onNext();
       }}
+      onBack={onCancel}
     />
   );
   const renderStep = () => {

@@ -65,7 +65,6 @@ export function SignIn({
             </div>
           </div>
           <div className={style.buttons}>
-            <div />
             <Button
               theme={ButtonTheme.Primary}
               text="Unlock"

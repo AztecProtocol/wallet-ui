@@ -5,11 +5,11 @@ import { SignClientContext } from '../../walletConnect/signClientContext';
 import { AcceptProposal } from './acceptProposal';
 import { useWalletConnectUri } from './walletConnectPairing';
 
-export interface WalletOpenProps {
+export interface LoggedInProps {
   keyStore: AztecKeyStore;
 }
 
-export default function WalletOpen(props: WalletOpenProps) {
+export default function LoggedIn(props: LoggedInProps) {
   const { client } = useContext(SignClientContext);
   const { proposal } = useWalletConnectUri();
 

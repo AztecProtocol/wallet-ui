@@ -11,14 +11,22 @@ import { AztecSdkProvider } from '../utils/aztecSdkContext';
 import AppCard from '../components/AppCard';
 import CreateAccount from './create_account';
 import OpenWallet from './openWallet';
-import { setCachedEncryptedKeystore } from '../utils/sessionUtils';
+import { getCachedEncryptedKeystore, setCachedEncryptedKeystore } from '../utils/sessionUtils';
 import { SignClientProvider } from '../walletConnect/signClientContext';
-import WalletOpen from './wallet_open';
+import LoggedIn from './logged_in';
+import { Landing } from '../components/landing';
+
+enum Pages {
+  LandingPage,
+  CreateAccount,
+  Login,
+  LoggedIn,
+}
 
 function StandaloneApp() {
   const chainId = getChainId();
   const [wagmiConfig, setWagmiConfig] = useState<WagmiRainbowConfig>();
-  const [isCreatingAccount, setIsCreatingAccount] = useState(false);
+  const [currentPage, setCurrentPage] = useState<Pages>(getCachedEncryptedKeystore() ? Pages.Login : Pages.LandingPage);
   const [keyStore, setKeyStore] = useState<AztecKeyStore | null>(null);
 
   useEffect(() => {
@@ -27,38 +35,44 @@ function StandaloneApp() {
 
   const wasm = useContext(BBWasmContext);
 
-  if (!wagmiConfig) {
+  if (!wagmiConfig || !wasm) {
     return null;
   }
 
   function renderView() {
-    if (wasm) {
-      if (keyStore) {
-        return <WalletOpen keyStore={keyStore} />;
-      }
-      if (isCreatingAccount) {
+    switch (currentPage) {
+      case Pages.LandingPage:
         return (
-          <CreateAccount
-            chainId={chainId}
-            onAccountCreated={newEncryptedKeys => {
-              setCachedEncryptedKeystore(newEncryptedKeys);
-              setIsCreatingAccount(false);
-            }}
+          <Landing
+            onCreateWallet={() => setCurrentPage(Pages.CreateAccount)}
+            onLogin={() => setCurrentPage(Pages.Login)}
           />
         );
-      } else {
+      case Pages.Login:
         return (
           <OpenWallet
             onKeyStoreOpened={(keyStore, encryptedKeystore) => {
               setKeyStore(keyStore);
               setCachedEncryptedKeystore(encryptedKeystore);
+              setCurrentPage(Pages.LoggedIn);
             }}
-            onCreateAccount={() => setIsCreatingAccount(true)}
+            onCreateAccount={() => setCurrentPage(Pages.CreateAccount)}
           />
         );
-      }
+      case Pages.CreateAccount:
+        return (
+          <CreateAccount
+            chainId={chainId}
+            onAccountCreated={newEncryptedKeys => {
+              setCachedEncryptedKeystore(newEncryptedKeys);
+              setCurrentPage(Pages.Login);
+            }}
+            onCancel={() => setCurrentPage(Pages.Login)}
+          />
+        );
+      case Pages.LoggedIn:
+        return <LoggedIn keyStore={keyStore!} />;
     }
-    return <div>Loading...</div>;
   }
 
   return (
