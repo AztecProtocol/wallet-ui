@@ -1,8 +1,69 @@
-@use './assets/fonts.scss';
-
 body {
   margin: 0;
   font-family: Sohne, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+@font-face {
+  font-family: Sohne;
+  font-style: normal;
+  font-weight: 400;
+  src: url(./assets/soehne-web-leicht.woff2);
+}
+
+@font-face {
+  font-family: Sohne;
+  font-style: normal;
+  font-weight: 450;
+  src: url(./assets/soehne-web-buch.woff2);
+}
+
+@font-face {
+  font-family: Sohne;
+  font-style: normal;
+  font-weight: 500;
+  src: url(./assets/soehne-web-kraftig.woff2);
+}
+
+@font-face {
+  font-family: Sohne;
+  font-style: normal;
+  font-weight: 600;
+  src: url(./assets/soehne-web-halbfett.woff2);
+}
+
+@font-face {
+  font-family: Sohne;
+  font-style: italic;
+  font-weight: 400;
+  src: url(./assets/soehne-leicht-kursiv.ttf);
+}
+
+@font-face {
+  font-family: Sohne;
+  font-style: italic;
+  font-weight: 500;
+  src: url(./assets/soehne-web-halbfett-kursiv.woff2);
+}
+
+@font-face {
+  font-family: 'Sohne Mono';
+  font-style: normal;
+  font-weight: 400;
+  src: url(./assets/soehne-mono-leicht.woff);
+}
+
+@font-face {
+  font-family: 'Sohne Mono';
+  font-style: normal;
+  font-weight: 450;
+  src: url(./assets/soehne-mono-buch.woff);
+}
+
+@font-face {
+  font-family: 'Sohne Mono';
+  font-style: normal;
+  font-weight: 500;
+  src: url(./assets/soehne-mono-halbfett.ttf);
 }

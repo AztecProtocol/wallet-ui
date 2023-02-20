@@ -1,3 +1,4 @@
+import '../components/index.scss';
 import IframeApp from '../components/IframeApp';
 import render from '../components/render';
 import { BBWasmProvider, WithBBWasm } from '../utils/wasmContext';

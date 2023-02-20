@@ -1,3 +1,4 @@
+import '../components/index.scss';
 import AppCard from '../components/AppCard';
 import render from '../components/render';
 import { AztecSdkProvider } from '../utils/aztecSdkContext';
