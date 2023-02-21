@@ -38,34 +38,37 @@ function SummaryTable({ data }: { data: KeyValuePair[] }) {
   );
 }
 
-function generateAmountAndFeeSummary(amount: AssetValue, fee: AssetValue, sdk: AztecSdk) {
-  const amountStr = sdk.fromBaseUnits(amount, true);
-  const feeStr = sdk.fromBaseUnits(fee, true);
-  const isSameAsset = amount.assetId === fee.assetId;
-  let totalStr: string;
-  if (isSameAsset) {
-    totalStr = sdk.fromBaseUnits({ assetId: amount.assetId, value: amount.value + fee.value }, true);
-  } else {
-    totalStr = `${amountStr} + ${feeStr}`;
-  }
+function assetIdToSymbol(assetId: number, sdk: AztecSdk) {
+  return sdk.isVirtualAsset(assetId) ? 'Virtual asset' : sdk.getAssetInfo(assetId).symbol;
+}
 
-  return [
-    { key: 'Amount', value: amountStr },
-    { key: 'Transaction Fee', value: feeStr },
-    { key: 'Total Cost', value: totalStr },
-  ];
+function assetValueToString(assetValue: AssetValue, sdk: AztecSdk) {
+  return `${sdk.fromBaseUnits(assetValue)} ${assetIdToSymbol(assetValue.assetId, sdk)}`;
+}
+
+function generateTotalCost(amounts: AssetValue[], sdk: AztecSdk) {
+  const totalAmounts = amounts.reduce((acc: AssetValue[], amount: AssetValue) => {
+    const existingAmount = acc.find(a => a.assetId === amount.assetId);
+    if (existingAmount) {
+      existingAmount.value += amount.value;
+    } else {
+      acc.push({ ...amount });
+    }
+    return acc;
+  }, []);
+
+  return { key: 'Total Cost', value: totalAmounts.map(amount => assetValueToString(amount, sdk)).join(' + ') };
 }
 
 function renderPaymentProofSummary(requestData: PaymentProofRequestData, sdk: AztecSdk) {
-  let recipientRow: KeyValuePair;
-
-  if (requestData.proofId === ProofId.WITHDRAW) {
-    recipientRow = { key: 'L1 Recipient', value: shortEthAddress(requestData.publicOwner) };
-  } else {
-    recipientRow = { key: 'Recipient', value: requestData.recipient.toShortString() };
-  }
-
-  return [recipientRow, ...generateAmountAndFeeSummary(requestData.assetValue, requestData.fee, sdk)];
+  return [
+    requestData.proofId === ProofId.WITHDRAW
+      ? { key: 'L1 Recipient', value: shortEthAddress(requestData.publicOwner) }
+      : { key: 'Recipient', value: requestData.recipient.toShortString() },
+    { key: 'Amount', value: assetValueToString(requestData.assetValue, sdk) },
+    { key: 'Transaction Fee', value: assetValueToString(requestData.fee, sdk) },
+    generateTotalCost([requestData.assetValue, requestData.fee], sdk),
+  ];
 }
 
 function renderAccountProofSummary(requestData: AccountProofRequestData, sdk: AztecSdk) {
@@ -87,7 +90,7 @@ function renderAccountProofSummary(requestData: AccountProofRequestData, sdk: Az
     data.push({ key: 'New spending key', value: requestData.newSpendingPublicKey2.toShortString() });
   }
 
-  const feeStr = sdk.fromBaseUnits(requestData.fee, true);
+  const feeStr = assetValueToString(requestData.fee, sdk);
 
   return data.concat([
     { key: 'Transaction Fee', value: feeStr },
@@ -96,9 +99,33 @@ function renderAccountProofSummary(requestData: AccountProofRequestData, sdk: Az
 }
 
 function renderDefiProofSummary(requestData: DefiProofRequestData, sdk: AztecSdk) {
+  const {
+    assetValue: { value },
+    bridgeCallData,
+  } = requestData;
+
+  const inputAssetValues: AssetValue[] = [{ assetId: bridgeCallData.inputAssetIdA, value }];
+  if (bridgeCallData.secondInputInUse) {
+    inputAssetValues.push({ assetId: bridgeCallData.inputAssetIdB, value });
+  }
+
+  const outputAssetIds: number[] = [bridgeCallData.outputAssetIdA];
+  if (bridgeCallData.secondOutputInUse) {
+    outputAssetIds.push(bridgeCallData.outputAssetIdB);
+  }
+
   return [
     { key: 'Recipient', value: 'Defi integration' },
-    ...generateAmountAndFeeSummary(requestData.assetValue, requestData.fee, sdk),
+    ...inputAssetValues.map((assetValue, index) => ({
+      key: `Amount ${String.fromCharCode(65 + index)}`,
+      value: assetValueToString(assetValue, sdk),
+    })),
+    ...outputAssetIds.map((assetId, index) => ({
+      key: `Receive ${String.fromCharCode(65 + index)}`,
+      value: assetIdToSymbol(assetId, sdk),
+    })),
+    { key: 'Transaction Fee', value: assetValueToString(requestData.fee, sdk) },
+    generateTotalCost([...inputAssetValues, requestData.fee], sdk),
   ];
 }
 
