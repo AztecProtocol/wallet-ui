@@ -65,6 +65,7 @@ jobs:
           command: |
             deploy_ecr wallet-ui
             deploy_s3 wallet-ui
+            .circleci/post_deploy_s3
 
 # TODO: add tag filters
 deploy_filters: &deploy_filters
