@@ -23,12 +23,6 @@ export async function isRequestedKeyStore(keyStore: KeyStore) {
     return true;
   }
   const accountKey = await keyStore.getAccountKey();
-  console.log(
-    'Comparing',
-    accountKey.getPublicKey().toString(),
-    aztecAccount,
-    accountKey.getPublicKey().toString() === aztecAccount,
-  );
   return accountKey.getPublicKey().toString() === aztecAccount;
 }
 
