@@ -1,5 +1,6 @@
 
-
+#!/bin/bash
+set -e
 REPOSITORY=wallet-ui
 TF_DIR=$ROOT_PATH/wallet-ui/terraform/$VERSION_TAG
 PROJECT_DIR=$(query_manifest projectDir $REPOSITORY)
