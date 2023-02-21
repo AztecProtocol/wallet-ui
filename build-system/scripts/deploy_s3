@@ -44,21 +44,6 @@ aws s3 cp \
       --cache-control "no-cache" \
       --recursive
 
-# if [ -f "$EXTRACT_DIR/deploy_s3" ]; then
-#   echo "Running dest/deploy_s3 from repo"
-#   $EXTRACT_DIR/deploy_s3 $AWS_BUCKET_NAME
-# fi
-
-for entry in wc iframe popup ; do
-    aws s3 cp \
-        s3://$AWS_BUCKET_NAME/$entry.html \
-        s3://$AWS_BUCKET_NAME/$entry \
-        --no-guess-mime-type \
-        --content-type="text/html; charset=utf-8" \
-        --cache-control "no-cache" \
-        --metadata-directive="REPLACE"
-done
-
 if [ -n "$AWS_CLOUDFRONT_DISTRIBUTION" ]; then
   aws cloudfront create-invalidation --distribution-id $AWS_CLOUDFRONT_DISTRIBUTION --paths "/*"
 fi

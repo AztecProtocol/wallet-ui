@@ -1,0 +1,24 @@
+
+
+REPOSITORY=wallet-ui
+TF_DIR=$ROOT_PATH/wallet-ui/terraform/$VERSION_TAG
+PROJECT_DIR=$(query_manifest projectDir $REPOSITORY)
+pushd $TF_DIR > /dev/null
+AWS_BUCKET_NAME=$(terraform output s3)
+AWS_CLOUDFRONT_DISTRIBUTION=$(terraform output cloudfront || echo "")
+popd > /dev/null
+
+for entry in wc iframe popup ; do
+    aws s3 cp \
+        s3://$AWS_BUCKET_NAME/$entry.html \
+        s3://$AWS_BUCKET_NAME/$entry \
+        --no-guess-mime-type \
+        --content-type="text/html; charset=utf-8" \
+        --cache-control "no-cache" \
+        --metadata-directive="REPLACE"
+done
+
+# TODO should we avoid doing this twice? also done in build-system/deploy_s3
+if [ -n "$AWS_CLOUDFRONT_DISTRIBUTION" ]; then
+  aws cloudfront create-invalidation --distribution-id $AWS_CLOUDFRONT_DISTRIBUTION --paths "/*"
+fi
