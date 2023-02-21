@@ -1,10 +1,10 @@
 import { SignClient } from '@walletconnect/sign-client/dist/types/client.js';
-import { useState, useEffect } from 'react';
-import { createSignClient } from '../walletConnect/createSignClient.js';
+import { useState, useEffect, useContext } from 'react';
 import { SignClientTypes, ProposalTypes, SessionTypes } from '@walletconnect/types';
-import { GrumpkinAddress, RPC_METHODS } from '@ludamad-aztec/sdk';
-import { storeSession } from '../utils/sessionUtils.js';
-import { AztecChainId } from '../utils/config.js';
+import { GrumpkinAddress, RPC_METHODS } from '@aztec/sdk';
+import { storeSession } from '../../utils/sessionUtils.js';
+import { AztecChainId } from '../../utils/config.js';
+import { SignClientContext } from '../../walletConnect/signClientContext.js';
 
 function getUri() {
   return new URLSearchParams(window.location.search).get('uri');
@@ -19,37 +19,20 @@ export async function applyUriIfNecessary(client: SignClient) {
   }
 }
 
-export function useWalletConnectServer({
-  onSessionProposal,
-}: {
-  onSessionProposal: (proposal: WalletConnectProposal) => void;
-}) {
-  const [client, setClient] = useState<SignClient | null>(null);
-  const [initError, setInitError] = useState<Error | null>(null);
+export function useWalletConnectUri() {
+  const { client } = useContext(SignClientContext);
+  const [proposal, setProposal] = useState<WalletConnectProposal | null>(null);
 
   useEffect(() => {
     if (client) {
+      client.on('session_proposal', event => {
+        setProposal(event);
+      });
       applyUriIfNecessary(client).catch(console.error);
     }
   }, [client]);
 
-  async function init() {
-    try {
-      const client = await createSignClient(false);
-      client.on('session_proposal', event => {
-        onSessionProposal(event);
-      });
-      setClient(client);
-    } catch (err) {
-      setInitError(err as Error);
-    }
-  }
-
-  return {
-    client,
-    initError,
-    init,
-  };
+  return { proposal };
 }
 
 export function createNamespace(chainId: AztecChainId, address: GrumpkinAddress) {

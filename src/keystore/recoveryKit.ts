@@ -1,4 +1,4 @@
-import { AztecKeyStore, RecoveryKit, ConstantKeyPair } from '@ludamad-aztec/sdk';
+import { AztecKeyStore, RecoveryKit, ConstantKeyPair } from '@aztec/sdk';
 import { jsPDF } from 'jspdf';
 
 function chunkString(str: string, length: number) {

@@ -5,24 +5,24 @@ import { NextStepResult } from '../StepCard';
 import { ToastsContext, addErrorToast } from '../../utils/toastsContext';
 
 interface SignInProps {
+  showEncryptedKeystore: boolean;
   showCreate?: boolean;
   showForgot?: boolean;
-  initialEncryptedKeystore: string | null;
   isValidPasscode: (passcode: string) => boolean;
   onCreateAccount: () => void;
   // Save expensive validation for onFinish
   onFinish: (encryptedKeystore: string, passcode: string) => Promise<NextStepResult>;
 }
 export function SignIn({
+  showEncryptedKeystore,
   showCreate,
   showForgot,
-  initialEncryptedKeystore,
   isValidPasscode,
   onCreateAccount,
   onFinish,
 }: SignInProps) {
   const setToasts = useContext(ToastsContext);
-  const [encryptedKeystore, setEncryptedKeystore] = useState<string>(initialEncryptedKeystore || '');
+  const [encryptedKeystore, setEncryptedKeystore] = useState<string>('');
   const [passcode, setPasscode] = useState('');
 
   return (
@@ -34,21 +34,23 @@ export function SignIn({
         <div className={style.cardContent}>
           <div className={style.header}>Access the Aztec Network</div>
           <div className={style.fields}>
-            <Field
-              value={encryptedKeystore}
-              password={true}
-              autoComplete="current-password"
-              status={encryptedKeystore.length > 0 ? FieldStatus.Success : undefined}
-              label="Unlock with Aztec key"
-              placeholder="Enter Aztec key"
-              onChangeValue={setEncryptedKeystore}
-            />
+            {showEncryptedKeystore && (
+              <Field
+                value={encryptedKeystore}
+                password={true}
+                autoComplete="current-password"
+                status={encryptedKeystore.length > 0 ? FieldStatus.Success : undefined}
+                label="Unlock with Aztec key"
+                placeholder="Enter Aztec key"
+                onChangeValue={setEncryptedKeystore}
+              />
+            )}
             <Field
               value={passcode}
               password={true}
               autoComplete="current-password"
               status={passcode.length > 0 ? FieldStatus.Success : undefined}
-              label="Passcode"
+              label="Unlock with passcode"
               placeholder="Enter passcode"
               onChangeValue={setPasscode}
             />
@@ -58,7 +60,6 @@ export function SignIn({
             </div>
           </div>
           <div className={style.buttons}>
-            <div />
             <Button
               theme={ButtonTheme.Primary}
               text="Unlock"

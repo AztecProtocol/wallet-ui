@@ -1,4 +1,4 @@
-import { AztecKeyStore, BarretenbergWasm } from '@ludamad-aztec/sdk';
+import { AztecKeyStore, BarretenbergWasm } from '@aztec/sdk';
 import { SignClient } from '@walletconnect/sign-client/dist/types/client.js';
 import { SessionTypes } from '@walletconnect/types';
 import getWasm from '../utils/getWasm.js';
@@ -8,6 +8,10 @@ export const IFRAME_HANDOVER_TYPE = 'iframe_handover';
 
 export function getTopic() {
   return new URLSearchParams(window.location.search).get('topic');
+}
+
+export function getAztecAccount() {
+  return new URLSearchParams(window.location.search).get('aztecAccount');
 }
 
 export type HandoverResult = { session?: SessionTypes.Struct; keyStore?: AztecKeyStore };
@@ -38,6 +42,10 @@ export function openPopup() {
     const topic = getTopic();
     if (topic) {
       walletWindow.handoverSession = topic;
+    }
+    const aztecAccount = getAztecAccount();
+    if (aztecAccount) {
+      walletWindow.handoverAztecAccount = aztecAccount;
     }
   }
 }

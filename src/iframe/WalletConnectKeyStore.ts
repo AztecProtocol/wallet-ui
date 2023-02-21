@@ -1,12 +1,32 @@
-import { SchnorrSignature, ProofInput, KeyStore, KeyPair, Permission, AztecKeyStore } from '@ludamad-aztec/sdk';
+import {
+  SchnorrSignature,
+  ProofInput,
+  KeyStore,
+  KeyPair,
+  Permission,
+  AztecKeyStore,
+  ProofRequestData,
+} from '@aztec/sdk';
+
+export interface ProofsRequest {
+  type: 'proofs';
+  data: ProofRequestData;
+}
+
+export interface ProofsInputsRequest {
+  type: 'proofInputs';
+  data: ProofRequestData;
+}
+
+export type TransactionRequest = ProofsRequest | ProofsInputsRequest;
+export type TransactionRequestResponse = { approved: boolean; error: string };
 
 export class WalletConnectKeyStore implements KeyStore {
   constructor(
     private aztecKeyStore: AztecKeyStore | undefined,
-    // UI connecting functions
-    // Show approval dialogues
-    private showApproveProofsRequest: () => Promise<{ approved: boolean; error: string }>,
-    private showApproveProofInputsRequest: () => Promise<{ approved: boolean; error: string }>,
+    // UI connecting function
+    // Show approval dialogue
+    private approveRequest: (request: TransactionRequest) => Promise<TransactionRequestResponse>,
   ) {}
 
   private ensureHaveKeyStore() {
@@ -44,24 +64,31 @@ export class WalletConnectKeyStore implements KeyStore {
     this.ensureHaveKeyStore();
     return this.aztecKeyStore!.setPermissions(permissions);
   }
-  public async approveProofsRequest() {
+
+  public async approveProofsRequest(proofRequestData: ProofRequestData) {
     if (!this.aztecKeyStore) {
       return {
         approved: false,
         error: 'Wallet not connected',
       };
     }
-    return await this.showApproveProofsRequest();
+    return await this.approveRequest({
+      type: 'proofs',
+      data: proofRequestData,
+    });
   }
 
-  public async approveProofInputsRequest() {
+  public async approveProofInputsRequest(proofRequestData: ProofRequestData) {
     if (!this.aztecKeyStore) {
       return {
         approved: false,
         error: 'Wallet not connected',
       };
     }
-    return await this.showApproveProofInputsRequest();
+    return await this.approveRequest({
+      type: 'proofInputs',
+      data: proofRequestData,
+    });
   }
 
   public signProofs(proofInputs: ProofInput[]): Promise<SchnorrSignature[]> {

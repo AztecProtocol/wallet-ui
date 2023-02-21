@@ -1,0 +1,26 @@
+.table {
+  width: 100%;
+
+  td {
+    padding: 16px 0px;
+    font-size: 16px;
+  }
+
+  tr:nth-child(even) {
+    background: #f7fbfc;
+  }
+
+  tr:nth-child(odd) {
+    background: #fff;
+  }
+
+  td:nth-child(odd) {
+    text-align: left;
+    padding-left: 10px;
+  }
+
+  td:nth-child(even) {
+    text-align: right;
+    padding-right: 10px;
+  }
+}

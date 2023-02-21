@@ -1,4 +1,4 @@
-import { BarretenbergWasm } from '@ludamad-aztec/sdk';
+import { BarretenbergWasm } from '@aztec/sdk';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import getWasm from './getWasm';
 

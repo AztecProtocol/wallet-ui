@@ -1,39 +1,31 @@
-import { WalletConnectAztecWalletProviderServer } from '@ludamad-aztec/sdk';
-import { SignClient } from '@walletconnect/sign-client/dist/types/client';
+import { WalletConnectAztecWalletProviderServer } from '@aztec/sdk';
 import { SessionTypes } from '@walletconnect/types';
-import { useState, useEffect } from 'react';
-import { createSignClient } from '../walletConnect/createSignClient';
-import { getTopic, handleHandoverMessage, HandoverResult, IFRAME_HANDOVER_TYPE } from './handleHandover';
-import { WalletConnectKeyStore } from './WalletConnectKeyStore';
+import { useState, useEffect, useContext } from 'react';
+import { createDeferredPromise, DeferredPromise } from '../utils/deferredPromise';
+import { SignClientContext } from '../walletConnect/signClientContext';
+import { getTopic, handleHandoverMessage, IFRAME_HANDOVER_TYPE } from './handleHandover';
+import { TransactionRequestResponse, TransactionRequest, WalletConnectKeyStore } from './WalletConnectKeyStore';
 
 /**
  * Performs loading of WalletConnectKeyStore using a wallet connect handover
  * session from a popup/opened window from the popup/ folder.
  */
-export default function useWalletConnectKeyStore(
-  aztecAWPServer: WalletConnectAztecWalletProviderServer,
-  showApproveProofsRequest: () => Promise<{ approved: boolean; error: string }>,
-  showApproveProofInputsRequest: () => Promise<{ approved: boolean; error: string }>,
-) {
-  const [client, setClient] = useState<SignClient>();
+export default function useWalletConnectKeyStore(aztecAWPServer: WalletConnectAztecWalletProviderServer) {
+  const { client } = useContext(SignClientContext);
+
   const [session, setSession] = useState<SessionTypes.Struct>();
   const [keyStore, setKeyStore] = useState<WalletConnectKeyStore>();
+  const [requests, setRequests] = useState<
+    { transactionRequest: TransactionRequest; deferredPromise: DeferredPromise<TransactionRequestResponse> }[]
+  >([]);
 
   useEffect(() => {
-    async function init() {
-      const client = await createSignClient(true);
-      setClient(client);
+    if (client) {
       aztecAWPServer.setClient(client);
       const cachedSession = client.session.getAll().find(({ topic }) => topic === getTopic());
       if (cachedSession) {
         setSession(cachedSession);
       }
-    }
-    init().catch(console.error);
-  }, []);
-
-  useEffect(() => {
-    if (client) {
       const handler = async (event: MessageEvent<any>) => {
         if (event.origin === window.location.origin) {
           switch (event.data.type) {
@@ -42,7 +34,19 @@ export default function useWalletConnectKeyStore(
               if (session) {
                 setSession(session);
               }
-              setKeyStore(new WalletConnectKeyStore(keyStore, showApproveProofsRequest, showApproveProofInputsRequest));
+              setKeyStore(
+                new WalletConnectKeyStore(keyStore, async transactionRequest => {
+                  const { promise, deferredPromise } = createDeferredPromise<TransactionRequestResponse>();
+                  const request = { transactionRequest, deferredPromise };
+
+                  setRequests(requests => [...requests, request]);
+                  try {
+                    return await promise;
+                  } finally {
+                    setRequests(requests => requests.filter(r => r !== request));
+                  }
+                }),
+              );
               break;
             default:
               console.log('Unknown message', event.data);
@@ -55,5 +59,5 @@ export default function useWalletConnectKeyStore(
     return () => {};
   }, [client]);
 
-  return { client, keyStore, session };
+  return { client, keyStore, session, requests };
 }

@@ -1,16 +1,16 @@
-import { KeyStore } from '@ludamad-aztec/sdk';
+import { AztecKeyStore } from '@aztec/sdk';
 import { SignClient } from '@walletconnect/sign-client/dist/types/client';
 import { SessionTypes } from '@walletconnect/types';
 import { useEffect, useState } from 'react';
-import { Connect } from '../components/connect';
-import { AztecChainId } from '../utils/config';
-import { createNamespace, extractAndStoreSession, WalletConnectProposal } from './useWalletConnectServer';
+import { Connect } from '../../components/connect';
+import { AztecChainId } from '../../utils/config';
+import { createNamespace, extractAndStoreSession, WalletConnectProposal } from './walletConnectPairing';
 
 export interface AcceptProposalProps {
   aztecChainId: AztecChainId;
   client: SignClient;
   proposal: WalletConnectProposal;
-  keyStore: KeyStore;
+  keyStore: AztecKeyStore;
 }
 
 export function AcceptProposal(props: AcceptProposalProps) {
