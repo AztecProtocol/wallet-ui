@@ -1,5 +1,4 @@
-import { AztecKeyStore } from '@aztec/sdk';
-import { SessionTypes } from '@walletconnect/types';
+import { AztecKeyStore, KeyStore } from '@aztec/sdk';
 import { IFRAME_HANDOVER_TYPE } from '../iframe/handleHandover.js';
 import { getSession, keyStoreToString } from '../utils/sessionUtils.js';
 
@@ -16,6 +15,21 @@ export function getSessionToHandover() {
   }
 
   return sessionData;
+}
+
+export async function isRequestedKeyStore(keyStore: KeyStore) {
+  const aztecAccount = window.handoverAztecAccount;
+  if (!aztecAccount) {
+    return true;
+  }
+  const accountKey = await keyStore.getAccountKey();
+  console.log(
+    'Comparing',
+    accountKey.getPublicKey().toString(),
+    aztecAccount,
+    accountKey.getPublicKey().toString() === aztecAccount,
+  );
+  return accountKey.getPublicKey().toString() === aztecAccount;
 }
 
 export async function sendHandoverMessage(keyStore: AztecKeyStore | null) {

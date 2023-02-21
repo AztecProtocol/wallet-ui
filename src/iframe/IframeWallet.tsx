@@ -9,6 +9,9 @@ import { useIframeToggle } from './useIframeToggle.js';
 import { AztecSdkContext } from '../utils/aztecSdkContext.js';
 
 function getDappOrigin() {
+  if (!document.referrer) {
+    return 'UNKNOWN';
+  }
   const url = new URL(document.referrer);
   return url.origin;
 }

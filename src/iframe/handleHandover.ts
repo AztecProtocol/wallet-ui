@@ -10,6 +10,10 @@ export function getTopic() {
   return new URLSearchParams(window.location.search).get('topic');
 }
 
+export function getAztecAccount() {
+  return new URLSearchParams(window.location.search).get('aztecAccount');
+}
+
 export type HandoverResult = { session?: SessionTypes.Struct; keyStore?: AztecKeyStore };
 
 export async function handleHandoverMessage(
@@ -38,6 +42,10 @@ export function openPopup() {
     const topic = getTopic();
     if (topic) {
       walletWindow.handoverSession = topic;
+    }
+    const aztecAccount = getAztecAccount();
+    if (aztecAccount) {
+      walletWindow.handoverAztecAccount = aztecAccount;
     }
   }
 }

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useMemo, useState } from 'react';
-import { sendHandoverMessage, getSessionToHandover } from './handoverSession.js';
+import { sendHandoverMessage, getSessionToHandover, isRequestedKeyStore } from './handoverSession.js';
 import { getCachedEncryptedKeystore, getCachedPassword } from '../utils/sessionUtils.js';
 import { AztecKeyStore, AztecBuffer, BarretenbergWasm } from '@aztec/sdk';
 import { BBWasmContext } from '../utils/wasmContext.js';
@@ -40,6 +40,9 @@ export default function PopupWallet() {
             try {
               const encryptedKeystore = cachedEncryptedKeys || encryptedKeys;
               const keyStore = await AztecKeyStore.open(AztecBuffer.from(encryptedKeystore, 'hex'), passcode, wasm, []);
+              if (!(await isRequestedKeyStore(keyStore))) {
+                throw new Error('Incorrect account');
+              }
               setKeyStore(keyStore);
             } catch (error: any) {
               return { error: error.toString() };
