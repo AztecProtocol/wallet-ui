@@ -1,4 +1,15 @@
-import { AztecSdk, ProofId, ProofRequestData, ProofRequestDataType, EthAddress } from '@aztec/sdk';
+import {
+  AztecSdk,
+  ProofId,
+  ProofRequestData,
+  ProofRequestDataType,
+  EthAddress,
+  PaymentProofRequestData,
+  AccountProofRequestData,
+  DefiProofRequestData,
+  GrumpkinAddress,
+  AliasHash,
+} from '@aztec/sdk';
 import { AssetValue } from '../../utils/assets';
 import style from './transaction_summary.module.scss';
 
@@ -45,31 +56,63 @@ function generateAmountAndFeeSummary(amount: AssetValue, fee: AssetValue, sdk: A
   ];
 }
 
+function renderPaymentProofSummary(requestData: PaymentProofRequestData, sdk: AztecSdk) {
+  let recipientRow: KeyValuePair;
+
+  if (requestData.proofId === ProofId.WITHDRAW) {
+    recipientRow = { key: 'L1 Recipient', value: shortEthAddress(requestData.publicOwner) };
+  } else {
+    recipientRow = { key: 'Recipient', value: requestData.recipient.toShortString() };
+  }
+
+  return [recipientRow, ...generateAmountAndFeeSummary(requestData.assetValue, requestData.fee, sdk)];
+}
+
+function renderAccountProofSummary(requestData: AccountProofRequestData, sdk: AztecSdk) {
+  const isAccountCreation = requestData.spendingKeyAccount.aliasHash.equals(AliasHash.ZERO);
+  const data: KeyValuePair[] = [
+    { key: 'Operation', value: isAccountCreation ? 'Account creation' : 'Account update' },
+    { key: 'Account alias', value: requestData.alias },
+  ];
+
+  if (!requestData.accountPublicKey.equals(requestData.newAccountPublicKey)) {
+    data.push({ key: 'New account key', value: requestData.newAccountPublicKey.toShortString() });
+  }
+
+  if (!requestData.newSpendingPublicKey1.equals(GrumpkinAddress.ZERO)) {
+    data.push({ key: 'New spending key', value: requestData.newSpendingPublicKey1.toShortString() });
+  }
+
+  if (!requestData.newSpendingPublicKey2.equals(GrumpkinAddress.ZERO)) {
+    data.push({ key: 'New spending key', value: requestData.newSpendingPublicKey2.toShortString() });
+  }
+
+  const feeStr = sdk.fromBaseUnits(requestData.fee, true);
+
+  return data.concat([
+    { key: 'Transaction Fee', value: feeStr },
+    { key: 'Total Cost', value: feeStr },
+  ]);
+}
+
+function renderDefiProofSummary(requestData: DefiProofRequestData, sdk: AztecSdk) {
+  return [
+    { key: 'Recipient', value: 'Defi integration' },
+    ...generateAmountAndFeeSummary(requestData.assetValue, requestData.fee, sdk),
+  ];
+}
+
 export function TransactionSummary({ requestData, sdk }: { requestData: ProofRequestData; sdk: AztecSdk }) {
-  let data: KeyValuePair[] = [];
+  let data: KeyValuePair[];
   switch (requestData.type) {
     case ProofRequestDataType.PaymentProofRequestData:
-      let recipientRow: KeyValuePair;
-
-      if (requestData.proofId === ProofId.WITHDRAW) {
-        recipientRow = { key: 'L1 Recipient', value: shortEthAddress(requestData.publicOwner) };
-      } else {
-        recipientRow = { key: 'Recipient', value: requestData.recipient.toShortString() };
-      }
-
-      data = [recipientRow, ...generateAmountAndFeeSummary(requestData.assetValue, requestData.fee, sdk)];
+      data = renderPaymentProofSummary(requestData, sdk);
       break;
     case ProofRequestDataType.AccountProofRequestData:
-      data = [
-        { key: 'Operation', value: 'Account update' },
-        { key: 'Transaction Fee', value: sdk.fromBaseUnits(requestData.fee, true) },
-      ];
+      data = renderAccountProofSummary(requestData, sdk);
       break;
     case ProofRequestDataType.DefiProofRequestData:
-      data = [
-        { key: 'Recipient', value: 'Defi integration' },
-        ...generateAmountAndFeeSummary(requestData.assetValue, requestData.fee, sdk),
-      ];
+      data = renderDefiProofSummary(requestData, sdk);
       break;
   }
 
