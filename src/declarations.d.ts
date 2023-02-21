@@ -3,6 +3,7 @@ declare module '*.woff';
 declare module '*.woff2';
 declare module '*.png';
 declare module '*.svg';
+declare module '*.scss';
 
 declare global {
   interface Window {

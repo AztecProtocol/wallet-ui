@@ -8,7 +8,7 @@ import Deposit from '../../components/create_account_flow/05_Deposit/Deposit';
 import { downloadRecoveryKit, generateRecoveryKey } from '../../keystore';
 import { AztecSdkContext } from '../../utils/aztecSdkContext';
 import { EthereumChainId } from '../../utils/config';
-import { AssetValue, mapFeesToFeeOptions } from '../../utils/fees';
+import { AssetValue, mapFeesToFeeOptions } from '../../utils/assets';
 import { BBWasmContext } from '../../utils/wasmContext';
 import createAndExportKeyStore from './createAndExportKeyStore';
 import sendRegisterProof, { EthIdentity } from './sendRegisterProof';

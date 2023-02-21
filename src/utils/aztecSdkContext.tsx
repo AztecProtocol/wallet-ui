@@ -40,7 +40,15 @@ interface AztecSdkContextData {
 
 export const AztecSdkContext = createContext<AztecSdkContextData>({});
 
-export function AztecSdkProvider({ children, chainId }: { children: ReactNode; chainId: EthereumChainId }) {
+export function AztecSdkProvider({
+  children,
+  chainId,
+  noSync,
+}: {
+  children: ReactNode;
+  chainId: EthereumChainId;
+  noSync?: boolean;
+}) {
   const [sdk, setSdk] = useState<AztecSdk | undefined>();
 
   useEffect(() => {
@@ -49,7 +57,7 @@ export function AztecSdkProvider({ children, chainId }: { children: ReactNode; c
   }, [chainId]);
 
   useEffect(() => {
-    if (sdk) {
+    if (sdk && !noSync) {
       sdk.run();
     }
   }, [sdk]);

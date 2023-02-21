@@ -5,7 +5,7 @@ import { useBalance } from 'wagmi';
 import { EthIdentity } from '../../../standalone/create_account/sendRegisterProof';
 import { useActiveWalletEthSigner } from '../../../utils/activeWalletHooks';
 import { EthereumChainId } from '../../../utils/config';
-import { AssetValue, TxSettlementTime } from '../../../utils/fees';
+import { AssetValue, TxSettlementTime } from '../../../utils/assets';
 import { chainIdToNetwork } from '../../../utils/networks';
 import StepCard, { NextStepResult } from '../../StepCard';
 import CreatingAccount from './CreatingAccount';

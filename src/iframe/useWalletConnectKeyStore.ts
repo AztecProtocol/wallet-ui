@@ -4,7 +4,7 @@ import { useState, useEffect, useContext } from 'react';
 import { createDeferredPromise, DeferredPromise } from '../utils/deferredPromise';
 import { SignClientContext } from '../walletConnect/signClientContext';
 import { getTopic, handleHandoverMessage, IFRAME_HANDOVER_TYPE } from './handleHandover';
-import { KeyStoreRequestResponse, KeyStoreRequest, WalletConnectKeyStore } from './WalletConnectKeyStore';
+import { TransactionRequestResponse, TransactionRequest, WalletConnectKeyStore } from './WalletConnectKeyStore';
 
 /**
  * Performs loading of WalletConnectKeyStore using a wallet connect handover
@@ -16,7 +16,7 @@ export default function useWalletConnectKeyStore(aztecAWPServer: WalletConnectAz
   const [session, setSession] = useState<SessionTypes.Struct>();
   const [keyStore, setKeyStore] = useState<WalletConnectKeyStore>();
   const [requests, setRequests] = useState<
-    { keyStoreRequest: KeyStoreRequest; deferredPromise: DeferredPromise<KeyStoreRequestResponse> }[]
+    { transactionRequest: TransactionRequest; deferredPromise: DeferredPromise<TransactionRequestResponse> }[]
   >([]);
 
   useEffect(() => {
@@ -35,9 +35,9 @@ export default function useWalletConnectKeyStore(aztecAWPServer: WalletConnectAz
                 setSession(session);
               }
               setKeyStore(
-                new WalletConnectKeyStore(keyStore, async keyStoreRequest => {
-                  const { promise, deferredPromise } = createDeferredPromise<KeyStoreRequestResponse>();
-                  const request = { keyStoreRequest: keyStoreRequest, deferredPromise };
+                new WalletConnectKeyStore(keyStore, async transactionRequest => {
+                  const { promise, deferredPromise } = createDeferredPromise<TransactionRequestResponse>();
+                  const request = { transactionRequest, deferredPromise };
 
                   setRequests(requests => [...requests, request]);
                   try {

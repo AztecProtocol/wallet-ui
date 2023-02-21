@@ -18,15 +18,15 @@ export interface ProofsInputsRequest {
   data: ProofRequestData;
 }
 
-export type KeyStoreRequest = ProofsRequest | ProofsInputsRequest;
-export type KeyStoreRequestResponse = { approved: boolean; error: string };
+export type TransactionRequest = ProofsRequest | ProofsInputsRequest;
+export type TransactionRequestResponse = { approved: boolean; error: string };
 
 export class WalletConnectKeyStore implements KeyStore {
   constructor(
     private aztecKeyStore: AztecKeyStore | undefined,
     // UI connecting function
     // Show approval dialogue
-    private approveRequest: (request: KeyStoreRequest) => Promise<KeyStoreRequestResponse>,
+    private approveRequest: (request: TransactionRequest) => Promise<TransactionRequestResponse>,
   ) {}
 
   private ensureHaveKeyStore() {

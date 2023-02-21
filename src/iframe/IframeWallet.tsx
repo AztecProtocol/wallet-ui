@@ -4,8 +4,9 @@ import { openPopup } from './handleHandover.js';
 import useWalletConnectKeyStore from './useWalletConnectKeyStore.js';
 import { BBWasmContext } from '../utils/wasmContext.js';
 import { PopupTrigger } from '../components/popup_trigger/popup_trigger.js';
-import { ApproveKeyStoreRequest } from '../components/approve_keystore_request/approve_keystore_request.js';
+import { ApproveTransaction } from '../components/approve_transaction';
 import { useIframeToggle } from './useIframeToggle.js';
+import { AztecSdkContext } from '../utils/aztecSdkContext.js';
 
 function getDappOrigin() {
   const url = new URL(document.referrer);
@@ -18,6 +19,7 @@ export default function IframeWallet() {
   const [initialized, setInitialized] = useState<boolean>(false);
 
   const wasm = useContext<BarretenbergWasm>(BBWasmContext);
+  const { sdk } = useContext(AztecSdkContext);
 
   const { client, keyStore, session, requests } = useWalletConnectKeyStore(aztecAWPServer);
   const { setIframeOpen } = useIframeToggle(aztecAWPServer);
@@ -56,10 +58,15 @@ export default function IframeWallet() {
 
   if (requests.length > 0) {
     const request = requests[0];
+    if (!sdk) {
+      return <div>Starting the SDK...</div>;
+    }
+
     return (
-      <ApproveKeyStoreRequest
+      <ApproveTransaction
         dappOrigin={getDappOrigin()}
-        request={request.keyStoreRequest}
+        request={request.transactionRequest}
+        sdk={sdk}
         onUserResponse={approved =>
           request.deferredPromise.resolve({
             approved,
