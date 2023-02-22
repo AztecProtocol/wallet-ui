@@ -15,10 +15,10 @@
     "@jridgewell/gen-mapping" "^0.1.0"
     "@jridgewell/trace-mapping" "^0.3.9"
 
-"@aztec/aztec-ui@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@aztec/aztec-ui/-/aztec-ui-0.0.2.tgz#694540ec8097722b3091de1d57116d25d6ae1660"
-  integrity sha512-xLqstG/UE3eldCgJm39SPc5hUYsd2VvvtIPKjA1QkDBgFM5LUnmvwF603EJLZG+OHUneNeFecap+dEYxWlnlfA==
+"@aztec/aztec-ui@^0.1.10":
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/@aztec/aztec-ui/-/aztec-ui-0.1.10.tgz#91bdb009df4f17043fd2ce827dd87e82be010e46"
+  integrity sha512-QXp1gQ1TG/fmImUE8KWX5h7K/lg37kZOcmCGFDHW5gK1E0IQX6FYNwpDbRXaQnbjZ8RzwTQ1MVDxn3dk7z/cOQ==
   dependencies:
     "@rainbow-me/rainbowkit" "^0.8.1"
     classnames "^2.3.2"
@@ -32,10 +32,10 @@
     style-loader "^3.3.1"
     wagmi "^0.11.2"
 
-"@aztec/barretenberg@2.2.0-alpha.4":
-  version "2.2.0-alpha.4"
-  resolved "https://registry.yarnpkg.com/@aztec/barretenberg/-/barretenberg-2.2.0-alpha.4.tgz#1ee5f2ed0e9f82c30432b905709e4a5af2f5dccd"
-  integrity sha512-d2/vjzOKZMRg+kJukxU0W1FLVI+UH3uNJSM3b8bqSdxObn8zxTYAAIjkNWAKsO83aCLyihIV5whjs6Xp/Vjz+w==
+"@aztec/barretenberg@2.2.0-alpha.5":
+  version "2.2.0-alpha.5"
+  resolved "https://registry.yarnpkg.com/@aztec/barretenberg/-/barretenberg-2.2.0-alpha.5.tgz#9db7ef5fd0f13fcda095e9d1fc1be47e8f39c47f"
+  integrity sha512-uiF2pL37X6QT0rMYgo0JpEaseytKQo/3AAk2WATyR0K8CHCmzuOoJ30WmAgCACgvhQvhBw+j8HMaq3gyLk7ncQ==
   dependencies:
     "@types/levelup" "^4.3.0"
     browserify-cipher "^1.0.1"
@@ -52,12 +52,12 @@
     supports-color "7.2.0"
     tslib "^2.0.0"
 
-"@aztec/blockchain@2.2.0-alpha.4":
-  version "2.2.0-alpha.4"
-  resolved "https://registry.yarnpkg.com/@aztec/blockchain/-/blockchain-2.2.0-alpha.4.tgz#a886cac0eb63ca4c200808dd0c44da7f22c51199"
-  integrity sha512-ZVsT83TLkiFYVfcDqcjXk/aXdgo9//HkfVShzz+I8i38B6+wD9cZMvWfGqESnVB51+iCnZxuVFRGIOmFeTHeqA==
+"@aztec/blockchain@2.2.0-alpha.5":
+  version "2.2.0-alpha.5"
+  resolved "https://registry.yarnpkg.com/@aztec/blockchain/-/blockchain-2.2.0-alpha.5.tgz#18ddf72faaf777d698a3cdfd538232842f56e0fb"
+  integrity sha512-g6sfFHa9CHI/gkdy8O+GhhCGpXxDMgV0o9mdDxnPfCA3qvsRS5Qtvk6BcQ8i06Z/7CzItFrwr/v+uCuJU7mhWg==
   dependencies:
-    "@aztec/barretenberg" "2.2.0-alpha.4"
+    "@aztec/barretenberg" "2.2.0-alpha.5"
     "@ethersproject/abi" "5.5.0"
     "@ethersproject/abstract-provider" "5.5.1"
     "@ethersproject/contracts" "5.5.0"
@@ -69,13 +69,13 @@
     debug "^4.3.4"
     ethers "5.5.1"
 
-"@aztec/sdk@2.2.0-alpha.4":
-  version "2.2.0-alpha.4"
-  resolved "https://registry.yarnpkg.com/@aztec/sdk/-/sdk-2.2.0-alpha.4.tgz#3604db5b2f51889ab41f51741d4cc8fd2ba4dfe0"
-  integrity sha512-s44JA4oVfo5BmjfvHVDrmK5fDK+2lEnuv8p1cqvB0R1ayfxkX7qRK545nZM+5rJ8WHbFd00mI2RSiIqINj6bfA==
+"@aztec/sdk@2.2.0-alpha.5":
+  version "2.2.0-alpha.5"
+  resolved "https://registry.yarnpkg.com/@aztec/sdk/-/sdk-2.2.0-alpha.5.tgz#23b9ffcbf5043690a8aba8259e53c4dafeaf87a4"
+  integrity sha512-rX+pAmgVUM/7XJqcUCazc3F5mdxAx9UU9b3oFDbpMqPuoQO9VXd4ghU3ht7k6qJVaf3czsbcIOxzyyGmPNwUrA==
   dependencies:
-    "@aztec/barretenberg" "2.2.0-alpha.4"
-    "@aztec/blockchain" "2.2.0-alpha.4"
+    "@aztec/barretenberg" "2.2.0-alpha.5"
+    "@aztec/blockchain" "2.2.0-alpha.5"
     detect-node "^2.1.0"
     dexie "3.0.1"
     events "^3.3.0"
