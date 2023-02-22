@@ -40,7 +40,7 @@ export function openPopup() {
   const walletWindow = window.open(
     window.location.origin + '/popup',
     '_blank',
-    'popup=true,resizable=true,width=750,height=750',
+    'popup=true,resizable=true,width=800,height=875',
   );
   if (walletWindow) {
     const topic = getTopic();
