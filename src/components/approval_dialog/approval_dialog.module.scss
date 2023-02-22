@@ -1,11 +1,38 @@
 @use '../global.module.scss';
 
-.permissions {
-  font-size: 16px;
-  width: 100%;
-  line-height: 18px;
+.cardContent {
+  padding: 44px 42px;
+  gap: 50px;
+}
+
+.header {
+  margin-top: 16px;
+  padding: 0px;
+  font-weight: 300;
+  font-size: 30px;
+  line-height: 38px;
 }
 
 .logo {
-  width: 75px;
+  width: 110px;
+}
+
+.permissions {
+  width: 100%;
+}
+
+.permissionsHeader {
+  margin-top: 30px;
+  font-size: 20px;
+  line-height: 25px;
+}
+
+.permissionsContent {
+  margin-top: 25px;
+  font-size: 15px;
+  line-height: 22px;
+}
+
+.buttons {
+  margin-top: 50px;
 }

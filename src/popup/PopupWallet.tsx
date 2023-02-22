@@ -60,7 +60,6 @@ export default function PopupWallet() {
               <li>View your wallet assets</li>
             </ul>
           }
-          cardHeader={`Connect to ${sessionToHandover.peer.metadata.name}`}
           title={`${sessionToHandover.peer.metadata.name} wants to view your assets & wallet balance`}
           onUserResponse={async approved => {
             await sendHandoverMessage(approved ? keyStore : null);

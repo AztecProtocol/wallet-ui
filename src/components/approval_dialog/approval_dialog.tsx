@@ -17,17 +17,15 @@ export function ApprovalDialog(props: {
   return (
     <Card
       className={style.card}
-      headerSize={CardHeaderSize.MEDIUM}
-      cardHeader={props.cardHeader}
+      headerSize={CardHeaderSize.NONE}
       cardContent={
         <div className={style.cardContent}>
-          <div className={style.header}>
-            <img className={style.logo} src={props.dappLogoUrl || logo} alt="Logo" />
-            <div>{props.title}</div>
-          </div>
+          <div className={style.header}>{props.title}</div>
+          <img className={style.logo} src={props.dappLogoUrl || logo} alt="Logo" />
+
           <div className={style.permissions}>
-            You are allowing the app to:
-            {props.permissions}
+            <div className={style.permissionsHeader}>You are allowing the app to:</div>
+            <div className={style.permissionsContent}>{props.permissions}</div>
           </div>
           <div className={style.buttons}>
             <Button
