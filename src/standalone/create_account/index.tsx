@@ -50,7 +50,9 @@ export default function CreateAccount({ onAccountCreated, onCancel, chainId }: C
   }
 
   const onBack = () => setCurrentStep(currentStep - 1);
-  const onNext = () => setCurrentStep(currentStep + 1);
+  const onNext = () => {
+    setCurrentStep(currentStep + 1);
+  };
 
   // We want to remember passcode and alias, so unmount only the visual display, not the state hooks
   const renderPasscodeAlias = () => (
@@ -110,6 +112,9 @@ export default function CreateAccount({ onAccountCreated, onCancel, chainId }: C
             onBack={onBack}
             onFinish={async () => {
               onNext();
+            }}
+            isSameAztecKey={(reenteredAztecKey: string) => {
+              return encryptedKeyStore == reenteredAztecKey;
             }}
             isSamePasscode={(reenteredPasscode: string) => {
               return passcode === reenteredPasscode;
