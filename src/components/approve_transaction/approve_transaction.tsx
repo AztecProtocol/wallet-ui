@@ -1,7 +1,6 @@
-import { Card, CardHeaderSize, Button, ButtonTheme } from '@aztec/aztec-ui';
+import { Card, CardHeaderSize, Button, ButtonTheme, ButtonSize } from '@aztec/aztec-ui';
 import style from './approve_transaction.module.scss';
 import { TransactionRequest } from '../../iframe/WalletConnectKeyStore';
-import { useState } from 'react';
 import { AztecSdk } from '@aztec/sdk';
 import { TransactionSummary } from './transaction_summary';
 
@@ -26,6 +25,7 @@ export function ApproveTransaction(props: ApproveTransactionProps) {
               theme={ButtonTheme.Secondary}
               className={style.confirmButton}
               text="Cancel"
+              size={ButtonSize.Medium}
               onClick={() => {
                 props.onUserResponse(false);
               }}
@@ -34,6 +34,7 @@ export function ApproveTransaction(props: ApproveTransactionProps) {
               theme={ButtonTheme.Primary}
               className={style.confirmButton}
               text="Confirm"
+              size={ButtonSize.Medium}
               onClick={() => {
                 props.onUserResponse(true);
               }}

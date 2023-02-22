@@ -14,7 +14,6 @@ export function Connect(props: {
           <li>View your aztec address</li>
         </ul>
       }
-      cardHeader={`Sign in to ${props.dappName}`}
       title={`${props.dappName} wants to connect to your Aztec Wallet`}
       dappLogoUrl={props.dappLogoUrl}
       onUserResponse={props.onUserResponse}

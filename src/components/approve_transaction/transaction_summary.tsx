@@ -68,8 +68,8 @@ function generateTotalCost(amounts: AssetValue[], sdk: AztecSdk) {
 function renderPaymentProofSummary(requestData: PaymentProofRequestData, sdk: AztecSdk) {
   return [
     requestData.proofId === ProofId.WITHDRAW
-      ? { key: 'L1 Recipient', value: shortEthAddress(requestData.publicOwner) }
-      : { key: 'Recipient', value: requestData.recipient.toShortString() },
+      ? { key: 'Withdraw to', value: shortEthAddress(requestData.publicOwner) }
+      : { key: 'Send to', value: requestData.recipient.toShortString() },
     { key: 'Amount', value: assetValueToString(requestData.assetValue, sdk) },
     { key: 'Transaction Fee', value: assetValueToString(requestData.fee, sdk) },
     generateTotalCost([requestData.assetValue, requestData.fee], sdk),
@@ -120,7 +120,7 @@ function renderDefiProofSummary(requestData: DefiProofRequestData, sdk: AztecSdk
   }
 
   return [
-    { key: 'Recipient', value: 'Defi integration' },
+    { key: 'Send to', value: 'Defi integration' },
     ...inputAssetValues.map((assetValue, index) => ({
       key: `Amount ${inputAssetValues.length > 1 ? String.fromCharCode(65 + index) : ''}`,
       value: assetValueToString(assetValue, sdk),
