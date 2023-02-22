@@ -35,8 +35,16 @@ export default function CreateAccount({ onAccountCreated, onCancel, chainId }: C
   const [currentStep, setCurrentStep] = useState(Step._01_PasscodeAlias);
   const wasm = useContext(BBWasmContext)!;
 
-  const { sdk } = useContext(AztecSdkContext);
+  const { sdk, sdkError } = useContext(AztecSdkContext);
 
+  if (!sdk && sdkError) {
+    return (
+      <div>
+        Could not start SDK. <br />
+        {sdkError}
+      </div>
+    );
+  }
   if (!sdk) {
     return <div>Starting the SDK...</div>;
   }

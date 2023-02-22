@@ -22,7 +22,7 @@ export default function IframeWallet() {
   const [initialized, setInitialized] = useState<boolean>(false);
 
   const wasm = useContext<BarretenbergWasm>(BBWasmContext);
-  const { sdk } = useContext(AztecSdkContext);
+  const { sdk, sdkError } = useContext(AztecSdkContext);
 
   const { client, keyStore, session, requests } = useWalletConnectKeyStore(aztecAWPServer);
   const { setIframeOpen } = useIframeToggle(aztecAWPServer);
@@ -61,6 +61,9 @@ export default function IframeWallet() {
 
   if (requests.length > 0) {
     const request = requests[0];
+    if (!sdk && sdkError) {
+      return <div>Error starting the SDK: {sdkError} </div>;
+    }
     if (!sdk) {
       return <div>Starting the SDK...</div>;
     }
