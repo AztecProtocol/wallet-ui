@@ -13,29 +13,18 @@ export interface ApproveTransactionProps {
 }
 
 export function ApproveTransaction(props: ApproveTransactionProps) {
-  const [warningAccepted, setWarningAccepted] = useState(false);
-
   return (
     <Card
       className={style.card}
       headerSize={CardHeaderSize.NONE}
       cardContent={
         <div className={style.cardContent}>
-          <div className={style.header}>
-            <div>Confirm your transaction</div>
-          </div>
+          <div className={style.title}>Confirm your transaction</div>
           <TransactionSummary requestData={props.request.data} sdk={props.sdk} />
-          <p>
-            This is experimental software that hasn't yet been externally audited. Your private key is stored in the
-            browser, for security amounts are capped at 1 ETH. Use at your own risk.
-          </p>
-          <label>
-            I understand the risks
-            <input type="checkbox" checked={warningAccepted} onChange={() => setWarningAccepted(!warningAccepted)} />
-          </label>
           <div className={style.buttons}>
             <Button
               theme={ButtonTheme.Secondary}
+              className={style.confirmButton}
               text="Cancel"
               onClick={() => {
                 props.onUserResponse(false);
@@ -43,7 +32,7 @@ export function ApproveTransaction(props: ApproveTransactionProps) {
             />
             <Button
               theme={ButtonTheme.Primary}
-              disabled={!warningAccepted}
+              className={style.confirmButton}
               text="Confirm"
               onClick={() => {
                 props.onUserResponse(true);

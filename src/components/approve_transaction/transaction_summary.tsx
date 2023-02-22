@@ -16,6 +16,7 @@ import style from './transaction_summary.module.scss';
 interface KeyValuePair {
   key: string;
   value: string;
+  highlight?: boolean;
 }
 
 function shortEthAddress(address: EthAddress) {
@@ -29,8 +30,8 @@ function SummaryTable({ data }: { data: KeyValuePair[] }) {
       <tbody>
         {data.map((pair, index) => (
           <tr key={index}>
-            <td>{pair.key}</td>
-            <td>{pair.value}</td>
+            <td className={pair.highlight ? style.highlightTableCell : ''}>{pair.key}</td>
+            <td className={pair.highlight ? style.highlightTableCell : ''}>{pair.value}</td>
           </tr>
         ))}
       </tbody>
@@ -57,7 +58,11 @@ function generateTotalCost(amounts: AssetValue[], sdk: AztecSdk) {
     return acc;
   }, []);
 
-  return { key: 'Total Cost', value: totalAmounts.map(amount => assetValueToString(amount, sdk)).join(' + ') };
+  return {
+    key: 'Total Cost',
+    value: totalAmounts.map(amount => assetValueToString(amount, sdk)).join(' + '),
+    highlight: true,
+  };
 }
 
 function renderPaymentProofSummary(requestData: PaymentProofRequestData, sdk: AztecSdk) {
@@ -94,7 +99,7 @@ function renderAccountProofSummary(requestData: AccountProofRequestData, sdk: Az
 
   return data.concat([
     { key: 'Transaction Fee', value: feeStr },
-    { key: 'Total Cost', value: feeStr },
+    { key: 'Total Cost', value: feeStr, highlight: true },
   ]);
 }
 
@@ -117,11 +122,11 @@ function renderDefiProofSummary(requestData: DefiProofRequestData, sdk: AztecSdk
   return [
     { key: 'Recipient', value: 'Defi integration' },
     ...inputAssetValues.map((assetValue, index) => ({
-      key: `Amount ${String.fromCharCode(65 + index)}`,
+      key: `Amount ${inputAssetValues.length > 1 ? String.fromCharCode(65 + index) : ''}`,
       value: assetValueToString(assetValue, sdk),
     })),
     ...outputAssetIds.map((assetId, index) => ({
-      key: `Receive ${String.fromCharCode(65 + index)}`,
+      key: `Receive ${outputAssetIds.length > 1 ? String.fromCharCode(65 + index) : ''}`,
       value: assetIdToSymbol(assetId, sdk),
     })),
     { key: 'Transaction Fee', value: assetValueToString(requestData.fee, sdk) },
