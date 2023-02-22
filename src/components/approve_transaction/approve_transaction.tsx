@@ -1,7 +1,6 @@
 import { Card, CardHeaderSize, Button, ButtonTheme, ButtonSize } from '@aztec/aztec-ui';
 import style from './approve_transaction.module.scss';
 import { TransactionRequest } from '../../iframe/WalletConnectKeyStore';
-import { useState } from 'react';
 import { AztecSdk } from '@aztec/sdk';
 import { TransactionSummary } from './transaction_summary';
 
