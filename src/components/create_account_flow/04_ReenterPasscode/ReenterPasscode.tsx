@@ -14,7 +14,10 @@ export default function ReenterPasscode({ onBack, isSameAztecKey, isSamePasscode
 
   return (
     <StepCard
-      header="Re-enter your account details"
+      header="Re-enter your Passcode and Aztec Key"
+      steps={5}
+      currentStep={4}
+      subtitle="Confirm your details before proceeding - Password manager etc etc"
       nextButtonDisabled={!isSamePasscode(password) || !isSameAztecKey(aztecKey)}
       handlePreviousStep={onBack}
       handleNextStep={() => onFinish(aztecKey, password)}

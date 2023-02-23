@@ -60,7 +60,10 @@ export default function Deposit({ chainId, getInitialRegisterFees, sendProof, on
           setLog(`It appears that this deposit failed. ${(error as Error).message}`);
         }
       }}
-      header="Make your First Deposit"
+      header="Make a deposit & select a Transaction fee"
+      subtitle="Confirm your details before proceeding"
+      steps={5}
+      currentStep={5}
     >
       {/* <input value={ethDeposit} onChange={event => setEthDeposit(event.target.value)} /> */}
       <Field
@@ -74,8 +77,7 @@ export default function Deposit({ chainId, getInitialRegisterFees, sendProof, on
       />
       <FeeSelector
         placeholder={'Select a speed'}
-        label={'Select a speed for your transaction'}
-        sublabel={`There are several options to choose from, depending on your budget`}
+        label={'Transaction fee'}
         value={selectedFee}
         options={registerFeeOptions}
         status={selectedFee !== null ? FeeSelectorStatus.Success : undefined}

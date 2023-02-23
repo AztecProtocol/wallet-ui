@@ -27,6 +27,9 @@ export default function PasscodeAlias({
   return (
     <StepCard
       header="Choose Alias & Passcode"
+      subtitle="You will need you Passcode alongside your Aztec Key in order to log into your Wallet."
+      currentStep={1}
+      steps={5}
       nextButtonDisabled={!isValidAlias(alias) || !isValidPasscode(passcode) || reconfirmPasscode !== passcode}
       handlePreviousStep={onBack}
       handleNextStep={() => onFinish(passcode, alias)}
@@ -42,7 +45,7 @@ export default function PasscodeAlias({
         value={passcode}
         password={true}
         label="Choose a passcode"
-        status={isValidPasscode(alias) ? FieldStatus.Success : undefined}
+        status={passcode.length > 0 ? FieldStatus.Success : undefined}
         placeholder="Enter passcode"
         autoComplete="new-password"
         onChangeValue={setPasscode}
