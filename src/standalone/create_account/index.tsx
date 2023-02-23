@@ -35,14 +35,24 @@ export default function CreateAccount({ onAccountCreated, onCancel, chainId }: C
   const [currentStep, setCurrentStep] = useState(Step._01_PasscodeAlias);
   const wasm = useContext(BBWasmContext)!;
 
-  const { sdk } = useContext(AztecSdkContext);
+  const { sdk, sdkError } = useContext(AztecSdkContext);
 
+  if (!sdk && sdkError) {
+    return (
+      <div>
+        Could not start SDK. <br />
+        {sdkError}
+      </div>
+    );
+  }
   if (!sdk) {
     return <div>Starting the SDK...</div>;
   }
 
   const onBack = () => setCurrentStep(currentStep - 1);
-  const onNext = () => setCurrentStep(currentStep + 1);
+  const onNext = () => {
+    setCurrentStep(currentStep + 1);
+  };
 
   // We want to remember passcode and alias, so unmount only the visual display, not the state hooks
   const renderPasscodeAlias = () => (
@@ -102,6 +112,9 @@ export default function CreateAccount({ onAccountCreated, onCancel, chainId }: C
             onBack={onBack}
             onFinish={async () => {
               onNext();
+            }}
+            isSameAztecKey={(reenteredAztecKey: string) => {
+              return encryptedKeyStore == reenteredAztecKey;
             }}
             isSamePasscode={(reenteredPasscode: string) => {
               return passcode === reenteredPasscode;

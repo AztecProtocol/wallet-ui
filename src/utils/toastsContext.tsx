@@ -1,14 +1,7 @@
 import { createContext, Dispatch, ReactNode, SetStateAction, useState } from 'react';
-import { ToastGroup, ToastGroupPosition } from '@aztec/aztec-ui';
+import { ToastContent, ToastGroup, ToastGroupPosition } from '@aztec/aztec-ui';
 
-export interface Toast {
-  text: string;
-  key: number;
-  autocloseInMs: number;
-  closable: boolean;
-}
-
-export const ToastsContext = createContext<Dispatch<SetStateAction<Toast[]>>>(() => {});
+export const ToastsContext = createContext<Dispatch<SetStateAction<ToastContent[]>>>(() => {});
 
 export function addErrorToast(error: string, setToasts: any) {
   setToasts((prevToasts: any) => [
@@ -23,7 +16,7 @@ export function addErrorToast(error: string, setToasts: any) {
 }
 
 export function ToastsProvider({ children }: { children: ReactNode }) {
-  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [toasts, setToasts] = useState<ToastContent[]>([]);
 
   function closeToast(key: string) {
     setToasts(prevToasts => prevToasts.filter((toast: any) => toast.key !== key));

@@ -57,7 +57,7 @@ export default function Deposit({ chainId, getInitialRegisterFees, sendProof, on
           await sendProof(ethDeposit, registerFees[selectedFee], { ethAddress, ethSigner }, setLog);
           setSendingProofFinished(true);
         } catch (error) {
-          setLog((error as Error).message);
+          setLog(`It appears that this deposit failed. ${(error as Error).message}`);
         }
       }}
       header="Make a deposit & select a Transaction fee"

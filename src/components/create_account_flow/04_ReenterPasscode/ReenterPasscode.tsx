@@ -1,14 +1,15 @@
-import { Field } from '@aztec/aztec-ui';
+import { Field, FieldStatus } from '@aztec/aztec-ui';
 import { useState } from 'react';
 import StepCard, { NextStepResult } from '../../StepCard';
 
 interface ReenterPasscodeProps {
+  isSameAztecKey: (aztecKey: string) => boolean;
   isSamePasscode: (password: string) => boolean;
   onBack?: () => void;
   onFinish: (encryptionKey: string, password: string) => Promise<NextStepResult>;
 }
-export default function ReenterPasscode({ onBack, isSamePasscode, onFinish }: ReenterPasscodeProps) {
-  const [encryptionKey, setEncryptionKey] = useState('');
+export default function ReenterPasscode({ onBack, isSameAztecKey, isSamePasscode, onFinish }: ReenterPasscodeProps) {
+  const [aztecKey, setAztecKey] = useState('');
   const [password, setPassword] = useState('');
 
   return (
@@ -17,23 +18,25 @@ export default function ReenterPasscode({ onBack, isSamePasscode, onFinish }: Re
       steps={5}
       currentStep={4}
       subtitle="Confirm your details before proceeding - Password manager etc etc"
-      nextButtonDisabled={!isSamePasscode(password)}
+      nextButtonDisabled={!isSamePasscode(password) || !isSameAztecKey(aztecKey)}
       handlePreviousStep={onBack}
-      handleNextStep={() => onFinish(encryptionKey, password)}
+      handleNextStep={() => onFinish(aztecKey, password)}
     >
+      <Field
+        value={aztecKey}
+        password={true}
+        label="Re-enter your Aztec Key"
+        placeholder="Enter aztec key"
+        onChangeValue={setAztecKey}
+        status={isSameAztecKey(aztecKey) ? FieldStatus.Success : undefined}
+      />
       <Field
         value={password}
         password={true}
         label="Re-enter your Passcode"
         placeholder="Enter passcode"
         onChangeValue={setPassword}
-      />
-      <Field
-        value={encryptionKey}
-        password={true}
-        label="Re-enter your Aztec Key"
-        placeholder="Enter encryption key"
-        onChangeValue={setEncryptionKey}
+        status={isSamePasscode(password) ? FieldStatus.Success : undefined}
       />
     </StepCard>
   );
