@@ -1,5 +1,6 @@
 import { Button, ButtonTheme, Card, CardHeaderSize } from '@aztec/aztec-ui';
 import { ReactNode, useContext } from 'react';
+import { ProgressIndicator } from '../../aztec-ui/progress_indicator';
 import { ToastsContext, addErrorToast } from '../../utils/toastsContext';
 import style from './StepCard.module.scss';
 
@@ -10,6 +11,8 @@ interface CreateAccountCardProps {
   handleNextStep?: () => Promise<NextStepResult>;
   handlePreviousStep?: () => void;
   header: string;
+  steps: number;
+  currentStep: number;
   subtitle?: string;
   nextButtonDisabled?: boolean;
   mounted?: boolean;
@@ -25,18 +28,20 @@ export default function StepCard({
   header,
   subtitle,
   nextButtonDisabled,
+  currentStep,
+  steps,
 }: CreateAccountCardProps) {
   const setToasts = useContext(ToastsContext);
   return (
     <Card
       className={style.card}
-      headerSize={CardHeaderSize.MEDIUM}
+      headerSize={CardHeaderSize.NONE}
       gradient={['#f6f6f6', '#f6f6f6']}
       headerTextColor="black"
-      cardHeader="Account Creation"
       cardContent={
         <form>
           <div className={style.cardContent}>
+            <ProgressIndicator currentStep={currentStep} steps={steps} />
             <div className={style.header}>
               {header}
               {subtitle && <div className={style.subtitle}>{subtitle}</div>}

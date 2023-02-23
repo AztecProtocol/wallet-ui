@@ -13,24 +13,27 @@ export default function ReenterPasscode({ onBack, isSamePasscode, onFinish }: Re
 
   return (
     <StepCard
-      header="Re-enter your account details"
+      header="Re-enter your Passcode and Aztec Key"
+      steps={5}
+      currentStep={4}
+      subtitle="Confirm your details before proceeding - Password manager etc etc"
       nextButtonDisabled={!isSamePasscode(password)}
       handlePreviousStep={onBack}
       handleNextStep={() => onFinish(encryptionKey, password)}
     >
-      <Field
-        value={encryptionKey}
-        password={true}
-        label="Re-enter your Encryption Key"
-        placeholder="Enter encryption key"
-        onChangeValue={setEncryptionKey}
-      />
       <Field
         value={password}
         password={true}
         label="Re-enter your Passcode"
         placeholder="Enter passcode"
         onChangeValue={setPassword}
+      />
+      <Field
+        value={encryptionKey}
+        password={true}
+        label="Re-enter your Aztec Key"
+        placeholder="Enter encryption key"
+        onChangeValue={setEncryptionKey}
       />
     </StepCard>
   );

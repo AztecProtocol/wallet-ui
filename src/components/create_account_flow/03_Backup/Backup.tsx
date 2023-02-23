@@ -22,8 +22,11 @@ export default function Backup({ generateRecoveryKey, doDownloadRecoveryKit, onB
 
   return (
     <StepCard
-      header="Back Up Your Credentials"
+      header="Connect an Existing Wallet to generate a Recovery Kit"
+      subtitle="This will be used to recover your funds to a new Wallet account should you forget your login details."
       nextButtonDisabled={!kitDownloaded}
+      currentStep={3}
+      steps={5}
       handlePreviousStep={onBack}
       handleNextStep={() => onFinish()}
     >
@@ -31,6 +34,7 @@ export default function Backup({ generateRecoveryKey, doDownloadRecoveryKit, onB
       <div className={styles.buttonsWrapper}>
         <ImageButton
           icon={ImageButtonIcon.Download}
+          checked={kitDownloaded}
           label="Download your recovery kit"
           disabled={!account.address}
           onClick={async () => {
