@@ -1,3 +1,9 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+}
+
 .table {
   width: 100%;
 

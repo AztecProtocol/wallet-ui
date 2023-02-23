@@ -12,6 +12,7 @@ import {
   AliasHash,
 } from '@aztec/sdk';
 import { AssetValue } from '../../utils/assets';
+import { DefiCard } from './defi_card';
 import style from './transaction_summary.module.scss';
 
 type TransactionType = 'Withdraw' | 'Send';
@@ -104,6 +105,24 @@ function generateDefiProofSummary(requestData: DefiProofRequestData) {
   ];
 }
 
+function generateDefiCard(requestData: DefiProofRequestData, sdk: AztecSdk) {
+  const { bridgeCallData } = requestData;
+  const inputAssetIds = bridgeCallData.secondInputInUse
+    ? [bridgeCallData.inputAssetIdA, bridgeCallData.inputAssetIdB]
+    : [bridgeCallData.inputAssetIdA];
+
+  const outputAssetIds = bridgeCallData.secondOutputInUse
+    ? [bridgeCallData.outputAssetIdA, bridgeCallData.outputAssetIdB]
+    : [bridgeCallData.outputAssetIdA];
+  return (
+    <DefiCard
+      bridgeId={bridgeCallData.bridgeAddressId}
+      inputAssets={inputAssetIds.map(id => assetIdToSymbol(id, sdk))}
+      outputAssets={outputAssetIds.map(id => assetIdToSymbol(id, sdk))}
+    />
+  );
+}
+
 function renderValue(value: AssetValue | AssetValue[] | GrumpkinAddress | EthAddress, sdk: AztecSdk) {
   if (Array.isArray(value)) {
     return value.map((assetValue, index) => (
@@ -138,6 +157,8 @@ function SummaryTable({ data, sdk }: { data: KeyValuePair[]; sdk: AztecSdk }) {
 
 export function TransactionSummary({ requestData, sdk }: { requestData: ProofRequestData; sdk: AztecSdk }) {
   let data: KeyValuePair[];
+  let card: React.ReactNode = null;
+
   switch (requestData.type) {
     case ProofRequestDataType.PaymentProofRequestData:
       data = generatePaymentProofSummary(requestData);
@@ -146,9 +167,15 @@ export function TransactionSummary({ requestData, sdk }: { requestData: ProofReq
       data = generateAccountProofSummary(requestData);
       break;
     case ProofRequestDataType.DefiProofRequestData:
+      card = generateDefiCard(requestData, sdk);
       data = generateDefiProofSummary(requestData);
       break;
   }
 
-  return <SummaryTable data={data} sdk={sdk} />;
+  return (
+    <div className={style.container}>
+      {card}
+      <SummaryTable data={data} sdk={sdk} />
+    </div>
+  );
 }
