@@ -1,4 +1,4 @@
-import { Card, CardTheme, CardHeaderSize, Button, ButtonTheme } from '@aztec/aztec-ui';
+import { Card, CardTheme, CardHeaderSize, Button, ButtonTheme, ButtonSize } from '@aztec/aztec-ui';
 import style from './landing.module.scss';
 
 interface LandingProps {
@@ -17,11 +17,18 @@ export function Landing({ onCreateWallet, onLogin }: LandingProps) {
           <div className={style.buttons}>
             <Button
               theme={ButtonTheme.Primary}
+              size={ButtonSize.Medium}
               text="Create Wallet"
               className={style.button}
               onClick={onCreateWallet}
             />
-            <Button theme={ButtonTheme.Secondary} text="Log In" className={style.button} onClick={onLogin} />
+            <Button
+              theme={ButtonTheme.Secondary}
+              size={ButtonSize.Medium}
+              text="Log In"
+              className={style.button}
+              onClick={onLogin}
+            />
           </div>
         </div>
       }

@@ -37,7 +37,11 @@ export async function handleHandoverMessage(
 }
 
 export function openPopup() {
-  const walletWindow = window.open(window.location.origin + '/popup', '_blank', 'popup=true');
+  const walletWindow = window.open(
+    window.location.origin + '/popup',
+    '_blank',
+    'popup=true,resizable=true,width=800,height=875',
+  );
   if (walletWindow) {
     const topic = getTopic();
     if (topic) {

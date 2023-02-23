@@ -1,4 +1,14 @@
-import { Card, CardTheme, CardHeaderSize, Button, ButtonTheme, Field, Hyperlink, FieldStatus } from '@aztec/aztec-ui';
+import {
+  Card,
+  CardTheme,
+  CardHeaderSize,
+  Button,
+  ButtonTheme,
+  Field,
+  Hyperlink,
+  FieldStatus,
+  ButtonSize,
+} from '@aztec/aztec-ui';
 import { useContext, useState } from 'react';
 import style from './sign_in.module.scss';
 import { NextStepResult } from '../StepCard';
@@ -36,21 +46,25 @@ export function SignIn({
           <div className={style.fields}>
             {showEncryptedKeystore && (
               <Field
+                containerClassName={style.fieldContainer}
+                className={style.field}
                 value={encryptedKeystore}
                 password={true}
                 autoComplete="current-password"
                 status={encryptedKeystore.length > 0 ? FieldStatus.Success : undefined}
-                label="Unlock with Aztec key"
-                placeholder="Enter Aztec key"
+                label="Unlock with Aztec Key & Passcode"
+                placeholder="Enter Aztec Key"
                 onChangeValue={setEncryptedKeystore}
               />
             )}
             <Field
+              containerClassName={style.fieldContainer}
+              className={style.field}
               value={passcode}
               password={true}
               autoComplete="current-password"
               status={passcode.length > 0 ? FieldStatus.Success : undefined}
-              label="Unlock with passcode"
+              label={showEncryptedKeystore ? null : 'Unlock with Passcode'}
               placeholder="Enter passcode"
               onChangeValue={setPasscode}
             />
@@ -62,6 +76,7 @@ export function SignIn({
           <div className={style.buttons}>
             <Button
               theme={ButtonTheme.Primary}
+              size={ButtonSize.Medium}
               text="Unlock"
               className={style.unlockButton}
               disabled={!isValidPasscode(passcode)}

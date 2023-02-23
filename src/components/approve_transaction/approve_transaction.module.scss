@@ -1,1 +1,23 @@
 @use '../global.module.scss';
+
+.cardContent {
+  padding: 30px 0px;
+}
+
+.title {
+  width: 100%;
+  padding: 0px 50px;
+  text-align: left;
+  font-weight: 450;
+  font-size: 23px;
+}
+
+.buttons {
+  padding: 0px 50px;
+  gap: 10px;
+}
+
+.confirmButton {
+  flex-grow: 1;
+  font-size: 16px;
+}

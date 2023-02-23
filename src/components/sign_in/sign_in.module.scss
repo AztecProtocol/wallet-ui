@@ -8,6 +8,17 @@
   width: 100%;
 }
 
+.cardContent {
+  padding: 40px 50px;
+}
+
+.header {
+  margin-top: 10px;
+  margin-bottom: 35px;
+  padding: 0px;
+  font-size: 23px;
+}
+
 .links {
   display: flex;
   flex-direction: column;
@@ -21,6 +32,9 @@
 
 .fields {
   width: 100%;
+  .fieldContainer {
+    margin: 0px;
+  }
 }
 
 .logo {
