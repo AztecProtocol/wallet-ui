@@ -33,7 +33,7 @@ export default function ReenterPasscode({ onBack, isSameAztecKey, isSamePasscode
         label="Re-enter your Passcode"
         placeholder="Enter passcode"
         onChangeValue={setPassword}
-        status={isSamePasscode(aztecKey) ? FieldStatus.Success : undefined}
+        status={isSamePasscode(password) ? FieldStatus.Success : undefined}
       />
     </StepCard>
   );
