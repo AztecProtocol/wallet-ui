@@ -13,10 +13,14 @@
     height: 58px;
     vertical-align: middle;
     font-size: 16px;
+    line-height: 19px;
 
     &.highlightTableCell {
-      font-size: 23px;
       font-weight: 450;
+    }
+
+    .assetValueItem {
+      width: 100%;
     }
   }
 
@@ -26,6 +30,10 @@
   }
 
   td:nth-child(even) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: end;
     text-align: right;
     padding-right: 50px;
   }

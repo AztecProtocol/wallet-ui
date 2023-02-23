@@ -1,7 +1,8 @@
 @use '../global.module.scss';
 
 .cardContent {
-  padding: 30px 0px;
+  padding: 30px 0px 0px 0px;
+  width: 100%;
 }
 
 .title {
@@ -12,8 +13,15 @@
   font-size: 23px;
 }
 
+.scrollRegion {
+  width: 100%;
+  max-height: 570px;
+  // max-height: 300px; // to test scroll
+  padding-left: 10px;
+}
+
 .buttons {
-  padding: 0px 50px;
+  padding: 35px 50px 30px 50px;
   gap: 10px;
 }
 

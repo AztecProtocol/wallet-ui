@@ -3,6 +3,7 @@ import style from './approve_transaction.module.scss';
 import { TransactionRequest } from '../../iframe/WalletConnectKeyStore';
 import { AztecSdk } from '@aztec/sdk';
 import { TransactionSummary } from './transaction_summary';
+import { VerticalScrollRegion } from '@aztec/aztec-ui';
 
 export interface ApproveTransactionProps {
   dappOrigin: string;
@@ -19,27 +20,29 @@ export function ApproveTransaction(props: ApproveTransactionProps) {
       cardContent={
         <div className={style.cardContent}>
           <div className={style.title}>Confirm your transaction</div>
-          <TransactionSummary requestData={props.request.data} sdk={props.sdk} />
-          <div className={style.buttons}>
-            <Button
-              theme={ButtonTheme.Secondary}
-              className={style.confirmButton}
-              text="Cancel"
-              size={ButtonSize.Medium}
-              onClick={() => {
-                props.onUserResponse(false);
-              }}
-            />
-            <Button
-              theme={ButtonTheme.Primary}
-              className={style.confirmButton}
-              text="Confirm"
-              size={ButtonSize.Medium}
-              onClick={() => {
-                props.onUserResponse(true);
-              }}
-            />
-          </div>
+          <VerticalScrollRegion className={style.scrollRegion} scrollBottomButton={true}>
+            <TransactionSummary requestData={props.request.data} sdk={props.sdk} />
+            <div className={style.buttons}>
+              <Button
+                theme={ButtonTheme.Secondary}
+                className={style.confirmButton}
+                text="Cancel"
+                size={ButtonSize.Medium}
+                onClick={() => {
+                  props.onUserResponse(false);
+                }}
+              />
+              <Button
+                theme={ButtonTheme.Primary}
+                className={style.confirmButton}
+                text="Confirm"
+                size={ButtonSize.Medium}
+                onClick={() => {
+                  props.onUserResponse(true);
+                }}
+              />
+            </div>
+          </VerticalScrollRegion>
         </div>
       }
     />
