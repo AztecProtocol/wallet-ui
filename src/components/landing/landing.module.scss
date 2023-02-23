@@ -1,16 +1,5 @@
 @use '../global.module.scss';
 
-.cardContent {
-  padding: 40px 50px;
-}
-
-.header {
-  margin-top: 10px;
-  margin-bottom: 75px;
-  padding: 0px;
-  font-size: 23px;
-}
-
 .buttons {
   flex-direction: column;
   gap: 10px;
@@ -18,4 +7,8 @@
 
 .button {
   width: 100%;
+}
+
+.header {
+  text-align: center;
 }

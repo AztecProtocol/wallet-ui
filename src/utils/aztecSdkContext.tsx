@@ -36,6 +36,7 @@ export async function createSdk(chainId: EthereumChainId) {
 
 interface AztecSdkContextData {
   sdk?: AztecSdk;
+  sdkError?: string;
 }
 
 export const AztecSdkContext = createContext<AztecSdkContextData>({});
@@ -50,17 +51,31 @@ export function AztecSdkProvider({
   noSync?: boolean;
 }) {
   const [sdk, setSdk] = useState<AztecSdk | undefined>();
+  const [sdkError, setSdkError] = useState('');
 
   useEffect(() => {
     setSdk(undefined);
-    createSdk(chainId).then(setSdk);
+    (async () => {
+      try {
+        setSdk(await createSdk(chainId));
+      } catch (err: any) {
+        console.error(err);
+        setSdkError(err.toString());
+      }
+    })();
   }, [chainId]);
 
   useEffect(() => {
     if (sdk && !noSync) {
-      sdk.run();
+      (async () => {
+        try {
+          await sdk.run();
+        } catch (err: any) {
+          setSdkError(err.toString());
+        }
+      })();
     }
   }, [sdk]);
 
-  return <AztecSdkContext.Provider value={{ sdk }}>{children}</AztecSdkContext.Provider>;
+  return <AztecSdkContext.Provider value={{ sdk, sdkError }}>{children}</AztecSdkContext.Provider>;
 }
