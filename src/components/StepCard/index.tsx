@@ -1,6 +1,5 @@
-import { Button, ButtonTheme, Card, CardHeaderSize } from '@aztec/aztec-ui';
+import { Button, ButtonTheme, Card, CardHeaderSize, ProgressIndicator } from '@aztec/aztec-ui';
 import { ReactNode, useContext } from 'react';
-import { ProgressIndicator } from '../../aztec-ui/progress_indicator';
 import { ToastsContext, addErrorToast } from '../../utils/toastsContext';
 import style from './StepCard.module.scss';
 
