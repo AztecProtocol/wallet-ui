@@ -1,11 +1,8 @@
 .appHeader {
-  position: absolute;
-  top: 50px;
-  left: 100px;
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 16px;
+  gap: 15px;
+  padding: 40px 10% 40px 10%;
+  height: 116px;
 
   .appLogo {
     width: 40px;
@@ -20,12 +17,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100vw;
-  height: 100vh;
-  background-image: linear-gradient(
-    180deg,
-    rgba(240, 248, 250, 0.6),
-    rgba(210, 192, 207, 0.6) 67.71%,
-    rgba(149, 164, 239, 0.6)
-  );
+  margin: auto;
+  padding: 0px 10% 100px 10%;
+  padding-bottom: 100px;
+  width: 100%;
+}
+
+.background {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-image: linear-gradient(180deg,
+      rgba(240, 248, 250, 0.6),
+      rgba(210, 192, 207, 0.6) 67.71%,
+      rgba(149, 164, 239, 0.6));
 }
