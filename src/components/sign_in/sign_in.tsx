@@ -85,7 +85,7 @@ export function SignIn({
                 if (error) {
                   if (error.match(/provided data is too small/)) {
                     addErrorToast('The Aztec Key provided is too short.', setToasts);
-                  } else if (error.match(/operation-specific reason/)) {
+                  } else if (error.match(/OperationError/)) {
                     addErrorToast('The passcode provided is incorrect for this key.', setToasts);
                   } else {
                     addErrorToast(error, setToasts);

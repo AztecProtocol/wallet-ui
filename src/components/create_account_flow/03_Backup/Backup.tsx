@@ -1,7 +1,7 @@
 import { ImageButton, ImageButtonIcon } from '@aztec/aztec-ui';
 import { useState } from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { ConstantKeyPair, RECOVERY_KEY_MESSAGE } from '@aztec/sdk';
+import { ConstantKeyPair, RECOVERY_KEY_MESSAGE } from '@aztec/sdk-incubator';
 import { useAccount, useSignMessage } from 'wagmi';
 import StepCard, { NextStepResult } from '../../StepCard';
 import styles from './Backup.module.scss';

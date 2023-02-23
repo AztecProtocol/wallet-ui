@@ -1,4 +1,4 @@
-import { AztecKeyStore, BarretenbergWasm } from '@aztec/sdk';
+import { AztecKeyStore, BarretenbergWasm } from '@aztec/sdk-incubator';
 
 export default async function createAndExportKeyStore(passcode: string, wasm: BarretenbergWasm) {
   const keyStore = await AztecKeyStore.create(wasm);

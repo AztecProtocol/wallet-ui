@@ -2,7 +2,7 @@ import '../components/index.scss';
 import '@rainbow-me/rainbowkit/styles.css';
 import { WagmiConfig } from 'wagmi';
 import { lightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
-import { AztecKeyStore } from '@aztec/sdk';
+import { AztecKeyStore } from '@aztec/sdk-incubator';
 
 import render from '../components/render';
 import { BBWasmContext, BBWasmProvider } from '../utils/wasmContext';

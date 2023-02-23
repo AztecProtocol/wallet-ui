@@ -1,4 +1,4 @@
-import { AztecKeyStore, KeyStore } from '@aztec/sdk';
+import { AztecKeyStore, KeyStore } from '@aztec/sdk-incubator';
 import { IFRAME_HANDOVER_TYPE } from '../iframe/handleHandover.js';
 import { getSession, keyStoreToString } from '../utils/sessionUtils.js';
 

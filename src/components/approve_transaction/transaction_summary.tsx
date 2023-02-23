@@ -9,7 +9,7 @@ import {
   DefiProofRequestData,
   GrumpkinAddress,
   AliasHash,
-} from '@aztec/sdk';
+} from '@aztec/sdk-incubator';
 import { AssetValue } from '../../utils/assets';
 import style from './transaction_summary.module.scss';
 

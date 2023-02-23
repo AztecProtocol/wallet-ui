@@ -1,4 +1,4 @@
-import { AztecKeyStore } from '@aztec/sdk';
+import { AztecKeyStore } from '@aztec/sdk-incubator';
 import { SignClient } from '@walletconnect/sign-client/dist/types/client';
 import { SessionTypes } from '@walletconnect/types';
 import { useEffect, useState } from 'react';
