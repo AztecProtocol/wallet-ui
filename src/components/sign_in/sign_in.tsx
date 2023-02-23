@@ -83,7 +83,13 @@ export function SignIn({
               onClick={async () => {
                 const error = (await onFinish(encryptedKeystore, passcode))?.error;
                 if (error) {
-                  addErrorToast(error, setToasts);
+                  if (error.match(/provided data is too small/)) {
+                    addErrorToast('The Aztec Key provided is too short.', setToasts);
+                  } else if (error.match(/operation-specific reason/)) {
+                    addErrorToast('The passcode provided is incorrect for this key.', setToasts);
+                  } else {
+                    addErrorToast(error, setToasts);
+                  }
                 }
               }}
             />
