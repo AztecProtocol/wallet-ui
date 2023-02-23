@@ -11,7 +11,9 @@ import {
   GrumpkinAddress,
   AliasHash,
 } from '@aztec/sdk';
+import { useContext } from 'react';
 import { AssetValue } from '../../utils/assets';
+import { ToastsContext } from '../../utils/toastsContext';
 import { DefiCard } from './defi_card';
 import style from './transaction_summary.module.scss';
 
@@ -123,7 +125,11 @@ function generateDefiCard(requestData: DefiProofRequestData, sdk: AztecSdk) {
   );
 }
 
-function renderValue(value: AssetValue | AssetValue[] | GrumpkinAddress | EthAddress, sdk: AztecSdk) {
+function renderValue(
+  value: AssetValue | AssetValue[] | GrumpkinAddress | EthAddress,
+  sdk: AztecSdk,
+  showToast: () => void,
+) {
   if (Array.isArray(value)) {
     return value.map((assetValue, index) => (
       <div key={index} className={style.assetValueItem}>
@@ -135,19 +141,46 @@ function renderValue(value: AssetValue | AssetValue[] | GrumpkinAddress | EthAdd
     return assetValueToString(value, sdk);
   }
   if (value instanceof GrumpkinAddress || value instanceof EthAddress) {
-    return <AddressTooltip bindRight={true} address={value.toString()} />;
+    const strValue = value.toString();
+    return (
+      <div
+        style={{ cursor: 'pointer' }}
+        onClick={async () => {
+          navigator.clipboard.writeText(strValue);
+          showToast();
+        }}
+      >
+        {strValue.substring(0, 5)}...{strValue.substring(strValue.length - 4)} (click to copy)
+      </div>
+    );
   }
   return value;
 }
 
 function SummaryTable({ data, sdk }: { data: KeyValuePair[]; sdk: AztecSdk }) {
+  const setToasts = useContext(ToastsContext);
+
+  const showToast = () => {
+    setToasts((prevToasts: any) => [
+      ...prevToasts,
+      {
+        text: 'Address copied to clipboard.',
+        key: Date.now(),
+        autocloseInMs: 5e3,
+        closable: true,
+      },
+    ]);
+  };
+
   return (
     <table className={style.table}>
       <tbody>
         {data.map((pair, index) => (
           <tr key={index}>
             <td className={pair.highlight ? style.highlightTableCell : ''}>{pair.key}</td>
-            <td className={pair.highlight ? style.highlightTableCell : ''}>{renderValue(pair.value, sdk)}</td>
+            <td className={pair.highlight ? style.highlightTableCell : ''}>
+              {renderValue(pair.value, sdk, showToast)}
+            </td>
           </tr>
         ))}
       </tbody>
