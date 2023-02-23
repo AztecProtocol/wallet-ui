@@ -15,10 +15,10 @@
     "@jridgewell/gen-mapping" "^0.1.0"
     "@jridgewell/trace-mapping" "^0.3.9"
 
-"@aztec/aztec-ui@^0.1.11":
-  version "0.1.11"
-  resolved "https://registry.yarnpkg.com/@aztec/aztec-ui/-/aztec-ui-0.1.11.tgz#6886d71863f1e0d45d58ac3ab61001be51d1912b"
-  integrity sha512-o8ng1EG6WCa+b+WrMy1KkZlnXZobJonO/mj/mU7oxdjjmR2JMKcC0TClrPZcb13IeojjjrcuMmYNArPe5LVgHw==
+"@aztec/aztec-ui@^0.1.12":
+  version "0.1.13"
+  resolved "https://registry.yarnpkg.com/@aztec/aztec-ui/-/aztec-ui-0.1.13.tgz#0a5ff4ae873b77a66ef6008f659c39cad7135fe8"
+  integrity sha512-4+20KKDFKQVlm175EQ7FMQIb8bGMCyV5APqYfJH8u4LO0cf+54HirVKvBW6qPb7rZMHp5QS0S2ImYrnMybyfxg==
   dependencies:
     "@rainbow-me/rainbowkit" "^0.8.1"
     classnames "^2.3.2"
