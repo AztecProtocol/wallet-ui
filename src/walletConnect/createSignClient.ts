@@ -10,7 +10,7 @@ const SignClientClass = Client as unknown as typeof SignClient;
 export function createSignClient(isIframe: boolean) {
   const coreParams: CoreTypes.Options = {
     logger: 'debug',
-    projectId: "3c8bb328309b91d45b5cc8b2dc392065",
+    projectId: process.env.WALLETCONNECT_PROJECT_ID,
   };
 
   if (isIframe) {
