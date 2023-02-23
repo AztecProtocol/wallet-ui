@@ -27,8 +27,10 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-image: linear-gradient(180deg,
-      rgba(240, 248, 250, 0.6),
-      rgba(210, 192, 207, 0.6) 67.71%,
-      rgba(149, 164, 239, 0.6));
+  background-image: linear-gradient(
+    180deg,
+    rgba(240, 248, 250, 0.6),
+    rgba(210, 192, 207, 0.6) 67.71%,
+    rgba(149, 164, 239, 0.6)
+  );
 }
