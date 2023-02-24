@@ -43,3 +43,8 @@ See more:
 
 - [Secure key generation](https://hackmd.io/@aztec-network/SkMotEaIo)
 - [Handing over Walletconnect sessions](docs/wallet-connect.md)
+
+## Password manager
+
+Overall password management works by associating the passcode with the alias and the aztec key with a blank username.
+On chrome, `navigator.credentials.store(cred)` is used to show the passcode popup.
