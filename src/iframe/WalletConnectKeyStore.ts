@@ -6,7 +6,7 @@ import {
   Permission,
   AztecKeyStore,
   ProofRequestData,
-} from '@aztec/sdk';
+} from '@aztec/sdk-incubator';
 
 export interface ProofsRequest {
   type: 'proofs';

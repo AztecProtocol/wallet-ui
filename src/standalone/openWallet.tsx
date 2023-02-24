@@ -1,4 +1,4 @@
-import { AztecBuffer, AztecKeyStore, BarretenbergWasm } from '@aztec/sdk';
+import { AztecBuffer, AztecKeyStore, BarretenbergWasm } from '@aztec/sdk-incubator';
 import { useContext, useMemo, useState } from 'react';
 import { getCachedEncryptedKeystore } from '../utils/sessionUtils.js';
 import { BBWasmContext } from '../utils/wasmContext.js';

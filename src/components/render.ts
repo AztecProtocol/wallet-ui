@@ -1,4 +1,4 @@
-import { isLogEnabled, enableLogs } from '@aztec/sdk';
+import { isLogEnabled, enableLogs } from '@aztec/sdk-incubator';
 import { ReactElement } from 'react';
 import * as ReactDOM from 'react-dom/client';
 
