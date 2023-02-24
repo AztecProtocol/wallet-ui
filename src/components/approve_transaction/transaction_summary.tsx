@@ -16,11 +16,9 @@ import { ToastsContext } from '../../utils/toastsContext';
 import { DefiCard } from './defi_card';
 import style from './transaction_summary.module.scss';
 
-type TransactionType = 'Withdraw' | 'Send';
-
 interface KeyValuePair {
   key: string;
-  value: AssetValue | AssetValue[] | GrumpkinAddress | EthAddress | TransactionType;
+  value: AssetValue | AssetValue[] | GrumpkinAddress | EthAddress | string;
   highlight?: boolean;
 }
 
@@ -71,15 +69,15 @@ function generateAccountProofSummary(requestData: AccountProofRequestData) {
   ];
 
   if (!requestData.accountPublicKey.equals(requestData.newAccountPublicKey)) {
-    data.push({ key: 'New account key', value: requestData.newAccountPublicKey.toShortString() });
+    data.push({ key: 'New account key', value: requestData.newAccountPublicKey });
   }
 
   if (!requestData.newSpendingPublicKey1.equals(GrumpkinAddress.ZERO)) {
-    data.push({ key: 'New spending key', value: requestData.newSpendingPublicKey1.toShortString() });
+    data.push({ key: 'New spending key', value: requestData.newSpendingPublicKey1 });
   }
 
   if (!requestData.newSpendingPublicKey2.equals(GrumpkinAddress.ZERO)) {
-    data.push({ key: 'New spending key', value: requestData.newSpendingPublicKey2.toShortString() });
+    data.push({ key: 'New spending key', value: requestData.newSpendingPublicKey2 });
   }
 
   return data.concat([
@@ -96,7 +94,7 @@ function generateDefiProofSummary(requestData: DefiProofRequestData) {
 
   const inputAssetValues: AssetValue[] = [{ assetId: bridgeCallData.inputAssetIdA, value }];
   if (bridgeCallData.secondInputInUse) {
-    inputAssetValues.push({ assetId: bridgeCallData.inputAssetIdB, value });
+    inputAssetValues.push({ assetId: bridgeCallData.inputAssetIdB!, value });
   }
 
   return [
@@ -109,11 +107,11 @@ function generateDefiProofSummary(requestData: DefiProofRequestData) {
 function generateDefiCard(requestData: DefiProofRequestData, sdk: AztecSdk) {
   const { bridgeCallData } = requestData;
   const inputAssetIds = bridgeCallData.secondInputInUse
-    ? [bridgeCallData.inputAssetIdA, bridgeCallData.inputAssetIdB]
+    ? [bridgeCallData.inputAssetIdA, bridgeCallData.inputAssetIdB!]
     : [bridgeCallData.inputAssetIdA];
 
   const outputAssetIds = bridgeCallData.secondOutputInUse
-    ? [bridgeCallData.outputAssetIdA, bridgeCallData.outputAssetIdB]
+    ? [bridgeCallData.outputAssetIdA, bridgeCallData.outputAssetIdB!]
     : [bridgeCallData.outputAssetIdA];
   return (
     <DefiCard
@@ -125,7 +123,7 @@ function generateDefiCard(requestData: DefiProofRequestData, sdk: AztecSdk) {
 }
 
 function renderValue(
-  value: AssetValue | AssetValue[] | GrumpkinAddress | EthAddress,
+  value: AssetValue | AssetValue[] | GrumpkinAddress | EthAddress | string,
   sdk: AztecSdk,
   showToast: () => void,
 ) {
