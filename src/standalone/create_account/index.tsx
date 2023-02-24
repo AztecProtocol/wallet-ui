@@ -12,6 +12,7 @@ import { AssetValue, mapFeesToFeeOptions } from '../../utils/assets';
 import { BBWasmContext } from '../../utils/wasmContext';
 import createAndExportKeyStore from './createAndExportKeyStore';
 import sendRegisterProof, { EthIdentity } from './sendRegisterProof';
+import { setCachedAlias } from '../../utils/sessionUtils';
 
 export interface CreateAccountProps {
   onAccountCreated: (encryptedKeys: string) => void;
@@ -126,6 +127,7 @@ export default function CreateAccount({ onAccountCreated, onCancel, chainId }: C
           <Deposit
             onBack={onBack}
             onFinish={async () => {
+              setCachedAlias(userAlias);
               onAccountCreated(encryptedKeyStore!);
             }}
             getInitialRegisterFees={async () => {

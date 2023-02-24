@@ -12,7 +12,7 @@ import { AztecSdkProvider } from '../utils/aztecSdkContext';
 import AppCard from '../components/AppCard';
 import CreateAccount from './create_account';
 import OpenWallet from './openWallet';
-import { getCachedEncryptedKeystore, setCachedEncryptedKeystore } from '../utils/sessionUtils';
+import { getCachedEncryptedKeystore, setCachedAlias, setCachedEncryptedKeystore } from '../utils/sessionUtils';
 import { SignClientProvider } from '../walletConnect/signClientContext';
 import LoggedIn from './logged_in';
 import { Landing } from '../components/landing';
