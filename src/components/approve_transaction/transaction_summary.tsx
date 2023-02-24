@@ -10,33 +10,16 @@ import {
   GrumpkinAddress,
   AliasHash,
 } from '@aztec/sdk-incubator';
+import { useContext } from 'react';
 import { AssetValue } from '../../utils/assets';
+import { ToastsContext } from '../../utils/toastsContext';
+import { DefiCard } from './defi_card';
 import style from './transaction_summary.module.scss';
 
 interface KeyValuePair {
   key: string;
-  value: string;
+  value: AssetValue | AssetValue[] | GrumpkinAddress | EthAddress | string;
   highlight?: boolean;
-}
-
-function shortEthAddress(address: EthAddress) {
-  const stringAddress = address.toString();
-  return `${stringAddress.slice(0, 10)}...${stringAddress.slice(-4)}`;
-}
-
-function SummaryTable({ data }: { data: KeyValuePair[] }) {
-  return (
-    <table className={style.table}>
-      <tbody>
-        {data.map((pair, index) => (
-          <tr key={index}>
-            <td className={pair.highlight ? style.highlightTableCell : ''}>{pair.key}</td>
-            <td className={pair.highlight ? style.highlightTableCell : ''}>{pair.value}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
 }
 
 function assetIdToSymbol(assetId: number, sdk: AztecSdk) {
@@ -47,7 +30,7 @@ function assetValueToString(assetValue: AssetValue, sdk: AztecSdk) {
   return `${sdk.fromBaseUnits(assetValue)} ${assetIdToSymbol(assetValue.assetId, sdk)}`;
 }
 
-function generateTotalCost(amounts: AssetValue[], sdk: AztecSdk) {
+function mergeTotalCost(amounts: AssetValue[]) {
   const totalAmounts = amounts.reduce((acc: AssetValue[], amount: AssetValue) => {
     const existingAmount = acc.find(a => a.assetId === amount.assetId);
     if (existingAmount) {
@@ -60,23 +43,25 @@ function generateTotalCost(amounts: AssetValue[], sdk: AztecSdk) {
 
   return {
     key: 'Total Cost',
-    value: totalAmounts.map(amount => assetValueToString(amount, sdk)).join(' + '),
+    value: totalAmounts,
     highlight: true,
   };
 }
 
-function renderPaymentProofSummary(requestData: PaymentProofRequestData, sdk: AztecSdk) {
+function generatePaymentProofSummary(requestData: PaymentProofRequestData) {
   return [
-    requestData.proofId === ProofId.WITHDRAW
-      ? { key: 'Withdraw to', value: shortEthAddress(requestData.publicOwner) }
-      : { key: 'Send to', value: requestData.recipient.toShortString() },
-    { key: 'Amount', value: assetValueToString(requestData.assetValue, sdk) },
-    { key: 'Transaction Fee', value: assetValueToString(requestData.fee, sdk) },
-    generateTotalCost([requestData.assetValue, requestData.fee], sdk),
+    { key: 'Transaction Type', value: requestData.proofId === ProofId.WITHDRAW ? 'Withdraw' : 'Send' },
+    {
+      key: 'Send to',
+      value: requestData.proofId === ProofId.WITHDRAW ? requestData.publicOwner : requestData.recipient,
+    },
+    { key: 'Amount', value: requestData.assetValue },
+    { key: 'Transaction Fee', value: requestData.fee },
+    mergeTotalCost([requestData.assetValue, requestData.fee]),
   ];
 }
 
-function renderAccountProofSummary(requestData: AccountProofRequestData, sdk: AztecSdk) {
+function generateAccountProofSummary(requestData: AccountProofRequestData) {
   const isAccountCreation = requestData.spendingKeyAccount.aliasHash.equals(AliasHash.ZERO);
   const data: KeyValuePair[] = [
     { key: 'Operation', value: isAccountCreation ? 'Account creation' : 'Account update' },
@@ -84,26 +69,24 @@ function renderAccountProofSummary(requestData: AccountProofRequestData, sdk: Az
   ];
 
   if (!requestData.accountPublicKey.equals(requestData.newAccountPublicKey)) {
-    data.push({ key: 'New account key', value: requestData.newAccountPublicKey.toShortString() });
+    data.push({ key: 'New account key', value: requestData.newAccountPublicKey });
   }
 
   if (!requestData.newSpendingPublicKey1.equals(GrumpkinAddress.ZERO)) {
-    data.push({ key: 'New spending key', value: requestData.newSpendingPublicKey1.toShortString() });
+    data.push({ key: 'New spending key', value: requestData.newSpendingPublicKey1 });
   }
 
   if (!requestData.newSpendingPublicKey2.equals(GrumpkinAddress.ZERO)) {
-    data.push({ key: 'New spending key', value: requestData.newSpendingPublicKey2.toShortString() });
+    data.push({ key: 'New spending key', value: requestData.newSpendingPublicKey2 });
   }
 
-  const feeStr = assetValueToString(requestData.fee, sdk);
-
   return data.concat([
-    { key: 'Transaction Fee', value: feeStr },
-    { key: 'Total Cost', value: feeStr, highlight: true },
+    { key: 'Transaction Fee', value: requestData.fee },
+    { key: 'Total Cost', value: requestData.fee, highlight: true },
   ]);
 }
 
-function renderDefiProofSummary(requestData: DefiProofRequestData, sdk: AztecSdk) {
+function generateDefiProofSummary(requestData: DefiProofRequestData) {
   const {
     assetValue: { value },
     bridgeCallData,
@@ -111,42 +94,118 @@ function renderDefiProofSummary(requestData: DefiProofRequestData, sdk: AztecSdk
 
   const inputAssetValues: AssetValue[] = [{ assetId: bridgeCallData.inputAssetIdA, value }];
   if (bridgeCallData.secondInputInUse) {
-    inputAssetValues.push({ assetId: bridgeCallData.inputAssetIdB, value });
-  }
-
-  const outputAssetIds: number[] = [bridgeCallData.outputAssetIdA];
-  if (bridgeCallData.secondOutputInUse) {
-    outputAssetIds.push(bridgeCallData.outputAssetIdB);
+    inputAssetValues.push({ assetId: bridgeCallData.inputAssetIdB!, value });
   }
 
   return [
-    { key: 'Send to', value: 'Defi integration' },
-    ...inputAssetValues.map((assetValue, index) => ({
-      key: `Amount ${inputAssetValues.length > 1 ? String.fromCharCode(65 + index) : ''}`,
-      value: assetValueToString(assetValue, sdk),
-    })),
-    ...outputAssetIds.map((assetId, index) => ({
-      key: `Receive ${outputAssetIds.length > 1 ? String.fromCharCode(65 + index) : ''}`,
-      value: assetIdToSymbol(assetId, sdk),
-    })),
-    { key: 'Transaction Fee', value: assetValueToString(requestData.fee, sdk) },
-    generateTotalCost([...inputAssetValues, requestData.fee], sdk),
+    { key: 'Amount', value: inputAssetValues },
+    { key: 'Transaction Fee', value: requestData.fee },
+    mergeTotalCost([...inputAssetValues, requestData.fee]),
   ];
+}
+
+function generateDefiCard(requestData: DefiProofRequestData, sdk: AztecSdk) {
+  const { bridgeCallData } = requestData;
+  const inputAssetIds = bridgeCallData.secondInputInUse
+    ? [bridgeCallData.inputAssetIdA, bridgeCallData.inputAssetIdB!]
+    : [bridgeCallData.inputAssetIdA];
+
+  const outputAssetIds = bridgeCallData.secondOutputInUse
+    ? [bridgeCallData.outputAssetIdA, bridgeCallData.outputAssetIdB!]
+    : [bridgeCallData.outputAssetIdA];
+  return (
+    <DefiCard
+      bridgeId={bridgeCallData.bridgeAddressId}
+      inputAssets={inputAssetIds.map(id => assetIdToSymbol(id, sdk))}
+      outputAssets={outputAssetIds.map(id => assetIdToSymbol(id, sdk))}
+    />
+  );
+}
+
+function renderValue(
+  value: AssetValue | AssetValue[] | GrumpkinAddress | EthAddress | string,
+  sdk: AztecSdk,
+  showToast: () => void,
+) {
+  if (Array.isArray(value)) {
+    return value.map((assetValue, index) => (
+      <div key={index} className={style.assetValueItem}>
+        {assetValueToString(assetValue, sdk)}
+      </div>
+    ));
+  }
+  if (typeof value === 'object' && 'assetId' in value) {
+    return assetValueToString(value, sdk);
+  }
+  if (value instanceof GrumpkinAddress || value instanceof EthAddress) {
+    const strValue = value.toString();
+    return (
+      <div
+        style={{ cursor: 'pointer' }}
+        onClick={async () => {
+          navigator.clipboard.writeText(strValue);
+          showToast();
+        }}
+      >
+        {strValue.substring(0, 5)}...{strValue.substring(strValue.length - 4)} (click to copy)
+      </div>
+    );
+  }
+  return value;
+}
+
+function SummaryTable({ data, sdk }: { data: KeyValuePair[]; sdk: AztecSdk }) {
+  const setToasts = useContext(ToastsContext);
+
+  const showToast = () => {
+    setToasts((prevToasts: any) => [
+      ...prevToasts,
+      {
+        text: 'Address copied to clipboard.',
+        key: Date.now(),
+        autocloseInMs: 5e3,
+        closable: true,
+      },
+    ]);
+  };
+
+  return (
+    <table className={style.table}>
+      <tbody>
+        {data.map((pair, index) => (
+          <tr key={index}>
+            <td className={pair.highlight ? style.highlightTableCell : ''}>{pair.key}</td>
+            <td className={pair.highlight ? style.highlightTableCell : ''}>
+              {renderValue(pair.value, sdk, showToast)}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
 }
 
 export function TransactionSummary({ requestData, sdk }: { requestData: ProofRequestData; sdk: AztecSdk }) {
   let data: KeyValuePair[];
+  let card: React.ReactNode = null;
+
   switch (requestData.type) {
     case ProofRequestDataType.PaymentProofRequestData:
-      data = renderPaymentProofSummary(requestData, sdk);
+      data = generatePaymentProofSummary(requestData);
       break;
     case ProofRequestDataType.AccountProofRequestData:
-      data = renderAccountProofSummary(requestData, sdk);
+      data = generateAccountProofSummary(requestData);
       break;
     case ProofRequestDataType.DefiProofRequestData:
-      data = renderDefiProofSummary(requestData, sdk);
+      card = generateDefiCard(requestData, sdk);
+      data = generateDefiProofSummary(requestData);
       break;
   }
 
-  return <SummaryTable data={data} />;
+  return (
+    <div className={style.container}>
+      {card}
+      <SummaryTable data={data} sdk={sdk} />
+    </div>
+  );
 }

@@ -52,7 +52,9 @@ jobs:
       - *setup_env
       - run:
           name: 'Build and test'
-          command: build wallet-ui
+          command: |
+            sed -i "s/{{WALLETCONNECT_PROJECT_ID}}/$WALLETCONNECT_PROJECT_ID/" Dockerfile
+            build wallet-ui
 
   deploy-wallet-ui:
     machine:
