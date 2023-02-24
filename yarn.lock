@@ -69,9 +69,9 @@
     debug "^4.3.4"
     ethers "5.5.1"
 
-"@aztec/sdk-incubator@2.2.0-alpha.6":
+"@aztec/alpha-sdk@2.2.0-alpha.6":
   version "2.2.0-alpha.6"
-  resolved "https://registry.yarnpkg.com/@aztec/sdk-incubator/-/sdk-incubator-2.2.0-alpha.6.tgz#f2d1015b4622b2fe2f8b28324a787a2b53c02da5"
+  resolved "https://registry.yarnpkg.com/@aztec/alpha-sdk/-/sdk-incubator-2.2.0-alpha.6.tgz#f2d1015b4622b2fe2f8b28324a787a2b53c02da5"
   integrity sha512-OHxKQFr5U04fopywciEryiMlrJkDmjH4lun0Wsft+Eez06TRjXnkRzn5ix5LmfLasobT3/9gti20c3uKlpsLDA==
   dependencies:
     "@aztec/barretenberg" "2.2.0-alpha.5"

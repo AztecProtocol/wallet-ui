@@ -1,4 +1,4 @@
-import { WalletConnectAztecWalletProviderServer } from '@aztec/sdk-incubator';
+import { WalletConnectAztecWalletProviderServer } from '@aztec/alpha-sdk';
 import { useEffect, useState } from 'react';
 
 const MIN_TIME_OPEN = 500;

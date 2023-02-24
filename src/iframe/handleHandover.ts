@@ -1,4 +1,4 @@
-import { AztecKeyStore, BarretenbergWasm } from '@aztec/sdk-incubator';
+import { AztecKeyStore, BarretenbergWasm } from '@aztec/alpha-sdk';
 import { SignClient } from '@walletconnect/sign-client/dist/types/client.js';
 import { SessionTypes } from '@walletconnect/types';
 import getWasm from '../utils/getWasm.js';

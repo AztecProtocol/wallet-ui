@@ -1,4 +1,4 @@
-import { BarretenbergWasm } from '@aztec/sdk-incubator';
+import { BarretenbergWasm } from '@aztec/alpha-sdk';
 
 // Awaited by anything that needs wasm
 let WASM_PROMISE: Promise<BarretenbergWasm>;

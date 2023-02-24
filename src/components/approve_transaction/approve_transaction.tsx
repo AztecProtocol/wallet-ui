@@ -1,7 +1,7 @@
 import { Card, CardHeaderSize, Button, ButtonTheme, ButtonSize } from '@aztec/aztec-ui';
 import style from './approve_transaction.module.scss';
 import { TransactionRequest } from '../../iframe/WalletConnectKeyStore';
-import { AztecSdk } from '@aztec/sdk-incubator';
+import { AztecSdk } from '@aztec/alpha-sdk';
 import { TransactionSummary } from './transaction_summary';
 import { VerticalScrollRegion } from '@aztec/aztec-ui';
 
