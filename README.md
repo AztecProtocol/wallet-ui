@@ -46,9 +46,9 @@ See more:
 
 ## Password manager
 
-Overall password management works by associating the passcode with the alias and the aztec key with a blank username.
+Overall password management works by associating the passcode with a 'Aztec Passcode' username and the aztec key with a 'Aztec Key' username.
 
-On the create account flow screen 1 where we enter our passcode and alias, we have a username field with the alias and a password field with the passcode, and a password manager will offer to save this pair.
+On the create account flow screen 1 where we enter our passcode and alias, we have a username field with 'Aztec Passcode' and a password field with the passcode, and a password manager will offer to save this pair.
 
 On the encryption key flow screen 2 we generate an aztec key in a field, we have a hidden Aztec Key username field and use `navigator.credentials.store(cred)` to trigger a passcode save in Chrome. Unfortunately, in other browsers like Firefox, the user must type into this field for this to trigger.
 
