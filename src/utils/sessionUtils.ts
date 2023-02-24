@@ -8,14 +8,6 @@ function getKey(key: string) {
   return AZTEC_WALLET_PREFIX + key;
 }
 
-export function getCachedAlias() {
-  return localStorage.getItem(getKey('alias'));
-}
-
-export function setCachedAlias(alias: string) {
-  return localStorage.setItem(getKey('alias'), alias);
-}
-
 export function getCachedEncryptedKeystore() {
   return localStorage.getItem(getKey('encryptedKeystore'));
 }

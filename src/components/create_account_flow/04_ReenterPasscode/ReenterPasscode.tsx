@@ -22,6 +22,7 @@ export default function ReenterPasscode({ onBack, isSameAztecKey, isSamePasscode
       handlePreviousStep={onBack}
       handleNextStep={() => onFinish(aztecKey, password)}
     >
+      {/* Guide password manager */}
       <input
         type="text"
         id="username"
@@ -40,6 +41,9 @@ export default function ReenterPasscode({ onBack, isSameAztecKey, isSamePasscode
         onChangeValue={setAztecKey}
         status={isSameAztecKey(aztecKey) ? FieldStatus.Success : undefined}
       />
+      {/* TODO firefox password manager likely needs hacks so that this is not a password=true
+      right before submit
+      TODO add lastpass (and others) ignore attributes if on page with aztec key */}
       <Field
         value={password}
         password={true}

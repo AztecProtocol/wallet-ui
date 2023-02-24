@@ -13,7 +13,6 @@ import { useContext, useState } from 'react';
 import style from './sign_in.module.scss';
 import { NextStepResult } from '../StepCard';
 import { ToastsContext, addErrorToast } from '../../utils/toastsContext';
-import { getCachedAlias } from '../../utils/sessionUtils';
 
 interface SignInProps {
   showEncryptedKeystore: boolean;
@@ -51,7 +50,7 @@ export function SignIn({
               id="username"
               name="username"
               autoComplete="username"
-              value={showEncryptedKeystore ? 'Aztec Key' : getCachedAlias()!}
+              value={showEncryptedKeystore ? 'Aztec Key' : 'Aztec Passcode'}
               readOnly
               style={{ position: 'fixed', top: '-50px', left: 0 }}
             />
@@ -68,6 +67,10 @@ export function SignIn({
                 onChangeValue={setEncryptedKeystore}
               />
             )}
+
+            {/* TODO firefox password manager likely needs hacks so that this is not a password=true
+            right before submit
+            TODO add lastpass (and others) ignore attributes if on page with aztec key */}
             <Field
               containerClassName={style.fieldContainer}
               className={style.field}
