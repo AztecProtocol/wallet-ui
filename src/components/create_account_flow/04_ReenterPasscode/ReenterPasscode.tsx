@@ -17,7 +17,7 @@ export default function ReenterPasscode({ onBack, isSameAztecKey, isSamePasscode
       header="Re-enter your Passcode and Aztec Key"
       steps={5}
       currentStep={4}
-      subtitle="Confirm your details before proceeding - Password manager etc etc"
+      subtitle="Confirm your details before proceeding."
       nextButtonDisabled={!isSamePasscode(password) || !isSameAztecKey(aztecKey)}
       handlePreviousStep={onBack}
       handleNextStep={() => onFinish(aztecKey, password)}

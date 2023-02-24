@@ -10,7 +10,7 @@ interface AppCardProps {
 
 export default function AppCard({ children }: AppCardProps) {
   return (
-    <div>
+    <div className={style.background}>
       <div className={style.appHeader}>
         <img className={style.appLogo} src={logo} alt="Wallet logo" />
         <img className={style.appName} src={brand} alt="Wallet.Aztec" />

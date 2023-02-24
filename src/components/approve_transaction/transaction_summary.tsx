@@ -1,4 +1,3 @@
-import { AddressTooltip } from '@aztec/aztec-ui';
 import {
   AztecSdk,
   ProofId,
@@ -10,7 +9,7 @@ import {
   DefiProofRequestData,
   GrumpkinAddress,
   AliasHash,
-} from '@aztec/sdk';
+} from '@aztec/sdk-incubator';
 import { useContext } from 'react';
 import { AssetValue } from '../../utils/assets';
 import { ToastsContext } from '../../utils/toastsContext';
