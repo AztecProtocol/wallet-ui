@@ -1,4 +1,4 @@
-import { WalletConnectAztecWalletProviderServer } from '@aztec/sdk-incubator';
+import { WalletConnectAztecWalletProviderServer } from '@aztec/alpha-sdk';
 import { SessionTypes } from '@walletconnect/types';
 import { useState, useEffect, useContext } from 'react';
 import { createDeferredPromise, DeferredPromise } from '../utils/deferredPromise';

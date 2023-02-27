@@ -1,4 +1,4 @@
-import { keyPairFromPK, BarretenbergWasm, AztecBuffer } from '@aztec/sdk-incubator';
+import { keyPairFromPK, BarretenbergWasm, AztecBuffer } from '@aztec/alpha-sdk';
 import { useSignMessage } from 'wagmi';
 
 export async function generateRecoveryKey(signature: `0x${string}`, wasm: BarretenbergWasm) {

@@ -1,4 +1,4 @@
-import { AztecKeyStore } from '@aztec/sdk-incubator';
+import { AztecKeyStore } from '@aztec/alpha-sdk';
 import { useContext } from 'react';
 import { getAztecChainId } from '../../utils/config';
 import { SignClientContext } from '../../walletConnect/signClientContext';

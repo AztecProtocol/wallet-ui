@@ -33,11 +33,11 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         {
-          src: `${path.dirname(require.resolve('@aztec/sdk-incubator'))}/aztec-connect.wasm`,
+          src: `${path.dirname(require.resolve('@aztec/alpha-sdk'))}/aztec-connect.wasm`,
           dest: '',
         },
         {
-          src: `${path.dirname(require.resolve('@aztec/sdk-incubator'))}/web_worker.js`,
+          src: `${path.dirname(require.resolve('@aztec/alpha-sdk'))}/web_worker.js`,
           dest: '',
         },
       ],

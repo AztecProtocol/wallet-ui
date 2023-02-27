@@ -1,5 +1,5 @@
 import { RadioButtonOption } from '@aztec/aztec-ui';
-import { AztecSdk } from '@aztec/sdk-incubator';
+import { AztecSdk } from '@aztec/alpha-sdk';
 
 // Importing these types from the sdk is broken
 export interface AssetValue {

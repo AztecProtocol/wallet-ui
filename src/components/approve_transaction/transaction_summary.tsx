@@ -9,7 +9,7 @@ import {
   DefiProofRequestData,
   GrumpkinAddress,
   AliasHash,
-} from '@aztec/sdk-incubator';
+} from '@aztec/alpha-sdk';
 import { useContext } from 'react';
 import { AssetValue } from '../../utils/assets';
 import { ToastsContext } from '../../utils/toastsContext';

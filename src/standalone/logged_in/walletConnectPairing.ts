@@ -1,7 +1,7 @@
 import { SignClient } from '@walletconnect/sign-client/dist/types/client.js';
 import { useState, useEffect, useContext } from 'react';
 import { SignClientTypes, ProposalTypes, SessionTypes } from '@walletconnect/types';
-import { GrumpkinAddress, RPC_METHODS } from '@aztec/sdk-incubator';
+import { GrumpkinAddress, RPC_METHODS } from '@aztec/alpha-sdk';
 import { storeSession } from '../../utils/sessionUtils.js';
 import { AztecChainId } from '../../utils/config.js';
 import { SignClientContext } from '../../walletConnect/signClientContext.js';

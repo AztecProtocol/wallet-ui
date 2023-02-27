@@ -1,4 +1,4 @@
-import { BarretenbergWasm } from '@aztec/sdk-incubator';
+import { BarretenbergWasm } from '@aztec/alpha-sdk';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import getWasm from './getWasm';
 

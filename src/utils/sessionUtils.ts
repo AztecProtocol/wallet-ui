@@ -1,4 +1,4 @@
-import { AztecBuffer, AztecKeyStore, BarretenbergWasm, Permission } from '@aztec/sdk-incubator';
+import { AztecBuffer, AztecKeyStore, BarretenbergWasm, Permission } from '@aztec/alpha-sdk';
 import { SessionTypes } from '@walletconnect/types';
 import { safeJsonParse, safeJsonStringify } from 'safe-json-utils';
 
