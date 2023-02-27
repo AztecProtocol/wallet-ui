@@ -44,6 +44,16 @@ export function SignIn({
         <div className={style.cardContent}>
           <div className={style.header}>Access the Aztec Network</div>
           <div className={style.fields}>
+            {/* Ensure we trigger either the aztec key or passcode password manager context */}
+            <input
+              type="text"
+              id="username"
+              name="username"
+              autoComplete="username"
+              value={showEncryptedKeystore ? 'Aztec Key' : 'Aztec Passcode'}
+              readOnly
+              style={{ position: 'fixed', top: '-50px', left: 0 }}
+            />
             {showEncryptedKeystore && (
               <Field
                 containerClassName={style.fieldContainer}
@@ -57,14 +67,18 @@ export function SignIn({
                 onChangeValue={setEncryptedKeystore}
               />
             )}
+
+            {/* TODO firefox password manager likely needs hacks so that this is not a password=true
+            right before submit
+            TODO add lastpass (and others) ignore attributes if on page with aztec key */}
             <Field
               containerClassName={style.fieldContainer}
               className={style.field}
               value={passcode}
               password={true}
-              autoComplete="current-password"
+              autoComplete={showEncryptedKeystore ? 'off' : 'current-password'}
               status={passcode.length > 0 ? FieldStatus.Success : undefined}
-              label={showEncryptedKeystore ? null : 'Unlock with Passcode'}
+              label={showEncryptedKeystore ? undefined : 'Unlock with Passcode'}
               placeholder="Enter passcode"
               onChangeValue={setPasscode}
             />

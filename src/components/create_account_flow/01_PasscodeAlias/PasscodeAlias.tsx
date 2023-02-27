@@ -41,6 +41,16 @@ export default function PasscodeAlias({
         placeholder="Enter alias"
         onChangeValue={setAlias}
       />
+      {/* Guide password manager */}
+      <input
+        type="text"
+        id="username"
+        name="username"
+        autoComplete="username"
+        value="Aztec Passcode"
+        readOnly
+        style={{ position: 'fixed', top: '-50px', left: 0 }}
+      />
       <Field
         value={passcode}
         password={true}

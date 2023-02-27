@@ -27,7 +27,7 @@ export default function EncryptionKey({ onBack, onFinish, encryptedKeyStore }: E
   return (
     <StepCard
       header="Make a note of your Aztec key"
-      subtitle="You will need this alongside you passcode to access your Wallet in future. You will be prompted to save this in the browser on advancing to the next step."
+      subtitle="You will need this alongside your passcode to access your Wallet in future. You will be prompted to save this in the browser on advancing to the next step."
       currentStep={2}
       steps={5}
       handlePreviousStep={onBack}
@@ -46,6 +46,7 @@ export default function EncryptionKey({ onBack, onFinish, encryptedKeyStore }: E
       }}
     >
       <input
+        // If a password manager triggers, it's best to have 'Aztec Key' as the context username
         type="text"
         id="username"
         name="username"
@@ -55,12 +56,15 @@ export default function EncryptionKey({ onBack, onFinish, encryptedKeyStore }: E
         style={{ position: 'fixed', top: '-50px', left: 0 }}
       />
       <Field
+        // Note: Firefox does not allow clicking disabled inputs,
+        // so we use userSelect: none
+        // Since we set value in react, it is already functionally disabled
+        style={{ userSelect: 'none' }}
         label="Your auto-generated Aztec Key"
         onClick={async () => {
           navigator.clipboard.writeText(encryptedKeyStore);
           showToast();
         }}
-        disabled={true}
         value={encryptedKeyStore}
         password={true}
         autoComplete="new-password"

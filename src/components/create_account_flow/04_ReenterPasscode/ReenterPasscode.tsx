@@ -22,17 +22,32 @@ export default function ReenterPasscode({ onBack, isSameAztecKey, isSamePasscode
       handlePreviousStep={onBack}
       handleNextStep={() => onFinish(aztecKey, password)}
     >
+      {/* Guide password manager */}
+      <input
+        type="text"
+        id="username"
+        name="username"
+        autoComplete="username"
+        value="Aztec Key"
+        readOnly
+        style={{ position: 'fixed', top: '-50px', left: 0 }}
+      />
       <Field
         value={aztecKey}
         password={true}
+        autoComplete="current-password"
         label="Re-enter your Aztec Key"
         placeholder="Enter aztec key"
         onChangeValue={setAztecKey}
         status={isSameAztecKey(aztecKey) ? FieldStatus.Success : undefined}
       />
+      {/* TODO firefox password manager likely needs hacks so that this is not a password=true
+      right before submit
+      TODO add lastpass (and others) ignore attributes if on page with aztec key */}
       <Field
         value={password}
         password={true}
+        autoComplete="off"
         label="Re-enter your Passcode"
         placeholder="Enter passcode"
         onChangeValue={setPassword}
