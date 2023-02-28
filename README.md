@@ -10,7 +10,87 @@ An example dApp can be found here: https://github.com/AztecProtocol/aztec-fronte
 
 ## architecture
 
-To use `wallet-ui`, the dApp (i.e, application using Aztec wallet) should use the wallet connect Aztec provider with a URL that is hosting this UI. Inside an iframe (after hand-off), a parallel session object conforming to `AztecWalletProvider` is also used. This session object uses a pop-up UI for generating spending and account private keys. Once initiated, the approval UI flow occurs in an iframe. The private keys are used to sign transactions and decrypt notes from an iframe, which provides an extra layer of security from malicious dApps.
+The structure of entry points is mandated by the walletconnect connection flow, there are three entry points to the wallet:
+
+- The /wc walletconnect callback: opened by web3Modal with a pairing proposal. It will create/unlock the Aztec wallet and then ask the user to accept or deny the pairing.
+- The /iframe: Will be opened inside the dapp as an iframe to perform long-running operations such as note decryption. It will also show the transaction approval UI.
+- The /popup: Will offer the session data to the iframe (Aztec keys, walletconnect session...) to bypass browser iframe storage partitioning.
+
+### connection flow
+
+The rationale behind this connection flow can be found here: [Handing over Walletconnect sessions](docs/wallet-connect.md).
+
+To use `wallet-ui`, the dApp (i.e, application using Aztec wallet) should open the url `WALLET_URL/wc?uri=URI`. The typical way of doing this is using web3modal as follows:
+
+```typescript
+const core = new Core({
+  projectId: process.env.WALLETCONNECT_PROJECT_ID,
+});
+
+const signClient = await SignClient.init({
+  core,
+  metadata: dappMetadata,
+});
+// Manually add the wallet url during development
+const web3Modal = new Web3Modal({
+  projectId: process.env.WALLETCONNECT_PROJECT_ID,
+  desktopWallets: [
+    {
+      id: 'aztec-wallet',
+      name: 'Aztec Wallet',
+      links: {
+        universal: process.env.WALLET_URL,
+        native: '',
+      },
+    },
+  ],
+  mobileWallets: [
+    {
+      id: 'aztec-wallet',
+      name: 'Aztec Wallet',
+      links: {
+        universal: process.env.WALLET_URL,
+        native: '',
+      },
+    },
+  ],
+  walletImages: {
+    'aztec-wallet': process.env.WALLET_IMAGE_URL,
+  },
+});
+
+const chains = [`aztec:${aztecChainId}`];
+
+const { uri, approval } = await signClient.connect({
+  requiredNamespaces: {
+    aztec: {
+      methods: [],
+      chains,
+      events: RPC_METHODS,
+    },
+  },
+});
+// Now the user can select the wallet to open the wc callback
+await web3Modal.openModal({ uri, standaloneChains: chains });
+```
+
+After the user has unlocked the wallet and accepted the walletconnect proposal, the `/wc` callback will close itself to come back to the dapp. The dapp will then create an AztecWalletProvider with the walletconnect session:
+
+```typescript
+const session = await approval();
+
+web3Modal.closeModal();
+
+const awpClient = new AztecWalletProviderClient(new EIP1193SignClient(signClient, aztecChainId, session));
+
+const aztecWalletProvider = await awpClient.init();
+```
+
+At this point, the `AztecWalletProviderClient` will figure out that the wallet metadata marks it as an 'iframable' wallet. The `AztecWalletProviderClient` will create an iframe pointing to `WALLET_URL/iframe?topic=WALLETCONNECT_SESSION_TOPIC&aztecAccount=ACCOUNT_PUBLIC_KEY`.
+
+Since storage is isolated in third party iframes in many browsers, the iframe will need to fetch the walletconnect session and the Aztec keys from the standalone wallet. In order to do so it will open a popup to the url `WALLET_URL/popup`. The popup will prompt the user to unlock the keystore and approve the connection, sending the Account and Spending keys to the embedded iframe along with the walletconnect session.
+
+Once the iframe has received all required data, it'll initiate a parallel session object conforming to `AztecWalletProvider` to serve all the requests coming from the dapp. Once initiated, the transaction approval UI flow occurs in an iframe. The private keys are used to sign transactions and decrypt notes from an iframe, which provides an extra layer of security from malicious dApps.
 
 ## development
 
@@ -42,7 +122,6 @@ https://user-images.githubusercontent.com/5372114/221233460-36cdb484-3f6c-4ab8-8
 See more:
 
 - [Secure key generation](https://hackmd.io/@aztec-network/SkMotEaIo)
-- [Handing over Walletconnect sessions](docs/wallet-connect.md)
 
 ## Password manager
 
