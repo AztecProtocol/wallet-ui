@@ -12,7 +12,7 @@ An example dApp can be found here: https://github.com/AztecProtocol/aztec-fronte
 
 The main points in the wallet design have been the following:
 
-- It should use a secure key generation scheme with recovery methods. You can find more about key generation [here](https://hackmd.io/@aztec-network/SkMotEaIo)
+- It should use a secure key generation scheme with recovery methods. You can find more about key generation [here](docs/key-generation.md)
 - It should be embeddable in the dapp to perform decryption operations
 - It should use walletconnect as the transport protocol
 
