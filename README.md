@@ -12,9 +12,9 @@ An example dApp can be found here: https://github.com/AztecProtocol/aztec-fronte
 
 The structure of entry points is mandated by the walletconnect connection flow, there are three entry points to the wallet:
 
-- The /wc walletconnect callback: opened by web3Modal with a pairing proposal. It will create/unlock the Aztec wallet and then ask the user to accept or deny the pairing.
-- The /iframe: Will be opened inside the dapp as an iframe to perform long-running operations such as note decryption. It will also show the transaction approval UI.
-- The /popup: Will offer the session data to the iframe (Aztec keys, walletconnect session...) to bypass browser iframe storage partitioning.
+- `/wc`: Will be opened by the dapp using web3Modal with a pairing proposal. It will create/unlock the Aztec wallet and then ask the user to accept or deny the pairing.
+- `/iframe`: Will be opened inside the dapp as an iframe to perform long-running operations such as note decryption. It will also show the transaction approval UI.
+- `/popup`: Will offer the session data to the iframe (Aztec keys, walletconnect session...) to bypass browser iframe storage partitioning.
 
 ### connection flow
 
