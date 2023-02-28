@@ -10,7 +10,13 @@ An example dApp can be found here: https://github.com/AztecProtocol/aztec-fronte
 
 ## architecture
 
-The structure of entry points is mandated by the walletconnect connection flow, there are three entry points to the wallet:
+The main points in the wallet design have been the following:
+
+- It should use a secure key generation scheme with recovery methods. You can find more about key generation [here](https://hackmd.io/@aztec-network/SkMotEaIo)
+- It should be embeddable in the dapp to perform decryption operations
+- It should use walletconnect as the transport protocol
+
+The structure of entry points is mandated by the walletconnect connection flow. There are three entry points to the wallet:
 
 - `/wc`: Will be opened by the dapp using web3Modal with a pairing proposal. It will create/unlock the Aztec wallet and then ask the user to accept or deny the pairing.
 - `/iframe`: Will be opened inside the dapp as an iframe to perform long-running operations such as note decryption. It will also show the transaction approval UI.
@@ -118,10 +124,6 @@ https://user-images.githubusercontent.com/163993/221016437-483aa631-8084-4b13-98
 
 Shows transaction approval flow
 https://user-images.githubusercontent.com/5372114/221233460-36cdb484-3f6c-4ab8-884b-8f995eb26657.mp4
-
-See more:
-
-- [Secure key generation](https://hackmd.io/@aztec-network/SkMotEaIo)
 
 ## Password manager
 
