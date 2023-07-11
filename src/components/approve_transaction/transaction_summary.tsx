@@ -185,27 +185,13 @@ function SummaryTable({ data, sdk }: { data: KeyValuePair[]; sdk: AztecSdk }) {
   );
 }
 
-export function TransactionSummary({ requestData, sdk }: { requestData: ProofRequestData; sdk: AztecSdk }) {
-  let data: KeyValuePair[];
+export function TransactionSummary({ requestData }: { requestData: any; sdk: AztecSdk }) {
   let card: React.ReactNode = null;
-
-  switch (requestData.type) {
-    case ProofRequestDataType.PaymentProofRequestData:
-      data = generatePaymentProofSummary(requestData);
-      break;
-    case ProofRequestDataType.AccountProofRequestData:
-      data = generateAccountProofSummary(requestData);
-      break;
-    case ProofRequestDataType.DefiProofRequestData:
-      card = generateDefiCard(requestData, sdk);
-      data = generateDefiProofSummary(requestData);
-      break;
-  }
 
   return (
     <div className={style.container}>
       {card}
-      <SummaryTable data={data} sdk={sdk} />
+      {requestData}
     </div>
   );
 }

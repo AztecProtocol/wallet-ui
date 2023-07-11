@@ -1,15 +1,24 @@
 import { AztecBuffer, AztecKeyStore, BarretenbergWasm, Permission } from '@aztec/alpha-sdk';
 import { SessionTypes } from '@walletconnect/types';
 import { safeJsonParse, safeJsonStringify } from 'safe-json-utils';
-
+import { Buffer } from 'buffer/';
 const AZTEC_WALLET_PREFIX = 'aztec-wallet:';
 
 function getKey(key: string) {
   return AZTEC_WALLET_PREFIX + key;
 }
 
-export function getCachedEncryptedKeystore() {
-  return localStorage.getItem(getKey('encryptedKeystore'));
+export function getCachedCredential() {
+  const creds = localStorage.getItem('creds');
+  if (creds) {
+    const { counter, credId, pubKey } = JSON.parse(creds);
+    return {
+      counter,
+      credId: Buffer.from(credId, "base64"),
+      pubKey: Buffer.from(pubKey, "base64"),
+    };
+  }
+
 }
 
 export function setCachedEncryptedKeystore(encryptedKeystore: string) {

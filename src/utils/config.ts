@@ -46,35 +46,15 @@ function getPublicProvider(chainId: EthereumChainId) {
 
 export function getEthereumHost(chainId: EthereumChainId) {
   switch (chainId) {
-    case 5:
-      return 'https://goerli.infura.io/v3/85712ac4df0446b58612ace3ed566352';
-    case 1337:
-      return 'http://localhost:8545';
-    case 0xe2e: {
-      const apiKey = localStorage.getItem('ETH_HOST_API_KEY') ?? '';
-      return `http://localhost:8545/${apiKey}`;
-    }
-    case 0xa57ec: {
-      const apiKey = localStorage.getItem('ETH_HOST_API_KEY') ?? '';
-      return `https://aztec-connect-testnet-eth-host.aztec.network:8545/${apiKey}`;
-    }
-    case 0x57a93: {
-      const apiKey = localStorage.getItem('ETH_HOST_API_KEY') ?? '';
-      return `https://aztec-connect-stage-eth-host.aztec.network:8545/${apiKey}`;
-    }
-    case 0xdef: {
-      const apiKey = localStorage.getItem('ETH_HOST_API_KEY') ?? '';
-      return `https://aztec-connect-dev-eth-host.aztec.network:8545/${apiKey}`;
-    }
     default:
-      return 'https://aztec-connect-prod-eth-host.aztec.network:8545';
+      return 'https://goerli.infura.io/v3/85712ac4df0446b58612ace3ed566352';
   }
 }
 
 export function getWagmiRainbowConfig(config: EthereumChainId) {
   const { chains, provider, webSocketProvider } = configureChains([getWagmiChain(config)], [getPublicProvider(config)]);
 
-  const wallets = [metaMaskWallet({ chains }), walletConnectWallet({ chains }), braveWallet({ chains })];
+  const wallets = [walletConnectWallet({ chains })];
   const connectors = connectorsForWallets([{ groupName: 'Supported', wallets }]);
   const wagmiClient = createClient({
     autoConnect: true,

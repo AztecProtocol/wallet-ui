@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 const MIN_TIME_OPEN = 500;
 
 async function changeOpenState(server: WalletConnectAztecWalletProviderServer, openState: boolean) {
+  console.log('in open state');
   if (openState) {
     await server.openIframe();
   } else {

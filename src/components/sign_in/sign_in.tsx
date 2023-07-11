@@ -54,38 +54,6 @@ export function SignIn({
               readOnly
               style={{ position: 'fixed', top: '-50px', left: 0 }}
             />
-            {showEncryptedKeystore && (
-              <Field
-                containerClassName={style.fieldContainer}
-                className={style.field}
-                value={encryptedKeystore}
-                password={true}
-                autoComplete="current-password"
-                status={encryptedKeystore.length > 0 ? FieldStatus.Success : undefined}
-                label="Unlock with Aztec Key & Passcode"
-                placeholder="Enter Aztec Key"
-                onChangeValue={setEncryptedKeystore}
-              />
-            )}
-
-            {/* TODO firefox password manager likely needs hacks so that this is not a password=true
-            right before submit
-            TODO add lastpass (and others) ignore attributes if on page with aztec key */}
-            <Field
-              containerClassName={style.fieldContainer}
-              className={style.field}
-              value={passcode}
-              password={true}
-              autoComplete={showEncryptedKeystore ? 'off' : 'current-password'}
-              status={passcode.length > 0 ? FieldStatus.Success : undefined}
-              label={showEncryptedKeystore ? undefined : 'Unlock with Passcode'}
-              placeholder="Enter passcode"
-              onChangeValue={setPasscode}
-            />
-            <div className={style.links}>
-              {showCreate && <Hyperlink className={style.link} label="Create new account" onClick={onCreateAccount} />}
-              {showForgot && <Hyperlink className={style.link} label="I've forgotten my passcode" />}
-            </div>
           </div>
           <div className={style.buttons}>
             <Button

@@ -5,6 +5,7 @@ import svgrPlugin from 'vite-plugin-svgr';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import EnvironmentPlugin from 'vite-plugin-environment';
 import path from 'path';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 // Get require functionality in ESM
 import { createRequire } from 'module';
@@ -20,6 +21,17 @@ function rewriteUrlWithExtension(url, fileName) {
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
+    nodePolyfills({
+      // To exclude specific polyfills, add them to this list.
+      // Whether to polyfill specific globals.
+      globals: {
+        Buffer: true, // can also be 'build', 'dev', or false
+        global: true,
+        process: true,
+      },
+      // Whether to polyfill `node:` protocol imports.
+      protocolImports: true,
+    }),
     react(),
     viteTsconfigPaths(),
     svgrPlugin(),

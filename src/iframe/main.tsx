@@ -8,15 +8,9 @@ import { getChainId } from '../utils/config';
 import { AztecSdkProvider } from '../utils/aztecSdkContext';
 
 render(
-  <AztecSdkProvider chainId={getChainId()} noSync={true}>
-    <BBWasmProvider>
-      <WithBBWasm>
-        <SignClientProvider iframed={true}>
-          <IframeApp>
-            <IframeWallet />
-          </IframeApp>
-        </SignClientProvider>
-      </WithBBWasm>
-    </BBWasmProvider>
-  </AztecSdkProvider>,
+  <SignClientProvider iframed={true}>
+    <IframeApp>
+      <IframeWallet />
+    </IframeApp>
+  </SignClientProvider>,
 );

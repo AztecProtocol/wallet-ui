@@ -12,10 +12,11 @@ function getUri() {
 
 export type WalletConnectProposal = Omit<SignClientTypes.BaseEventArgs<ProposalTypes.Struct>, 'topic'>;
 
-export async function applyUriIfNecessary(client: SignClient) {
+export async function applyUriIfNecessary() {
+  const { client } = useContext(SignClientContext);
   const uri = getUri();
   if (uri) {
-    await client.pair({ uri });
+    await client.core.pairing.pair({ uri });
   }
 }
 
@@ -25,24 +26,35 @@ export function useWalletConnectUri() {
 
   useEffect(() => {
     if (client) {
-      client.on('session_proposal', event => {
-        setProposal(event);
+      client.on('session_proposal', async (proposal) => {
+        console.log({ proposal });
+        setProposal(proposal);
+
+        // optionally show user a modal or way to reject or approve session
+
+        // handle user approval case
+        // await client.respondSessionRequest({ topic: session.topic, response });
+
       });
-      applyUriIfNecessary(client).catch(console.error);
+
+
+
     }
   }, [client]);
 
-  return { proposal };
+  return { proposal, setProposal };
 }
 
-export function createNamespace(chainId: AztecChainId, address: GrumpkinAddress) {
-  return {
+export function createNamespace(chainId: AztecChainId) {
+  const resp = {
     aztec: {
-      methods: [],
-      accounts: [`aztec:${chainId}:${address.toString()}`],
-      events: RPC_METHODS,
+      methods: [`aztec_authenticateTx`],
+      accounts: [`aztec:${chainId}:0xab16a96d359ec26a11e2c2b3d8f8b8942d5bfcdb`],
+      events: [],
     },
   };
+  console.log(resp);
+  return resp;
 }
 
 export async function extractAndStoreSession(signClient: SignClient, session: SessionTypes.Struct) {

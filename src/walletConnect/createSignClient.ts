@@ -1,37 +1,29 @@
 import { Core } from '@walletconnect/core';
-import Client from '@walletconnect/sign-client';
-import { SignClient } from '@walletconnect/sign-client/dist/types/client.js';
+import { Web3Wallet } from "@walletconnect/web3wallet";
 import { CoreTypes } from '@walletconnect/types';
-import { PrefixedStorage } from './prefixedStorage.js';
+import { PrefixedStorage } from './prefixedStorage';
+import { SignClient } from '@walletconnect/sign-client';
 
 // Node16 module resolution seems to be broken for this package.
-const SignClientClass = Client as unknown as typeof SignClient;
 
-export function createSignClient(isIframe: boolean) {
+export async function createSignClient(isIframe: boolean) {
   const coreParams: CoreTypes.Options = {
     logger: 'debug',
-    projectId: process.env.WALLETCONNECT_PROJECT_ID,
-  };
-
-  if (isIframe) {
-    coreParams.storage = new PrefixedStorage(document.referrer);
+    projectId: "46b15d4ac7df71221bbf8b7299b90b88",
+    storage: new PrefixedStorage(document.referrer),
   }
 
   const core = new Core(coreParams);
 
-  const metadata = {
-    name: 'Wallet name',
-    description: 'A short description for your wallet',
-    url: window.location.origin,
-    icons: ['https://walletconnect.com/walletconnect-logo.png'],
-    iframable: true,
-  };
-
-  return SignClientClass.init({
-    logger: 'debug',
-    core,
-    // optional parameters
-    relayUrl: 'wss://relay.walletconnect.com',
-    metadata,
+  const web3wallet = await SignClient.init({
+    core: core,
+    metadata: {
+      name: "Example WalletConnect Wallet",
+      description: "Example WalletConnect Integration",
+      url: "myexamplewallet.com",
+      icons: [],
+    },
   });
+  window.client = web3wallet;
+  return web3wallet;
 }

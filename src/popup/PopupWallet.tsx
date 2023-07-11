@@ -1,6 +1,6 @@
 import { useContext, useEffect, useMemo, useState } from 'react';
 import { sendHandoverMessage, getSessionToHandover, isRequestedKeyStore } from './handoverSession.js';
-import { getCachedEncryptedKeystore, getCachedPassword } from '../utils/sessionUtils.js';
+import { getCachedCredential, getCachedPassword } from '../utils/sessionUtils.js';
 import { AztecKeyStore, AztecBuffer, BarretenbergWasm } from '@aztec/alpha-sdk';
 import { BBWasmContext } from '../utils/wasmContext.js';
 import { SignIn } from '../components/sign_in/sign_in.js';
@@ -10,19 +10,12 @@ import { ApprovalDialog } from '../components/approval_dialog/approval_dialog.js
 export default function PopupWallet() {
   const [keyStore, setKeyStore] = useState<AztecKeyStore | null>(null);
   const [sessionToHandover] = useState<SessionTypes.Struct | undefined>(getSessionToHandover()?.session);
-  const cachedEncryptedKeys = useMemo(() => getCachedEncryptedKeystore(), []);
+  const cachedCredential = useMemo(() => getCachedCredential(), []);
 
   const wasm = useContext<BarretenbergWasm>(BBWasmContext);
 
   useEffect(() => {
     const cachedPassword = getCachedPassword();
-    if (cachedEncryptedKeys && cachedPassword) {
-      AztecKeyStore.open(AztecBuffer.from(cachedEncryptedKeys, 'hex'), cachedPassword, wasm, [])
-        .then((keyStore: AztecKeyStore) => {
-          setKeyStore(keyStore);
-        })
-        .catch(console.warn);
-    }
   }, []);
 
   if (sessionToHandover) {
@@ -32,22 +25,9 @@ export default function PopupWallet() {
           showEncryptedKeystore={!cachedEncryptedKeys}
           showCreate={false}
           showForgot={false}
-          isValidPasscode={function (passcode: string): boolean {
-            return passcode.length > 0; // TODO
-          }}
+          isValidPasscode={function (passcode: string): boolean {}}
           onCreateAccount={() => {}}
-          onFinish={async function (encryptedKeys: string, passcode: string) {
-            try {
-              const encryptedKeystore = cachedEncryptedKeys || encryptedKeys;
-              const keyStore = await AztecKeyStore.open(AztecBuffer.from(encryptedKeystore, 'hex'), passcode, wasm, []);
-              if (!(await isRequestedKeyStore(keyStore))) {
-                throw new Error('Incorrect account');
-              }
-              setKeyStore(keyStore);
-            } catch (error: any) {
-              return { error: error.toString() };
-            }
-          }}
+          onFinish={async function (encryptedKeys: string, passcode: string) {}}
         />
       );
     } else {

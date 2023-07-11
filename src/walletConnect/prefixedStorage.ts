@@ -1,11 +1,9 @@
-import { safeJsonParse, safeJsonStringify } from 'safe-json-utils';
+import { serialize, deserialize } from 'wagmi'
 
 export class PrefixedStorage {
-  constructor(private prefix: string) {}
+  constructor(private prefix: string) { }
 
-  private generatePrefixedKey(key: string) {
-    return `${this.prefix}-${key}`;
-  }
+
 
   public getKeys(): Promise<string[]> {
     return Promise.resolve(
@@ -19,26 +17,27 @@ export class PrefixedStorage {
     return Promise.resolve(
       Object.entries(localStorage)
         .filter(([key]) => key.startsWith(this.prefix))
-        .map(([key, value]) => [key.slice(this.prefix.length), safeJsonParse(value)] as [string, T]),
+        .map(([key, value]) => [key.slice(this.prefix.length), deserialize(value)] as [string, T]),
     );
   }
 
   public getItem<T = any>(key: string): Promise<T | undefined> {
-    const item = localStorage.getItem(this.generatePrefixedKey(key));
+    const item = localStorage.getItem(key);
     if (item === null) {
       return Promise.resolve(undefined);
     }
 
-    return Promise.resolve(safeJsonParse(item) as T);
+    return Promise.resolve(deserialize(item) as T);
   }
 
   public setItem<T>(key: string, value: T): Promise<void> {
-    localStorage.setItem(this.generatePrefixedKey(key), safeJsonStringify(value));
+    console.log({ key, value: serialize(value) })
+    localStorage.setItem(key, serialize(value));
     return Promise.resolve();
   }
 
   public removeItem(key: string): Promise<void> {
-    localStorage.removeItem(this.generatePrefixedKey(key));
+    localStorage.removeItem(key);
     return Promise.resolve();
   }
 }

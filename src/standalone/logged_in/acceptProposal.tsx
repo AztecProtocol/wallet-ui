@@ -1,4 +1,3 @@
-import { AztecKeyStore } from '@aztec/alpha-sdk';
 import { SignClient } from '@walletconnect/sign-client/dist/types/client';
 import { SessionTypes } from '@walletconnect/types';
 import { useEffect, useState } from 'react';
@@ -8,9 +7,10 @@ import { createNamespace, extractAndStoreSession, WalletConnectProposal } from '
 
 export interface AcceptProposalProps {
   aztecChainId: AztecChainId;
-  client: SignClient;
+  client: any;
   proposal: WalletConnectProposal;
-  keyStore: AztecKeyStore;
+  creds: any;
+  setProposal: any;
 }
 
 export function AcceptProposal(props: AcceptProposalProps) {
@@ -18,9 +18,9 @@ export function AcceptProposal(props: AcceptProposalProps) {
 
   useEffect(() => {
     if (session) {
-      extractAndStoreSession(props.client, session)
-        .then(() => window.close())
-        .catch(console.error);
+      // extractAndStoreSession(props.client, session)
+      //   .then(() => window.close())
+      //   .catch(console.error);
     }
   }, [session]);
 
@@ -31,15 +31,30 @@ export function AcceptProposal(props: AcceptProposalProps) {
       onUserResponse={async accepted => {
         try {
           if (accepted) {
-            const account = (await props.keyStore.getAccountKey()).getPublicKey();
-            const namespaces = createNamespace(props.aztecChainId, account);
+            // const account = (await props.keyStore.getAccountKey()).getPublicKey();
+            // optionally show user a modal or way to reject or approve session
 
-            const { acknowledged } = await props.client.approve({
+            // handle user approval case
+
+            // create the approved session with selected accounts, supported methods, chains and events for your wallet
+            const session = await props.client.approve({
               id: props.proposal.id,
-              namespaces,
+              namespaces: {
+                aztec: {
+                  accounts: ['aztec:671337:1'],
+                  methods: ['aztec_authenticateTx'],
+                  chains: ['aztec:671337'],
+                  events: [],
+                },
+              },
             });
 
-            const session = await acknowledged();
+            // create response object
+            const response = { id: props.proposal.id, result: 'session approved', jsonrpc: '2.0' };
+
+            // respond to the dapp request with the approved session's topic and response
+            await props.client.respond({ topic: session.topic, response });
+            props.setProposal();
             setSession(session);
           } else {
             await props.client.reject({
